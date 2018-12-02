@@ -37,17 +37,21 @@ void CGoomba::Render()
 {
 	if (isActive == true)
 	{
-		int ani = 0;
-		if (GetState() == GOOMBA_STATE_DIE)
+		if (isHit == false)
 		{
-			ani = GOOMBA_ANI_DIE;
+			int ani = 0;
+			if (GetState() == GOOMBA_STATE_DIE)
+			{
+				ani = GOOMBA_ANI_DIE;
+				isHit = true;
+			}
+			else if (GetState() == GOOMBA_STATE_WALKING_LEFT)
+			{
+				ani = GOOMBA_ANI_WALKING_LEFT;
+			}
+			else ani = GOOMBA_ANI_WALKING_RIGHT;
+			animations[ani]->Render(x, y);
 		}
-		else if (GetState() == GOOMBA_STATE_WALKING_LEFT)
-		{
-			ani = GOOMBA_ANI_WALKING_LEFT;
-		}
-		else ani = GOOMBA_ANI_WALKING_RIGHT;
-		animations[ani]->Render(x, y);
 	}
 }
 

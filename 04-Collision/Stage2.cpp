@@ -15,13 +15,14 @@ void CStage2::LoadStage2()
 	textures->Add(ID_TEX_GHOST_LEFT, L"textures\\ghost_left.png", D3DCOLOR_XRGB(255,0,255));
 	textures->Add(ID_TEX_GHOST_RIGHT, L"textures\\ghost_right.png", D3DCOLOR_XRGB(255, 0, 255));
 	textures->Add(ID_TEX_GHOST_DIE, L"textures\\100pts.png", D3DCOLOR_XRGB(255, 255, 255));
+	textures->Add(ID_TEX_HEALTH, L"textures\\bar_health.bmp", D3DCOLOR_XRGB(255, 0, 255));
 	CSprites *sprites = CSprites::GetInstance();
 	CAnimations *animations = CAnimations::GetInstance();
 	map = new CTileMap(2);
 
-	sprites->Add(20002, 0, 0, 32, 32, textures->Get(CASTLE_GROUND));
+	sprites->Add(20002, 0, 0, 32, 32, textures->Get(CASTLE_GROUND)); // GROUND
 
-	LPDIRECT3DTEXTURE9 texGhost = textures->Get(ID_TEX_GHOST_LEFT);
+	LPDIRECT3DTEXTURE9 texGhost = textures->Get(ID_TEX_GHOST_LEFT);  //GHOST
 	sprites->Add(30001, 0, 0, 34, 64, texGhost);
 	sprites->Add(30002, 34, 0, 68, 64, texGhost);
 	texGhost = textures->Get(ID_TEX_GHOST_RIGHT);
@@ -29,6 +30,10 @@ void CStage2::LoadStage2()
 	sprites->Add(30004,34,0,68,64,texGhost);
 	texGhost = textures->Get(ID_TEX_GHOST_DIE);
 	sprites->Add(30005, 0, 0, 16, 9, texGhost);
+
+	LPDIRECT3DTEXTURE9 texHealth = textures->Get(ID_TEX_HEALTH); // HEALTH
+	sprites->Add(4, 0, 0, 8, 16, texHealth);
+	sprites->Add(5, 8, 0, 16, 16, texHealth);
 
 	LPANIMATION ani;
 	ani = new CAnimation(100);	//castle ground
@@ -48,48 +53,111 @@ void CStage2::LoadStage2()
 	ani->Add(30005);
 	animations->Add(703, ani);
 
-	whip= Whip::GetInstance();
-	
-	stair = new CStair();
-	stair->start->SetPosition(30 * 32, 352);
-	stair->start1->SetPosition(35 * 32 , 224);
-	stair->stop->SetPosition(35 * 32, 125);
-	objects.push_back(stair->start1);
-	objects.push_back(stair->start);
-	objects.push_back(stair->stop);
+	ani = new CAnimation(100);		//HEARLTH LIVE
+	ani->Add(4);
+	animations->Add(4, ani);
+	ani = new CAnimation(100);		//HEALTH DIE
+	ani->Add(5);
+	animations->Add(5, ani);
 
+	whip= Whip::GetInstance();
+// --------------GROUND SECTION---------------//	
 	for (int i = 0; i < 144; i++)
 	{
 		ground = new CCastleGround();
 		ground->AddAnimation(602);
-		ground->SetPosition(i * 32, 352);
+		ground->SetPosition(i * 32, 416);
 		objects.push_back(ground);
 	}
 	for (int i = 0; i < 3; i++)
 	{
 		ground = new CCastleGround();
 		ground->AddAnimation(602);
-		ground->SetPosition(35*32+i * 32, 224);
+		ground->SetPosition(35*32+i * 32, 286);
 		objects.push_back(ground);
 	}
-
+	for (int i = 0; i < 10; i++)
+	{
+		ground = new CCastleGround();
+		ground->AddAnimation(602);
+		ground->SetPosition(39 * 32 + i * 32, 222);
+		objects.push_back(ground);
+	}
+	for (int i = 0; i < 6; i++)
+	{
+		ground = new CCastleGround();
+		ground->AddAnimation(602);
+		ground->SetPosition(50 * 32 + i * 32, 286);
+		objects.push_back(ground);
+	}
+	for (int i = 0; i < 17; i++)
+	{
+		ground = new CCastleGround();
+		ground->AddAnimation(602);
+		ground->SetPosition(73 * 32 + i * 32, 222);
+		objects.push_back(ground);
+	}
+// ------------GOOMBA SECTION-----------------//
 	for (int i = 1; i < 3; i++)
 	{
 		goomba = new CGoomba();
 		goomba->AddAnimation(702);
 		goomba->AddAnimation(701);
 		goomba->AddAnimation(703);
-		goomba->SetPosition(i * 200, 290);
-		goomba->SetBoundingCell(i * 200,290 );
+		goomba->SetPosition(i * 200, 352);
+		goomba->SetBoundingCell(i * 200,320);
 		goomba->SetState(GOOMBA_STATE_WALKING_LEFT);
 		objects.push_back(goomba);
 	}
-	
+	for (int i = 0; i < 6; i++)
+	{
+		goomba = new CGoomba();
+		goomba->AddAnimation(702);
+		goomba->AddAnimation(701);
+		goomba->AddAnimation(703);
+		goomba->SetPosition(50 * 32 + i * 80, 352);
+		goomba->SetBoundingCell(50 * 32 + i * 80, 320);
+		goomba->SetState(GOOMBA_STATE_WALKING_LEFT);
+		objects.push_back(goomba);
+	}
+// ------------STAIR SECTION------------------//
+	stair = new CStair();
+	stair->start->SetPosition(30 * 32, 416);
+	stair->start1->SetPosition(35 * 32, 286);
+	stair->stop->SetPosition(35 * 32, 181);
+	objects.push_back(stair->start1);
+	objects.push_back(stair->start);
+	objects.push_back(stair->stop);
+
+	stair = new CStair();
+	stair->start->SetPosition(37 * 32, 286);
+	stair->start1->SetPosition(39 * 32, 222);
+	stair->stop->SetPosition(39 * 32, 125);
+	objects.push_back(stair->start1);
+	objects.push_back(stair->start);
+	objects.push_back(stair->stop);
+
+	stair = new CStair();
+	stair->start->SetPosition(51 * 32, 286);
+	stair->start1->SetPosition(48 * 32, 222);
+	stair->stop->SetPosition(48 * 32, 125);
+	objects.push_back(stair->start1);
+	objects.push_back(stair->start);
+	objects.push_back(stair->stop);
+
+	stair = new CStair();
+	stair->start->SetPosition(66 * 32, 416);
+	stair->start1->SetPosition(73 * 32, 222);
+	stair->stop->SetPosition(48 * 32, 125);
+	objects.push_back(stair->start1);
+	objects.push_back(stair->start);
+	objects.push_back(stair->stop);
+//------------MARIO SECTION --------------//
 	mario = CMario::GetInstance();
 	mario->SetWhip(whip);
 	mario->SetPosition(50.0f, 200.0f);
 	mario->SetState(MARIO_STATE_IDLE);
-
+//----------- CELL SYSTEM ---------------//
 	cellsSys = new CCells();
 	int numOfCell = MAP_LENGTH / SCREEN_WIDTH;	// vì chiều cao của map = chiều cao view nên không cần mảng 2 chiều 
 	float posX, posY,cellX,cellY;

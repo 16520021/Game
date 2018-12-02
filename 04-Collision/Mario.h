@@ -80,7 +80,7 @@ public:
 		knife = NULL;
 		tag = 0;
 		curHeart = 0;
-		curHealth = 12;
+		curHealth = 16;
 		isGoingStair = false;
 
 	}

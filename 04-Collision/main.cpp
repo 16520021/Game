@@ -35,7 +35,7 @@
 #define MAIN_WINDOW_TITLE L"04 - Collision"
 
 #define SCREEN_WIDTH		512
-#define SCREEN_HEIGHT		448
+#define SCREEN_HEIGHT		512
 
 #define MAX_FRAME_RATE		60
 

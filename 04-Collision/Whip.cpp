@@ -2,6 +2,7 @@
 #include "Light.h"
 #include "Heart.h"
 #include "Knife.h"
+#include "Goomba.h"
 
 
 Whip::Whip()
@@ -71,6 +72,15 @@ void Whip::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 					{
 						if (wicon->collision == true)
 							wicon->isHit = true;
+					}
+				}
+				if (dynamic_cast<CGoomba *>(e->obj))
+				{
+					CGoomba *goomba = dynamic_cast<CGoomba *>(e->obj);
+					if (e->nx == 0)
+					{
+						if (goomba->state != GOOMBA_STATE_DIE)
+							goomba->SetState(GOOMBA_STATE_DIE);
 					}
 				}
 			}

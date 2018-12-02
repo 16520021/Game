@@ -11,6 +11,7 @@ CStatus::CStatus(LPDIRECT3DDEVICE9 device)
 		ANTIALIASED_QUALITY, FF_DONTCARE,
 		L"Verdana Bold", &font);
 	SetRect(&zone, 0, 0, 512, 96);
+	hthBar = new HealthBar();
 }
 
 string convertScoreFormat(int score)
@@ -29,16 +30,17 @@ string convertScoreFormat(int score)
 		return std::to_string(score);
 };
 
-void CStatus::DrawStatusBar()
+void CStatus::DrawStatusBar(float camX,float camY)
 {
 	status = "SCORE - " + convertScoreFormat(CMario::GetInstance()->point) +
 		"         TIME "
 		+ "time here" +
 		"        STAGE 01"  +
 		"\n" +
-		"\nPLAYER " + "Siheal"
+		"\nPLAYER " +
 		"\nENEMY " + "Boheal";	
 	font->DrawTextA(NULL, status.c_str(), -1, &zone, DT_LEFT, D3DCOLOR_XRGB(255, 255, 255));
+	hthBar->Render(camX,camY);
 }
 
 string convertTimeFormat(int timeUI)

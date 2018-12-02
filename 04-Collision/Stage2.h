@@ -15,12 +15,13 @@
 #include "Stair.h"
 
 #define SCREEN_WIDTH		512
-#define SCREEN_HEIGHT		448
+#define SCREEN_HEIGHT		544
 #define MAP_LENGTH			4608
 #define CASTLE_GROUND		21
 #define ID_TEX_GHOST_LEFT	10
 #define ID_TEX_GHOST_RIGHT	11
 #define ID_TEX_GHOST_DIE	12
+#define ID_TEX_HEALTH		13
 #define BACKGROUND_COLOR	D3DCOLOR_XRGB(255,255,200)
 class CStage2
 {

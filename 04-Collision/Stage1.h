@@ -22,7 +22,7 @@
 #define ID_TEX_LIGHT		40
 #define ID_TEX_HEART		50
 #define ID_TEX_DIE			999
-
+#define ID_TEX_HEALTH		13
 #define SCREEN_WIDTH		512
 #define SCREEN_HEIGHT		448
 #define BACKGROUND_COLOR D3DCOLOR_XRGB(0,0,0)

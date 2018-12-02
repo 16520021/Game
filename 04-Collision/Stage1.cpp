@@ -24,6 +24,7 @@ void CStage1::InitStage1()
 	textures->Add(1, L"textures\\knife_left.png", D3DCOLOR_XRGB(255, 0, 255));
 	textures->Add(3, L"textures\\maingate_block.bmp", D3DCOLOR_XRGB(255, 255, 255));
 	textures->Add(32, L"textures\\whip_icon.png", D3DCOLOR_XRGB(255, 255, 255));
+	textures->Add(ID_TEX_HEALTH, L"textures\\bar_health.bmp", D3DCOLOR_XRGB(255, 0, 255));
 
 	map1 = new CTileMap(1);
 	CSprites * sprites = CSprites::GetInstance();
@@ -109,6 +110,10 @@ void CStage1::InitStage1()
 
 	LPDIRECT3DTEXTURE9 texGate = textures->Get(3);
 	sprites->Add(3, 0, 0, 128, 64, texGate);		//gate
+
+	LPDIRECT3DTEXTURE9 texHealth = textures->Get(ID_TEX_HEALTH); // HEALTH
+	sprites->Add(4, 0, 0, 8, 16, texHealth);
+	sprites->Add(5, 8, 0, 16, 16, texHealth);
 
 	LPANIMATION ani;
 	ani = new CAnimation(100);	// idle right
@@ -227,6 +232,13 @@ void CStage1::InitStage1()
 	wicon->SetPosition(600, 320);
 	objects.push_back(wicon);
 
+	ani = new CAnimation(100);		//HEARLTH LIVE
+	ani->Add(4);
+	animations->Add(4, ani);
+	ani = new CAnimation(100);		//HEALTH DIE
+	ani->Add(5);
+	animations->Add(5, ani);
+
 	whip = Whip::GetInstance();
 	whip->AddAnimation(804);
 	whip->AddAnimation(805);
@@ -328,6 +340,8 @@ void CStage1::RenderStage1()
 	stt = new CStatus(d3ddv);
 	LPDIRECT3DSURFACE9 bb = game->GetBackBuffer();
 	LPD3DXSPRITE spriteHandler = game->GetSpriteHandler();
+	float camx = 0, camy = 0;
+	game->GetInstance()->cam->GetPosition(camx, camy);
 	if (d3ddv->BeginScene())
 	{
 		// Clear back buffer with a color
@@ -340,7 +354,7 @@ void CStage1::RenderStage1()
 			objects[i]->Render();
 		}
 		mario->Render();
-		stt->DrawStatusBar();
+		stt->DrawStatusBar(camx,camy);
 		gate->Render();
 		spriteHandler->End();
 		d3ddv->EndScene();
