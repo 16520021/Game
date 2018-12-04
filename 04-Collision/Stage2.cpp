@@ -1,5 +1,5 @@
 ﻿#include "Stage2.h"
-
+#include "debug.h"
 
 
 CStage2::CStage2()
@@ -11,16 +11,16 @@ void CStage2::LoadStage2()
 {
 	game->GetInstance()->cam->Init(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	CTextures *textures = CTextures::GetInstance();
-	textures->Add(CASTLE_GROUND, L"textures\\ground2.png", D3DCOLOR_XRGB(255, 255, 255));
 	textures->Add(ID_TEX_GHOST_LEFT, L"textures\\ghost_left.png", D3DCOLOR_XRGB(255,0,255));
 	textures->Add(ID_TEX_GHOST_RIGHT, L"textures\\ghost_right.png", D3DCOLOR_XRGB(255, 0, 255));
 	textures->Add(ID_TEX_GHOST_DIE, L"textures\\100pts.png", D3DCOLOR_XRGB(255, 255, 255));
 	textures->Add(ID_TEX_HEALTH, L"textures\\bar_health.bmp", D3DCOLOR_XRGB(255, 0, 255));
+	textures->Add(ID_TEX_DOG_RIGHT, L"textures\\dog_right.png", D3DCOLOR_XRGB(255, 0, 255));
+	textures->Add(ID_TEX_DOG_LEFT, L"textures\\dog_left.png", D3DCOLOR_XRGB(255, 0, 255));
 	CSprites *sprites = CSprites::GetInstance();
 	CAnimations *animations = CAnimations::GetInstance();
 	map = new CTileMap(2);
 
-	sprites->Add(20002, 0, 0, 32, 32, textures->Get(CASTLE_GROUND)); // GROUND
 
 	LPDIRECT3DTEXTURE9 texGhost = textures->Get(ID_TEX_GHOST_LEFT);  //GHOST
 	sprites->Add(30001, 0, 0, 34, 64, texGhost);
@@ -35,10 +35,18 @@ void CStage2::LoadStage2()
 	sprites->Add(4, 0, 0, 8, 16, texHealth);
 	sprites->Add(5, 8, 0, 16, 16, texHealth);
 
+	LPDIRECT3DTEXTURE9 texDog = textures->Get(ID_TEX_DOG_LEFT);	//DOG
+	sprites->Add(6, 0, 0, 64, 32, texDog);
+	sprites->Add(7, 64, 0, 128, 32, texDog);
+	sprites->Add(8, 128, 0, 192, 32, texDog);
+	sprites->Add(9, 192, 0, 256, 32, texDog);
+	texDog = textures->Get(ID_TEX_DOG_RIGHT);
+	sprites->Add(10, 64, 0, 128, 32, texDog);
+	sprites->Add(11, 128, 0, 192, 32, texDog);
+
+
 	LPANIMATION ani;
-	ani = new CAnimation(100);	//castle ground
-	ani->Add(20002);
-	animations->Add(602, ani);
+
 
 	ani = new CAnimation(100);		// Goomba walk left
 	ani->Add(30001);
@@ -60,43 +68,64 @@ void CStage2::LoadStage2()
 	ani->Add(5);
 	animations->Add(5, ani);
 
+	ani = new CAnimation(100);		//DOG SLEEP
+	ani->Add(6);
+	animations->Add(6, ani);
+	ani = new CAnimation(100);		//DOG WALKING LEFT
+	ani->Add(7);
+	ani->Add(8);
+	animations->Add(7, ani);
+	ani = new CAnimation(100);		//DOG JUMP (LEFT)
+	ani->Add(9);
+	animations->Add(8, ani);
+	ani = new CAnimation(100);		//DOG WALKING RIGHT
+	ani->Add(10);
+	ani->Add(11);
+	animations->Add(9, ani);
+
 	whip= Whip::GetInstance();
+
 // --------------GROUND SECTION---------------//	
 	for (int i = 0; i < 144; i++)
 	{
 		ground = new CCastleGround();
-		ground->AddAnimation(602);
 		ground->SetPosition(i * 32, 416);
 		objects.push_back(ground);
 	}
 	for (int i = 0; i < 3; i++)
 	{
 		ground = new CCastleGround();
-		ground->AddAnimation(602);
 		ground->SetPosition(35*32+i * 32, 286);
 		objects.push_back(ground);
 	}
 	for (int i = 0; i < 10; i++)
 	{
 		ground = new CCastleGround();
-		ground->AddAnimation(602);
 		ground->SetPosition(39 * 32 + i * 32, 222);
 		objects.push_back(ground);
 	}
 	for (int i = 0; i < 6; i++)
 	{
 		ground = new CCastleGround();
-		ground->AddAnimation(602);
 		ground->SetPosition(50 * 32 + i * 32, 286);
 		objects.push_back(ground);
 	}
 	for (int i = 0; i < 17; i++)
 	{
 		ground = new CCastleGround();
-		ground->AddAnimation(602);
 		ground->SetPosition(73 * 32 + i * 32, 222);
 		objects.push_back(ground);
 	}
+// ------------DOG SECTION--------------------//
+	dog = new Dog();
+	dog->AddAnimation(7);
+	dog->AddAnimation(9);
+	dog->AddAnimation(8);
+	dog->AddAnimation(703);
+	dog->AddAnimation(6);
+	dog->SetPosition(35 * 32, 253);
+	dog->SetState(DOG_STATE_SLEEP);
+	objects.push_back(dog);
 // ------------GOOMBA SECTION-----------------//
 	for (int i = 1; i < 3; i++)
 	{
@@ -132,7 +161,7 @@ void CStage2::LoadStage2()
 	stair = new CStair();
 	stair->start->SetPosition(37 * 32, 286);
 	stair->start1->SetPosition(39 * 32, 222);
-	stair->stop->SetPosition(39 * 32, 125);
+	stair->stop->SetPosition(39 * 32, 123);
 	objects.push_back(stair->start1);
 	objects.push_back(stair->start);
 	objects.push_back(stair->stop);
@@ -140,7 +169,7 @@ void CStage2::LoadStage2()
 	stair = new CStair();
 	stair->start->SetPosition(51 * 32, 286);
 	stair->start1->SetPosition(48 * 32, 222);
-	stair->stop->SetPosition(48 * 32, 125);
+	stair->stop->SetPosition(48 * 32, 123);
 	objects.push_back(stair->start1);
 	objects.push_back(stair->start);
 	objects.push_back(stair->stop);
@@ -148,7 +177,7 @@ void CStage2::LoadStage2()
 	stair = new CStair();
 	stair->start->SetPosition(66 * 32, 416);
 	stair->start1->SetPosition(73 * 32, 222);
-	stair->stop->SetPosition(48 * 32, 125);
+	stair->stop->SetPosition(48 * 32, 123);
 	objects.push_back(stair->start1);
 	objects.push_back(stair->start);
 	objects.push_back(stair->stop);
@@ -186,6 +215,31 @@ void CStage2::Update(DWORD dt)
 		cellArr.push_back(cell);
 	}
 	game->GetInstance()->cam->CameraRunStage2(cellArr);
+	int lastCellId = game->GetInstance()->cam->lastCellCollided;
+	if (lastCellId >= 0)
+	{
+		LPCELL cell = cellsSys->GetCell(lastCellId);
+		if (cell->isActive == true)
+		{
+			if (cell->x + cell->width < mario->x && mario->nx > 0)
+			{
+				DebugOut(L"cell: %d\n", lastCellId);
+				cell->isActive = false;
+				for (int i = 0; i < cell->objects.size(); i++)
+				{
+					DebugOut(L"disable object:%d", i);
+					objects[i]->isActive = false;
+				}
+			}
+			else if (cell->x > mario->x && mario->nx < 0)
+			{
+				DebugOut(L"cell: %d\n", lastCellId);
+				cell->isActive = false;
+				for (int i = 0; i < cell->objects.size(); i++)
+					objects[i]->isActive = false;
+			}
+		}
+	}
 	for (int i = 0; i < cellsSys->cells.size(); i++)	// neu cell dang active(va cham), nap cac object trong cell vao coOject
 	{
 		LPCELL cell = new CCell();
@@ -198,9 +252,9 @@ void CStage2::Update(DWORD dt)
 			}
 		}
 	}
-	for (int i = 0; i < objects.size(); i++)
+	for (int i = 0; i < coObjects.size(); i++)
 	{
-		objects[i]->Update(dt, &coObjects);
+		coObjects[i]->Update(dt, &coObjects);
 	}
 	mario->Update(dt, &coObjects);
 	game->GetInstance()->cam->UpdatePosition();

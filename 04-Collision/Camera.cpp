@@ -4,7 +4,7 @@ CCamera*CCamera::instance = NULL;
 
 CCamera::CCamera()
 {
-
+	lastCellCollided = 0;
 }
 
 
@@ -83,6 +83,7 @@ void CCamera::CameraRunStage2(vector<LPGAMEOBJECT> grid)
 	int a, b;
 	a = y + height / 2;
 	b = x + width / 2;
+	this->nx = player->nx;
 	if ((player->x + player->dx > b && player->dx > 0) || (player->x + player->dx < b && player->dx < 0))
 	{
 		this->dx = player->dx;
@@ -128,7 +129,13 @@ void CCamera::CameraRunStage2(vector<LPGAMEOBJECT> grid)
 				{
 					cell->objects.at(i)->isActive = true;
 				}
-				cell->collision = false;
+				if(i == 0 && this->nx > 0 && coEventsResult.size()!= 1)
+					lastCellCollided = cell->GetCellId()-1;
+				else
+				{
+					if (i == coEvents.size() - 1 && this->nx < 0 && coEventsResult.size()!= 1)
+						lastCellCollided = cell->GetCellId()+1;
+				}
 				cell->isActive = true;
 			}
 		}

@@ -6,6 +6,7 @@ public:
 	static CCamera *instance;
 	int width;
 	int height;
+	int lastCellCollided;
 	LPGAMEOBJECT player;
 public:
 	CCamera();

@@ -6,7 +6,7 @@
 #include "Mario.h"
 #include "Goomba.h"
 #include "Camera.h"
-#include "Light.h"
+#include "Dog.h"
 #include "TileMap.h"
 #include "Whip.h"
 #include "Heart.h"
@@ -22,6 +22,10 @@
 #define ID_TEX_GHOST_RIGHT	11
 #define ID_TEX_GHOST_DIE	12
 #define ID_TEX_HEALTH		13
+#define ID_TEX_DOG_RIGHT	14
+#define ID_TEX_DOG_LEFT	15
+#define ID_TEX_CANDLE		16
+#define ID_TEX_DOOR			17
 #define BACKGROUND_COLOR	D3DCOLOR_XRGB(255,255,200)
 class CStage2
 {
@@ -30,6 +34,7 @@ class CStage2
 	CGoomba *goomba;
 	Whip *whip;
 	CTileMap *map;
+	Dog *dog;
 	CStair *stair;
 	CCells *cellsSys;
 	CCastleGround *ground;

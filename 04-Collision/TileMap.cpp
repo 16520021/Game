@@ -54,8 +54,8 @@ void CTileMap::MapLvlRender()
 		};
 		for (int i = 0; i < 72*7; i++) {
 			CSprite *tile = sprites->Get(Map[i]);
-			float x = i % 72;
-			float y = i / 72;
+			float x = i % 72;		//act as column
+			float y = i / 72;		//act as row
 			tile->Draw(x * 64, y * 64);
 		}
 	}

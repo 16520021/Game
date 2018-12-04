@@ -9,8 +9,6 @@ CCastleGround::CCastleGround()
 
 void CCastleGround::Render()
 {
-	if(isActive == true)
-	animations[0]->Render(x, y);
 }
 
 
