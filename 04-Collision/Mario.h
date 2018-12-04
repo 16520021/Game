@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "Whip.h"
 #include "Knife.h"
+#include "Axe.h"
 
 
 #define MARIO_WALKING_SPEED		0.1f
@@ -49,6 +50,8 @@
 
 #define MARIO_UNTOUCHABLE_TIME 5000
 
+#define MAX_SUB_WEAP_TAG					8
+#define MIN_SUB_WEAP_TAG					3
 
 class CMario : public CGameObject
 {
@@ -57,12 +60,14 @@ class CMario : public CGameObject
 	DWORD untouchable_start;
 	double attackTime;
 	Whip *mainWeap;
+	CAxe *axe;
 	CKnife *knife;			//cach lam khi chi co 1 sub weapon
 	static CMario* instance;
 public:
 	bool isAttacking;
 	int curHeart;
 	int curHealth;
+	int subWeapInUse;
 	bool isSitting;
 	bool SubWeapUsed;
 	bool autoMove;			//disable keyboard
@@ -76,8 +81,10 @@ public:
 		isSitting = false;
 		SubWeapUsed = false;
 		autoMove = false;
+		subWeapInUse = 0;
 		mainWeap = new Whip();
 		knife = NULL;
+		axe = NULL;
 		tag = 0;
 		curHeart = 0;
 		curHealth = 16;
@@ -91,7 +98,7 @@ public:
 	void SetAttackTime(float time) { attackTime = time;};
 	void SetState(int state);
 	void SetWhip(Whip *whip) { mainWeap = whip; };
-	CKnife *GetSubWeapon() {return knife; };
+	LPGAMEOBJECT GetSubWeapon(int tag) { if (knife != NULL && tag == knife->tag) return knife; else if ( axe != NULL && tag == axe->tag) return axe; else return NULL; };
 	Whip *GetWhip() { return mainWeap; };
 	void SetLevel(int l) { level = l; }
 	void StartUntouchable() { untouchable = 1; untouchable_start = GetTickCount(); }

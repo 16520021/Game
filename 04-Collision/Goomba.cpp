@@ -1,6 +1,5 @@
 #include "Goomba.h"
 #include "debug.h"
-#include "Mario.h"
 
 void CGoomba::GetBoundingBox(float &left, float &top, float &right, float &bottom)
 {
@@ -30,13 +29,7 @@ void CGoomba::Update(DWORD dt,vector<LPGAMEOBJECT> *coObjects)
 		if (vx > 0 && x > (BoundingCell.x+512-34))
 		{
 			SetState(GOOMBA_STATE_WALKING_LEFT);
-		}
-		if (state == GOOMBA_STATE_DIE)
-		{
-			CMario *mario = CMario::GetInstance();
-			mario->point += 100;
-		}
-		
+		}	
 	}
 }
 
@@ -63,6 +56,12 @@ void CGoomba::Render()
 	}
 }
 
+CGoomba::CGoomba()
+{
+	tag = 7;
+	point = 100;
+}
+
 void CGoomba::SetState(int state)
 {
 	CGameObject::SetState(state);
@@ -83,4 +82,8 @@ void CGoomba::SetState(int state)
 			break;
 	}
 
+}
+
+CGoomba::~CGoomba()
+{
 }

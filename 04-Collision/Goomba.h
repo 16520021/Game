@@ -23,6 +23,8 @@ class CGoomba : public CGameObject
 
 
 public: 	
+	CGoomba();
 	void SetBoundingCell(float x, float y) { BoundingCell.x = int(x / 512) * 512; BoundingCell.y = y; };
 	virtual void SetState(int state);
+	~CGoomba();
 };

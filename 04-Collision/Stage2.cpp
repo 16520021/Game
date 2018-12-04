@@ -17,6 +17,9 @@ void CStage2::LoadStage2()
 	textures->Add(ID_TEX_HEALTH, L"textures\\bar_health.bmp", D3DCOLOR_XRGB(255, 0, 255));
 	textures->Add(ID_TEX_DOG_RIGHT, L"textures\\dog_right.png", D3DCOLOR_XRGB(255, 0, 255));
 	textures->Add(ID_TEX_DOG_LEFT, L"textures\\dog_left.png", D3DCOLOR_XRGB(255, 0, 255));
+	textures->Add(ID_TEX_CANDLE, L"textures\\candle.png", D3DCOLOR_XRGB(255, 0, 255));
+	textures->Add(ID_TEX_AXE, L"textures\\axe.png", D3DCOLOR_XRGB(255, 0, 255));
+
 	CSprites *sprites = CSprites::GetInstance();
 	CAnimations *animations = CAnimations::GetInstance();
 	map = new CTileMap(2);
@@ -44,6 +47,14 @@ void CStage2::LoadStage2()
 	sprites->Add(10, 64, 0, 128, 32, texDog);
 	sprites->Add(11, 128, 0, 192, 32, texDog);
 
+	LPDIRECT3DTEXTURE9 texCandle = textures->Get(ID_TEX_CANDLE);
+	sprites->Add(12, 0, 0, 32, 32, texCandle);
+
+	LPDIRECT3DTEXTURE9 texAxe = textures->Get(ID_TEX_AXE);
+	sprites->Add(13, 0, 0, 30, 28, texAxe);
+	sprites->Add(14, 30, 0, 60, 28, texAxe);
+	sprites->Add(15, 60, 0, 90, 28, texAxe);
+	sprites->Add(16, 90, 0, 120, 28, texAxe);
 
 	LPANIMATION ani;
 
@@ -82,8 +93,38 @@ void CStage2::LoadStage2()
 	ani->Add(10);
 	ani->Add(11);
 	animations->Add(9, ani);
+	
+	ani = new CAnimation(100);		//CANDLE
+	ani->Add(12);
+	animations->Add(10, ani);
+	//animations->Add(902, ani);
+
+	ani = new CAnimation(100);
+	ani->Add(13);
+	animations->Add(11, ani);
+	ani = new CAnimation(100);
+	ani->Add(13);
+	ani->Add(14);
+	ani->Add(15);
+	ani->Add(16);
+	animations->Add(12, ani);
 
 	whip= Whip::GetInstance();
+	
+	axe = new CAxeIcon();
+	axe->AddAnimation(11);
+	axe->SetPosition(200, 310);
+	objects.push_back(axe);
+
+// -------------- CANDLE SECTION---------------//
+
+	for (int i = 1; i < 6; i++)
+	{
+		candle = new CCandle();
+		candle->SetState(CANDLE_STATE_LIVE);
+		candle->SetPosition(i * 200, 310);
+		objects.push_back(candle);
+	}
 
 // --------------GROUND SECTION---------------//	
 	for (int i = 0; i < 144; i++)
@@ -206,8 +247,8 @@ void CStage2::LoadStage2()
 
 void CStage2::Update(DWORD dt)
 {
-	vector<LPGAMEOBJECT >coObjects;
 	vector<LPGAMEOBJECT> cellArr;
+	coObjects.clear();
 	for (int i = 0; i < cellsSys->cells.size(); i++) // chuyen doi CCells thanh LPGAMEOBJECT
 	{
 		LPCELL cell = new CCell();
@@ -272,9 +313,9 @@ void CStage2::Render()
 
 		spriteHandler->Begin(D3DXSPRITE_ALPHABLEND);
 		map->MapLvlRender();
-		for (int i = 0; i < objects.size(); i++)
+		for (int i = 0; i < coObjects.size(); i++)
 		{
-			objects[i]->Render();
+			coObjects[i]->Render();
 		}
 		mario->Render();
 		spriteHandler->End();

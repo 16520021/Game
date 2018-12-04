@@ -72,16 +72,19 @@ void CSampleKeyHander::OnKeyDown(int KeyCode)
 		}
 		break;
 	case DIK_X:
-		if (mario != NULL &&  mario->GetSubWeapon() != NULL)
+		if (mario != NULL &&  mario->GetSubWeapon(mario->subWeapInUse) != NULL)
 		{
 			if (mario->nx > 0)
 				mario->SetState(MARIO_STATE_ATK_RIGHT);
 			else mario->SetState(MARIO_STATE_ATK_LEFT);
-			float posX, posY;
-			mario->GetPosition(posX, posY);
-			mario->GetSubWeapon()->SetPosition(posX, posY + 10);
-			mario->SubWeapUsed = true;
-
+			if (mario->subWeapInUse != 0)
+			{
+				float posX, posY;
+				mario->GetPosition(posX, posY);
+				mario->GetSubWeapon(mario->subWeapInUse)->SetPosition(posX, posY + 10);
+				mario->GetSubWeapon(mario->subWeapInUse)->isActive = true;
+				mario->SubWeapUsed = true;
+			}
 		}
 		break;
 	case DIK_Z:
@@ -90,6 +93,7 @@ void CSampleKeyHander::OnKeyDown(int KeyCode)
 			if (mario->nx > 0)
 				mario->SetState(MARIO_STATE_ATK_RIGHT);
 			else mario->SetState(MARIO_STATE_ATK_LEFT);
+			if (mario->SubWeapUsed) mario->SubWeapUsed = false;
 		}
 		break;
 	case DIK_A: // reset
@@ -99,6 +103,17 @@ void CSampleKeyHander::OnKeyDown(int KeyCode)
 			mario->SetLevel(MARIO_LEVEL_BIG);
 			mario->SetPosition(50.0f, 50.0f);
 			mario->SetSpeed(0, 0);
+		}
+		break;
+	case DIK_TAB:
+		if (mario != NULL)
+		{
+			if (mario->subWeapInUse != 0)
+			{
+				mario->subWeapInUse += 5;
+				if (mario->subWeapInUse > MAX_SUB_WEAP_TAG)
+					mario->subWeapInUse = MIN_SUB_WEAP_TAG;
+			}
 		}
 		break;
 	}
@@ -122,12 +137,6 @@ void CSampleKeyHander::OnKeyUp(int KeyCode)
 		}
 		mario->isSitting = false;
 		break;
-	case DIK_X:
-		if (mario->isAttacking == true)
-		{
-			mario->isAttacking = false;
-			mario->SubWeapUsed = false;
-		}
 	}
 }
 

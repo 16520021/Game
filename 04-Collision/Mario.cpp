@@ -35,7 +35,8 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 		for (int i = 0; i < coObjects->size(); i++)
 		{
-			if (coObjects->at(i)->tag != 2 && coObjects->at(i)->tag !=101 && coObjects->at(i)->tag !=5 && coObjects->at(i)->tag != 4)
+			if (coObjects->at(i)->tag != 2 && coObjects->at(i)->tag !=101 && coObjects->at(i)->tag !=5 
+				&& coObjects->at(i)->tag != 4 && coObjects->at(i)->tag !=9 && coObjects->at(i)->tag != 6 )
 			{
 				filterCoObjs.push_back(coObjects->at(i));
 			}
@@ -50,6 +51,11 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 					filterCoObjs.push_back(coObjects->at(i));
 			}
 			else if (coObjects->at(i)->tag == 4)
+			{
+				if (coObjects->at(i)->isHit == true)
+					filterCoObjs.push_back(coObjects->at(i));
+			}
+			else if (coObjects->at(i)->tag == 9)
 			{
 				if (coObjects->at(i)->isHit == true)
 					filterCoObjs.push_back(coObjects->at(i));
@@ -137,7 +143,18 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 					{
 						n->isHit = false;
 						n->collision = false;
-						knife = CKnife::GetInstance();
+						knife = new CKnife();
+						this->subWeapInUse = knife->tag;
+					}
+				}
+				if (dynamic_cast<CAxeIcon *>(e->obj))
+				{
+					CAxeIcon *a = dynamic_cast<CAxeIcon *>(e->obj);
+					if (a->collision == true)
+					{
+						a->isHit = false;
+						a->collision = false;
+						axe = new CAxe();
 					}
 				}
 				if (dynamic_cast<WhipIcon *>(e->obj))
@@ -176,8 +193,10 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	}
 	if (mainWeap != NULL)
 		mainWeap->Update(dt, coObjects);
-	if (knife != NULL)
+	if (knife != NULL && subWeapInUse == knife->tag)
 		knife->Update(dt, coObjects);
+	if (axe != NULL && subWeapInUse == axe->tag)
+		axe->Update(dt, coObjects);
 }
 
 void CMario::Render()
@@ -300,13 +319,24 @@ void CMario::Render()
 	}
 	if (this->knife != NULL)												//Knife used
 	{
-		if (SubWeapUsed == true && isAttacking == true)
+		if (SubWeapUsed == true && subWeapInUse == knife->tag)
 		{
 			if (nx > 0)
 				knife->SetState(KNIFE_STATE_RIGHT);
 			else
 				knife->SetState(KNIFE_STATE_LEFT);
 			knife->Render();
+		}
+	}
+	if (this->axe != NULL)												//Knife used
+	{
+		if (SubWeapUsed == true && subWeapInUse == axe->tag)
+		{
+			if (nx > 0)
+				axe->SetState(AXE_STATE_RIGHT);
+			else
+				axe->SetState(AXE_STATE_LEFT);
+			axe->Render();
 		}
 	}
 }

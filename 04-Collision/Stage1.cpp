@@ -182,7 +182,7 @@ void CStage1::InitStage1()
 	ani->Add(50002);
 	animations->Add(901, ani);
 
-	ani = new CAnimation(100);		//light destroyed
+	ani = new CAnimation(500);		//light destroyed
 	ani->Add(50003);
 	ani->Add(50004);
 	animations->Add(902, ani);
@@ -359,11 +359,12 @@ void CStage1::RenderStage1()
 		spriteHandler->End();
 		d3ddv->EndScene();
 	}
-
+	if (isRunning == false) CStage1::~CStage1();
 	// Display back buffer content to the screen
 	d3ddv->Present(NULL, NULL, NULL, NULL);
 }
 
 CStage1::~CStage1()
 {
+	objects.clear();
 }

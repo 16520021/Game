@@ -122,7 +122,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Axe.h" />
     <ClInclude Include="Bat.h" />
+    <ClInclude Include="Candle.h" />
     <ClInclude Include="CastleGround.h" />
     <ClInclude Include="Cell.h" />
     <ClInclude Include="Dog.h" />
@@ -152,7 +154,9 @@
     <ClInclude Include="Whip.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Axe.cpp" />
     <ClCompile Include="Bat.cpp" />
+    <ClCompile Include="Candle.cpp" />
     <ClCompile Include="CastleGround.cpp" />
     <ClCompile Include="Cell.cpp" />
     <ClCompile Include="Dog.cpp" />

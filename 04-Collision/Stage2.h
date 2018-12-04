@@ -13,6 +13,8 @@
 #include "Knife.h"
 #include "CastleGround.h"
 #include "Stair.h"
+#include "Candle.h"
+#include "Axe.h"
 
 #define SCREEN_WIDTH		512
 #define SCREEN_HEIGHT		544
@@ -23,9 +25,10 @@
 #define ID_TEX_GHOST_DIE	12
 #define ID_TEX_HEALTH		13
 #define ID_TEX_DOG_RIGHT	14
-#define ID_TEX_DOG_LEFT	15
+#define ID_TEX_DOG_LEFT		15
 #define ID_TEX_CANDLE		16
 #define ID_TEX_DOOR			17
+#define ID_TEX_AXE			18
 #define BACKGROUND_COLOR	D3DCOLOR_XRGB(255,255,200)
 class CStage2
 {
@@ -38,7 +41,10 @@ class CStage2
 	CStair *stair;
 	CCells *cellsSys;
 	CCastleGround *ground;
+	CCandle *candle;
+	CAxeIcon *axe;
 	vector<LPGAMEOBJECT> objects;
+	vector<LPGAMEOBJECT> coObjects;
 public:
 	bool isRunning;
 	CStage2();

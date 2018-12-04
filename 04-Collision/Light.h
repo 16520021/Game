@@ -19,6 +19,7 @@ public:
 	{
 		tag = 2;
 		isDestroyed = false;
+		point = 100;
 	};
 	virtual void Render();
 	void SetState(int state);

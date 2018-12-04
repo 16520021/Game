@@ -3,8 +3,9 @@
 #include "Heart.h"
 #include "Knife.h"
 #include "Goomba.h"
-
-
+#include "Candle.h"
+#include "Mario.h"
+#include "Axe.h"
 Whip::Whip()
 {
 	tag = 1;
@@ -32,6 +33,7 @@ void Whip::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 		{
 			float min_tx, min_ty, nx = 0, ny;
 			FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny);
+			CMario *mario = CMario::GetInstance();
 			for (UINT i = 0; i < coEventsResult.size(); i++)
 			{
 				LPCOLLISIONEVENT e = coEventsResult[i];
@@ -43,7 +45,10 @@ void Whip::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 						if (e->nx == 0)
 						{
 							if (light->GetState() != LIGHT_STATE_DESTROY)
+							{
 								light->SetState(LIGHT_STATE_DESTROY);
+								mario->point += light->point;
+							}
 						}
 					}
 				}
@@ -53,7 +58,10 @@ void Whip::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 					if (e->nx == 0)
 					{
 						if (heart->GetState() == HEART_STATE_LIVE)
+						{
 							heart->isHit = true;
+							mario->curHeart += 15;
+						}
 					}
 				}
 				if (dynamic_cast<CKnifeIcon *>(e->obj))
@@ -80,7 +88,28 @@ void Whip::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 					if (e->nx == 0)
 					{
 						if (goomba->state != GOOMBA_STATE_DIE)
+						{
 							goomba->SetState(GOOMBA_STATE_DIE);
+							mario->point += goomba->point;
+						}
+					}
+				}
+				if (dynamic_cast<CCandle *>(e->obj))
+				{
+					CCandle *candle = dynamic_cast<CCandle *>(e->obj);
+					if (candle->GetState() != CANDLE_STATE_DESTROYED)
+					{
+						candle->SetState(CANDLE_STATE_DESTROYED);
+						mario->point += candle->point;
+					}
+				}
+				if (dynamic_cast<CAxeIcon *>(e->obj))
+				{
+					CAxeIcon *axe = dynamic_cast<CAxeIcon *>(e->obj);
+					if (e->nx == 0)
+					{
+						if (axe->collision == true)
+							axe->isHit = true;
 					}
 				}
 			}

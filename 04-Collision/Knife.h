@@ -9,7 +9,7 @@
 #define KNIFE_ANI_ATK_RIGHT 0
 #define KNIFE_ANI_ATK_LEFT  1
 #define KNIFE_GRAVITY		0.002f
-#define KNIFE_MS			1.5f
+#define KNIFE_MS			0.5f
 #define KNIFE_ATK_RANGE		200
 class CKnife :
 	public CGameObject

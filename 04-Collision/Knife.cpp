@@ -1,18 +1,16 @@
 #include "Knife.h"
 #include "Textures.h"
 #include "Sprites.h"
+#include "Mario.h"
+#include "Goomba.h"
 #include "debug.h"
+#include "Candle.h"
 
 CKnife* CKnife::instance = NULL;
 
 CKnife::CKnife()
 {
 	tag = 3;
-	CTextures *tex = CTextures::GetInstance();
-
-	CSprites *sprite = CSprites::GetInstance();
-	CAnimations *animations = CAnimations::GetInstance();
-
 	this->AddAnimation(1);
 	this->AddAnimation(2);
 }
@@ -46,27 +44,53 @@ void CKnife::SetState(int state)
 
 void CKnife::Update(DWORD dt, vector<LPGAMEOBJECT>* coObject)
 {
-	if (coObject->size() != 0)
+	if (isActive == true)
 	{
-		CGameObject::Update(dt, coObject);
-		vector<LPCOLLISIONEVENT> coEvents;
-		vector<LPCOLLISIONEVENT> coEventsResult;
-		coEvents.clear();
-		CalcPotentialCollisions(coObject, coEvents);
-		if (coEvents.size() != 0)
+		if (coObject->size() != 0)
 		{
-			float min_tx, min_ty, nx = 0, ny;
-			FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny);
-			for (UINT i = 0; i < coEventsResult.size(); i++)
+			CGameObject::Update(dt, coObject);
+			vector<LPCOLLISIONEVENT> coEvents;
+			vector<LPCOLLISIONEVENT> coEventsResult;
+			coEvents.clear();
+			CalcPotentialCollisions(coObject, coEvents);
+			if (coEvents.size() != 0)
 			{
-				LPCOLLISIONEVENT e = coEventsResult[i];
+				float min_tx, min_ty, nx = 0, ny;
+				FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny);
+				CMario *mario = CMario::GetInstance();
+				for (UINT i = 0; i < coEventsResult.size(); i++)
+				{
+					LPCOLLISIONEVENT e = coEventsResult[i];
+					if (dynamic_cast<CGoomba *>(e->obj))
+					{
+						CGoomba *goomba = dynamic_cast<CGoomba *>(e->obj);
+						if (goomba->GetState() != GOOMBA_STATE_DIE)
+						{
+							goomba->SetState(GOOMBA_STATE_DIE);
+							mario->point += goomba->point;
+						}
+						this->isActive = false;
+					}
+					if (dynamic_cast<CCandle *>(e->obj))
+					{
+						CCandle *candle = dynamic_cast<CCandle *>(e->obj);
+						if (candle->GetState() != CANDLE_STATE_DESTROYED)
+						{
+							candle->SetState(CANDLE_STATE_DESTROYED);
+							mario->point += candle->point;
+						}
+					}
+				}
+				for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 			}
-			for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
-		}
-		else
-		{
-			x += dx;
-			y += dy;
+			else
+			{
+				x += dx;
+				y += dy;
+				CMario *mario = CMario::GetInstance();
+				if (abs(abs(mario->x) - abs(this->x)) > KNIFE_ATK_RANGE)
+					isActive = false;
+			}
 		}
 	}
 }
@@ -83,28 +107,19 @@ void CKnife::GetBoundingBox(float & l, float & t, float & r, float & b)
 void CKnife::Render()
 {
 	int ani = 0;
-	if (abs(attackRange) <= KNIFE_ATK_RANGE)
+	if (isActive == true)
 	{
 		if (GetState() == KNIFE_STATE_RIGHT)
 		{
-			attackRange += 1;
-			if (attackRange <= KNIFE_ATK_RANGE)
-			{
-				ani = KNIFE_ANI_ATK_RIGHT;
-				animations[ani]->Render(x, y);
-			}
+			ani = KNIFE_ANI_ATK_RIGHT;
+			animations[ani]->Render(x, y);
 		}
 		else if (GetState() == KNIFE_STATE_LEFT)
 		{
-			attackRange -= 1;
-			if (attackRange >= -KNIFE_ATK_RANGE)
-			{
-				ani = KNIFE_ANI_ATK_LEFT;
-				animations[ani]->Render(x, y);
-			}
+			ani = KNIFE_ANI_ATK_LEFT;
+			animations[ani]->Render(x, y);
 		}
 	}
-	DebugOut(L"[INFO] Attack Range: %d\n", attackRange);
 }
 
 CKnife::~CKnife()
