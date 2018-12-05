@@ -14,11 +14,9 @@ void CStage2::LoadStage2()
 	textures->Add(ID_TEX_GHOST_LEFT, L"textures\\ghost_left.png", D3DCOLOR_XRGB(255,0,255));
 	textures->Add(ID_TEX_GHOST_RIGHT, L"textures\\ghost_right.png", D3DCOLOR_XRGB(255, 0, 255));
 	textures->Add(ID_TEX_GHOST_DIE, L"textures\\100pts.png", D3DCOLOR_XRGB(255, 255, 255));
-	textures->Add(ID_TEX_HEALTH, L"textures\\bar_health.bmp", D3DCOLOR_XRGB(255, 0, 255));
 	textures->Add(ID_TEX_DOG_RIGHT, L"textures\\dog_right.png", D3DCOLOR_XRGB(255, 0, 255));
 	textures->Add(ID_TEX_DOG_LEFT, L"textures\\dog_left.png", D3DCOLOR_XRGB(255, 0, 255));
 	textures->Add(ID_TEX_CANDLE, L"textures\\candle.png", D3DCOLOR_XRGB(255, 0, 255));
-	textures->Add(ID_TEX_AXE, L"textures\\axe.png", D3DCOLOR_XRGB(255, 0, 255));
 
 	CSprites *sprites = CSprites::GetInstance();
 	CAnimations *animations = CAnimations::GetInstance();
@@ -47,14 +45,9 @@ void CStage2::LoadStage2()
 	sprites->Add(10, 64, 0, 128, 32, texDog);
 	sprites->Add(11, 128, 0, 192, 32, texDog);
 
-	LPDIRECT3DTEXTURE9 texCandle = textures->Get(ID_TEX_CANDLE);
-	sprites->Add(12, 0, 0, 32, 32, texCandle);
-
-	LPDIRECT3DTEXTURE9 texAxe = textures->Get(ID_TEX_AXE);
-	sprites->Add(13, 0, 0, 30, 28, texAxe);
-	sprites->Add(14, 30, 0, 60, 28, texAxe);
-	sprites->Add(15, 60, 0, 90, 28, texAxe);
-	sprites->Add(16, 90, 0, 120, 28, texAxe);
+	LPDIRECT3DTEXTURE9 texCandle = textures->Get(ID_TEX_CANDLE); //CANDLE
+	sprites->Add(12, 0, 0, 16, 32, texCandle);
+	sprites->Add(13, 16, 0, 32, 32, texCandle);
 
 	LPANIMATION ani;
 
@@ -71,13 +64,6 @@ void CStage2::LoadStage2()
 	ani = new CAnimation(1000);		// Goomba die
 	ani->Add(30005);
 	animations->Add(703, ani);
-
-	ani = new CAnimation(100);		//HEARLTH LIVE
-	ani->Add(4);
-	animations->Add(4, ani);
-	ani = new CAnimation(100);		//HEALTH DIE
-	ani->Add(5);
-	animations->Add(5, ani);
 
 	ani = new CAnimation(100);		//DOG SLEEP
 	ani->Add(6);
@@ -96,24 +82,15 @@ void CStage2::LoadStage2()
 	
 	ani = new CAnimation(100);		//CANDLE
 	ani->Add(12);
+	ani->Add(13);
 	animations->Add(10, ani);
 	//animations->Add(902, ani);
 
-	ani = new CAnimation(100);
-	ani->Add(13);
-	animations->Add(11, ani);
-	ani = new CAnimation(100);
-	ani->Add(13);
-	ani->Add(14);
-	ani->Add(15);
-	ani->Add(16);
-	animations->Add(12, ani);
 
 	whip= Whip::GetInstance();
 	
 	axe = new CAxeIcon();
-	axe->AddAnimation(11);
-	axe->SetPosition(200, 310);
+	axe->SetPosition(200, 350);
 	objects.push_back(axe);
 
 // -------------- CANDLE SECTION---------------//
@@ -122,7 +99,7 @@ void CStage2::LoadStage2()
 	{
 		candle = new CCandle();
 		candle->SetState(CANDLE_STATE_LIVE);
-		candle->SetPosition(i * 200, 310);
+		candle->SetPosition(i * 200, 350);
 		objects.push_back(candle);
 	}
 
@@ -305,7 +282,10 @@ void CStage2::Render()
 {
 	LPDIRECT3DDEVICE9 d3ddv = game->GetDirect3DDevice();
 	LPDIRECT3DSURFACE9 bb = game->GetBackBuffer();
+	stt = new CStatus(d3ddv);
 	LPD3DXSPRITE spriteHandler = game->GetSpriteHandler();
+	float camx = 0, camy = 0;
+	game->GetInstance()->cam->GetPosition(camx, camy);
 	if (d3ddv->BeginScene())
 	{
 		// Clear back buffer with a color
@@ -317,6 +297,7 @@ void CStage2::Render()
 		{
 			coObjects[i]->Render();
 		}
+		stt->DrawStatusBar(camx, camy);
 		mario->Render();
 		spriteHandler->End();
 		d3ddv->EndScene();

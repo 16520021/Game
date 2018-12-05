@@ -1,11 +1,12 @@
 #include "Axe.h"
-
-
+#include "debug.h"
+#include "Mario.h"
 
 CAxe::CAxe()
 {
 	tag = 8;
 	AddAnimation(12);
+	isFlying = false;
 }
 
 void CAxe::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
@@ -14,7 +15,13 @@ void CAxe::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 	{
 		if (coObjects->size() != 0)
 		{
-			CGameObject::Update(dt);
+			CGameObject::Update(dt,coObjects);
+			CMario *mario = CMario::GetInstance();
+			if (this->y > 512)
+			{
+				isActive = false;
+				isFlying = false;
+			}
 			vy += AXE_GRAVITY*dt;
 			vector<LPCOLLISIONEVENT> coEvents;
 			vector<LPCOLLISIONEVENT> coEventsResult;
@@ -27,19 +34,15 @@ void CAxe::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				float min_tx, min_ty, nx = 0, ny;
 
 				FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny);
-
-				y += min_ty*dy + ny*0.4f;
-
-				if (ny != 0) vy = 0;
-
+				y += dy;
 				// clean up collision events
 				for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 			}
-		}
-		else
-		{
-			x += dx;
-			y += dy;
+			else
+			{
+				x += dx;
+				y += dy;
+			}
 		}
 	}
 }
@@ -62,6 +65,26 @@ void CAxe::GetBoundingBox(float & l, float & t, float & r, float & b)
 		t = 512;*/
 }
 
+void CAxe::SetState(int state)
+{
+	CGameObject::SetState(state);
+	switch (state)
+	{
+	case AXE_STATE_LEFT:
+		nx = -1;
+		vx = -AXE_MS_X;
+		vy = -AXE_MS_Y;
+		isFlying = true;
+		break;
+	case AXE_STATE_RIGHT:
+		nx = 1;
+		vx = AXE_MS_X;
+		vy = -AXE_MS_Y;
+		isFlying = true;
+		break;
+	}
+}
+
 CAxe::~CAxe()
 {
 }
@@ -69,6 +92,8 @@ CAxe::~CAxe()
 CAxeIcon::CAxeIcon()
 {
 	tag = 9;
+	isHit = false;
+	AddAnimation(11);
 }
 
 void CAxeIcon::Update(DWORD dt, vector<LPGAMEOBJECT>* coObject)
@@ -77,7 +102,7 @@ void CAxeIcon::Update(DWORD dt, vector<LPGAMEOBJECT>* coObject)
 	{
 		CGameObject::Update(dt, coObject);
 		if (isHit == true)
-			vy += AXE_GRAVITY*dt;
+			vy = AXE_GRAVITY*dt;
 		vector<LPCOLLISIONEVENT> coEvents;
 		vector<LPCOLLISIONEVENT> coEventsResult;
 		coEvents.clear();
@@ -95,23 +120,6 @@ void CAxeIcon::Update(DWORD dt, vector<LPGAMEOBJECT>* coObject)
 	}
 }
 
-void CAxe::SetState(int state)
-{
-	CGameObject::SetState(state);
-	switch (state)
-	{
-	case AXE_STATE_LEFT:
-		nx = -1;
-		vx = -AXE_MS_X;
-		vy = -AXE_MS_Y;
-		break;
-	case AXE_STATE_RIGHT:
-		nx = 1;
-		vx = AXE_MS_X;
-		vy = -AXE_MS_Y;
-		break;
-	}
-}
 
 void CAxeIcon::GetBoundingBox(float & l, float & t, float & r, float & b)
 {

@@ -17,7 +17,7 @@ void HealthBar::Render(float camX,float camY)
 	{
 		Health* health = new Health();
 		health->SetState(HEALTH_STATE_LIVE);
-		health->SetPosition(x + 100 + i*8, y + 43);
+		health->SetPosition(x + 90 + i*8, y + 43);
 		if (i == curHealth - 1)
 			health->GetPosition(x, y);
 		health->Render();
@@ -29,7 +29,7 @@ void HealthBar::Render(float camX,float camY)
 		health->SetState(HEALTH_STATE_DIE);
 		if (curHealth == 0)
 		{
-			health->SetPosition(x + 100 + i * 8, y + 40);
+			health->SetPosition(x + 90 + i * 8, y + 40);
 		}
 		else health->SetPosition(x + i * 10, y);
 		health->Render();

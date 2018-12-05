@@ -15,6 +15,7 @@
 #include "Stair.h"
 #include "Candle.h"
 #include "Axe.h"
+#include "Status.h"
 
 #define SCREEN_WIDTH		512
 #define SCREEN_HEIGHT		544
@@ -43,6 +44,7 @@ class CStage2
 	CCastleGround *ground;
 	CCandle *candle;
 	CAxeIcon *axe;
+	CStatus *stt;
 	vector<LPGAMEOBJECT> objects;
 	vector<LPGAMEOBJECT> coObjects;
 public:

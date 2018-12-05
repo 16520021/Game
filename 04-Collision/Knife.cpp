@@ -129,6 +129,7 @@ CKnife::~CKnife()
 CKnifeIcon::CKnifeIcon()
 {
 	tag = 4;
+	AddAnimation(1);
 	isHit = false;
 }
 

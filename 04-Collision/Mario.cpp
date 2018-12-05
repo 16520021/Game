@@ -155,6 +155,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 						a->isHit = false;
 						a->collision = false;
 						axe = new CAxe();
+						this->subWeapInUse = axe->tag;
 					}
 				}
 				if (dynamic_cast<WhipIcon *>(e->obj))
@@ -332,9 +333,9 @@ void CMario::Render()
 	{
 		if (SubWeapUsed == true && subWeapInUse == axe->tag)
 		{
-			if (nx > 0)
+			if (nx > 0 && axe->isFlying == false)
 				axe->SetState(AXE_STATE_RIGHT);
-			else
+			else if(nx <0 && axe->isFlying == false)
 				axe->SetState(AXE_STATE_LEFT);
 			axe->Render();
 		}

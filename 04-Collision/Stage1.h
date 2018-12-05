@@ -15,7 +15,6 @@
 #include "MainGate.h"
 #include "Status.h"
 #define ID_TEX_MARIO		0
-#define ID_TEX_ENEMY		10
 #define ID_TEX_MISC			20
 #define ID_TEX_WHIP_RIGHT	30
 #define ID_TEX_WHIP_LEFT	31
@@ -23,6 +22,8 @@
 #define ID_TEX_HEART		50
 #define ID_TEX_DIE			999
 #define ID_TEX_HEALTH		13
+#define ID_TEX_AXE			18
+#define ID_TEX_SUBWEAPON_BAR	19
 #define SCREEN_WIDTH		512
 #define SCREEN_HEIGHT		448
 #define BACKGROUND_COLOR D3DCOLOR_XRGB(0,0,0)

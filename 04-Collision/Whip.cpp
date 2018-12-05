@@ -23,7 +23,8 @@ Whip * Whip::GetInstance()
 
 void Whip::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 {
-	if (colliable_objects->size() != 0)
+	CMario *mario = CMario::GetInstance();
+	if (colliable_objects->size() != 0 && mario->isAttacking == true)
 	{
 		vector<LPCOLLISIONEVENT> coEvents;
 		vector<LPCOLLISIONEVENT> coEventsResult;
@@ -166,7 +167,7 @@ void Whip::GetBoundingBox(float & left, float & top, float & right, float & bott
 		}
 		else if (animations[WHIP_ANI_ATK_RIGHT]->GetCurrentFrame() == 2 && nx > 0)
 		{
-			x += 37;
+			x += 40;
 			left = x;
 			top = y;
 			right = left + WHIP_BBOX_WIDTH;

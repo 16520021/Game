@@ -25,6 +25,8 @@ void CStage1::InitStage1()
 	textures->Add(3, L"textures\\maingate_block.bmp", D3DCOLOR_XRGB(255, 255, 255));
 	textures->Add(32, L"textures\\whip_icon.png", D3DCOLOR_XRGB(255, 255, 255));
 	textures->Add(ID_TEX_HEALTH, L"textures\\bar_health.bmp", D3DCOLOR_XRGB(255, 0, 255));
+	textures->Add(ID_TEX_AXE, L"textures\\axe.png", D3DCOLOR_XRGB(255, 0, 255));
+	textures->Add(ID_TEX_SUBWEAPON_BAR, L"textures\\redEdge.bmp", D3DCOLOR_XRGB(255, 0, 255));
 
 	map1 = new CTileMap(1);
 	CSprites * sprites = CSprites::GetInstance();
@@ -114,6 +116,15 @@ void CStage1::InitStage1()
 	LPDIRECT3DTEXTURE9 texHealth = textures->Get(ID_TEX_HEALTH); // HEALTH
 	sprites->Add(4, 0, 0, 8, 16, texHealth);
 	sprites->Add(5, 8, 0, 16, 16, texHealth);
+
+	LPDIRECT3DTEXTURE9 texAxe = textures->Get(ID_TEX_AXE); //AXE
+	sprites->Add(14, 0, 0, 30, 28, texAxe);
+	sprites->Add(15, 30, 0, 60, 28, texAxe);
+	sprites->Add(16, 60, 0, 90, 28, texAxe);
+	sprites->Add(17, 90, 0, 120, 28, texAxe);
+
+	LPDIRECT3DTEXTURE9 texSubBar = textures->Get(ID_TEX_SUBWEAPON_BAR);
+	sprites->Add(18, 0, 0, 80, 59, texSubBar);
 
 	LPANIMATION ani;
 	ani = new CAnimation(100);	// idle right
@@ -239,6 +250,20 @@ void CStage1::InitStage1()
 	ani->Add(5);
 	animations->Add(5, ani);
 
+	ani = new CAnimation(100);		//AXE
+	ani->Add(14);
+	animations->Add(11, ani);
+	ani = new CAnimation(100);
+	ani->Add(14);
+	ani->Add(15);
+	ani->Add(16);
+	ani->Add(17);
+	animations->Add(12, ani);
+
+	ani = new CAnimation(100);		//SUB WEAPON BAR
+	ani->Add(18);
+	animations->Add(13, ani);
+
 	whip = Whip::GetInstance();
 	whip->AddAnimation(804);
 	whip->AddAnimation(805);
@@ -274,7 +299,6 @@ void CStage1::InitStage1()
 	animations->Add(2, ani);
 
 	knife = new CKnifeIcon();				//knife icon
-	knife->AddAnimation(1);
 	knife->SetPosition(900, 320);
 	objects.push_back(knife);
 

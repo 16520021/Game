@@ -1,10 +1,10 @@
 #pragma once
 #include "GameObject.h"
 #define AXE_BBOX_WIDTH		30
-#define AXE_BBOX_HEIGHT		15
-#define AXE_GRAVITY			0.02f
-#define AXE_MS_X			0.02f
-#define AXE_MS_Y			0.08f
+#define AXE_BBOX_HEIGHT		28
+#define AXE_GRAVITY			0.001f
+#define AXE_MS_X			0.1f
+#define AXE_MS_Y			0.5f
 #define AXE_STATE_RIGHT		100
 #define AXE_STATE_LEFT		200
 class CAxe :
@@ -12,6 +12,7 @@ class CAxe :
 {
 public:
 	CAxe();
+	bool isFlying;
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects);
 	virtual void Render();
 	virtual void SetState(int state);

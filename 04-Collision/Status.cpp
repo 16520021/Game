@@ -12,6 +12,10 @@ CStatus::CStatus(LPDIRECT3DDEVICE9 device)
 		L"Verdana Bold", &font);
 	SetRect(&zone, 0, 0, 512, 96);
 	hthBar = new HealthBar();
+	subBar = new SubWeaponBar();
+	heart = new CHeart();
+	heart->isHit = true;
+	heart->collision = true;
 }
 
 string convertScoreFormat(int score)
@@ -30,19 +34,6 @@ string convertScoreFormat(int score)
 		return std::to_string(score);
 };
 
-void CStatus::DrawStatusBar(float camX,float camY)
-{
-	status = "SCORE - " + convertScoreFormat(CMario::GetInstance()->point) +
-		"         TIME "
-		+ "time here" +
-		"        STAGE 01"  +
-		"\n" +
-		"\nPLAYER " +
-		"\nENEMY " + "Boheal";	
-	font->DrawTextA(NULL, status.c_str(), -1, &zone, DT_LEFT, D3DCOLOR_XRGB(255, 255, 255));
-	hthBar->Render(camX,camY);
-}
-
 string convertTimeFormat(int timeUI)
 {
 	if (timeUI < 10)
@@ -53,7 +44,7 @@ string convertTimeFormat(int timeUI)
 		return "0" + std::to_string(timeUI);
 	else
 		return std::to_string(0); //return std::to_string(score);
-}
+};
 
 string convertTwoDigitFormat(int digit)
 {
@@ -61,7 +52,54 @@ string convertTwoDigitFormat(int digit)
 		return "0" + std::to_string(digit);
 	else
 		return std::to_string(digit);
+};
+
+void CStatus::DrawStatusBar(float camX,float camY)
+{
+	status = "  SCORE - " + convertScoreFormat(CMario::GetInstance()->point) +"        TIME "+ "time here" +"      STAGE 01"  +"\n" +
+		"\n  PLAYER                                                   - " + convertTwoDigitFormat(CMario::GetInstance()->curHeart) +
+		"\n  ENEMY " + "Boheal";	
+	font->DrawTextA(NULL, status.c_str(), -1, &zone, DT_LEFT, D3DCOLOR_XRGB(255, 255, 255));
+	hthBar->Render(camX,camY);
+	subBar->Render(camX, camY);
+	heart->SetPosition(camX + 360, camY + 10);
+	heart->SetState(HEART_STATE_LIVE);
+	heart->AddAnimation(903);
+	heart->Render();
 }
+
 CStatus::~CStatus()
+{
+}
+
+SubWeaponBar::SubWeaponBar()
+{
+	axe = new CAxeIcon();
+	axe->isHit = true;
+	axe->isActive = true;
+	knife = new CKnifeIcon();
+	knife->isHit = true;
+	AddAnimation(13);
+}
+
+void SubWeaponBar::Render(float camX,float camY)
+{
+	CMario *mario = CMario::GetInstance();
+		int id = mario->subWeapInUse;
+	switch (id)
+	{
+	case  3:
+		knife->SetPosition(camX+240, camY + 43);
+		knife->Render();
+		break;
+	case 8:
+		axe->SetPosition(camX + 240, camY + 43);
+		axe->Render();
+		break;
+	}
+	animations[0]->Render(camX + 233, camY + 35);
+}
+
+SubWeaponBar::~SubWeaponBar()
 {
 }
