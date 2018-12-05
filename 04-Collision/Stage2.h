@@ -16,11 +16,12 @@
 #include "Candle.h"
 #include "Axe.h"
 #include "Status.h"
+#include "Door.h"
 
 #define SCREEN_WIDTH		512
 #define SCREEN_HEIGHT		544
 #define MAP_LENGTH			4608
-#define CASTLE_GROUND		21
+#define ID_TEX_DOOR			21
 #define ID_TEX_GHOST_LEFT	10
 #define ID_TEX_GHOST_RIGHT	11
 #define ID_TEX_GHOST_DIE	12
@@ -44,6 +45,7 @@ class CStage2
 	CCastleGround *ground;
 	CCandle *candle;
 	CAxeIcon *axe;
+	CDoor *door;
 	CStatus *stt;
 	vector<LPGAMEOBJECT> objects;
 	vector<LPGAMEOBJECT> coObjects;

@@ -17,11 +17,10 @@ void CStage2::LoadStage2()
 	textures->Add(ID_TEX_DOG_RIGHT, L"textures\\dog_right.png", D3DCOLOR_XRGB(255, 0, 255));
 	textures->Add(ID_TEX_DOG_LEFT, L"textures\\dog_left.png", D3DCOLOR_XRGB(255, 0, 255));
 	textures->Add(ID_TEX_CANDLE, L"textures\\candle.png", D3DCOLOR_XRGB(255, 0, 255));
+	textures->Add(ID_TEX_DOOR, L"textures\\door.bmp", D3DCOLOR_XRGB(255, 0, 255));
 
 	CSprites *sprites = CSprites::GetInstance();
 	CAnimations *animations = CAnimations::GetInstance();
-	map = new CTileMap(2);
-
 
 	LPDIRECT3DTEXTURE9 texGhost = textures->Get(ID_TEX_GHOST_LEFT);  //GHOST
 	sprites->Add(30001, 0, 0, 34, 64, texGhost);
@@ -48,6 +47,11 @@ void CStage2::LoadStage2()
 	LPDIRECT3DTEXTURE9 texCandle = textures->Get(ID_TEX_CANDLE); //CANDLE
 	sprites->Add(12, 0, 0, 16, 32, texCandle);
 	sprites->Add(13, 16, 0, 32, 32, texCandle);
+
+	LPDIRECT3DTEXTURE9 texDoor = textures->Get(ID_TEX_DOOR);	//DOOR
+	sprites->Add(19, 0, 0, 16, 96, texDoor);
+	sprites->Add(20, 64, 0, 96, 96, texDoor);
+	sprites->Add(21, 96, 0, 144, 96, texDoor);
 
 	LPANIMATION ani;
 
@@ -86,7 +90,24 @@ void CStage2::LoadStage2()
 	animations->Add(10, ani);
 	//animations->Add(902, ani);
 
+	ani = new CAnimation(100);		//DOOR
+	ani->Add(19);
+	animations->Add(14, ani);
+	ani = new CAnimation(100);
+	ani->Add(20);
+	ani->Add(21);
+	animations->Add(15, ani);
 
+	map = new CTileMap(2);
+
+	door = new CDoor();
+	door->SetPosition(81 * 32 + 16, 126);
+	door->SetState(DOOR_STATE_CLOSE);
+	door->AddAnimation(14);
+	door->AddAnimation(15);
+	objects.push_back(door);
+
+//----------------WEAPON SECTION ----------------//
 	whip= Whip::GetInstance();
 	
 	axe = new CAxeIcon();
@@ -284,6 +305,7 @@ void CStage2::Render()
 	LPDIRECT3DSURFACE9 bb = game->GetBackBuffer();
 	stt = new CStatus(d3ddv);
 	LPD3DXSPRITE spriteHandler = game->GetSpriteHandler();
+	map->SetCam(game);
 	float camx = 0, camy = 0;
 	game->GetInstance()->cam->GetPosition(camx, camy);
 	if (d3ddv->BeginScene())

@@ -34,7 +34,7 @@ void CTileMap::MapLvlRender()
 			109,30,109,109,109,109,109,109,109,30,109,109,109,109,109,109,109,109,6,14,85,93,0,
 			62,70,78,62,62,78,62,78,62,70,78,62,62,78,62,78,78,86,102,110,7,0,0
 			};
-		for (int i = 0; i < 138;i++) {
+		for (int i = 0; i < 138;i++) {		//STATIC MAP
 			CSprite *tile = sprites->Get(Map[i]);
 			float x = i % 23;
 			float y = i / 23;
@@ -52,11 +52,29 @@ void CTileMap::MapLvlRender()
 			49, 25, 49, 65, 41, 25, 49, 65, 17, 25, 73, 65, 49, 25, 73, 50, 67, 35, 41, 49, 25, 49, 49, 25, 49, 25, 41, 41, 25, 65, 25, 65, 49, 50, 67, 35, 41, 49, 49, 25, 42, 75, 105, 105, 02, 19, 25, 12, 91, 99, 99, 02, 19, 25, 12, 91, 04, 73, 49, 41, 17, 43, 28, 98, 25, 49, 25, 49, 25, 27, 35, 42,
 			74, 66, 74, 74, 74, 66, 74, 74, 74, 66, 74, 74, 74, 66, 74, 27, 74, 74, 74, 74, 66, 74, 74, 66, 74, 66, 74, 74, 66, 74, 66, 74, 74, 27, 74, 74, 74, 74, 74, 66, 44, 52, 83, 11, 66, 11, 66, 68, 76, 99, 99, 66, 83, 66, 68, 51, 92, 74, 74, 74, 74, 74, 74, 51, 66, 74, 66, 74, 66, 74, 74, 44
 		};
-		for (int i = 0; i < 72*7; i++) {
-			CSprite *tile = sprites->Get(Map[i]);
-			float x = i % 72;		//act as column
-			float y = i / 72;		//act as row
-			tile->Draw(x * 64, y * 64);
+		//for (int i = 0; i < 72*7; i++) {
+		//	CSprite *tile = sprites->Get(Map[i]);
+		//	float x = i % 72;		//act as column
+		//	float y = i / 72;		//act as row
+		//	tile->Draw(x * 64, y * 64);
+		//}
+		int startCol = int(game->GetInstance()->cam->x / 64);					// NEW WAY FOR SCROLLING LVL MAP
+		int endCol =startCol + int(game->GetInstance()->cam->width / 64);
+		int startRow = int(game->GetInstance()->cam->y / 64);
+		int endRow = 6;
+		float offsetX = -game->GetInstance()->cam->x + startCol * 64;
+		float offsetY = -game->GetInstance()->cam->y + startRow * 64;
+		for (int c = startCol; c <= endCol; c++)
+		{
+			for (int r = startRow; r <= endRow; r++)
+			{
+				int i = 72 * r + c;
+				CSprite *tile = sprites->Get(Map[i]);;
+				float x = (c - startCol) * 64 + offsetX;
+				float y = (r - startRow) * 64 + offsetY;
+				if(tile != NULL)
+					tile->Draw(x + game->GetInstance()->cam->x, y + game->GetInstance()->cam->y);
+			}
 		}
 	}
 }

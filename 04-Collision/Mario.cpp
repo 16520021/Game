@@ -7,6 +7,7 @@
 #include "Goomba.h"
 #include "Heart.h"
 #include "Stair.h"
+#include "Door.h"
 
 CMario* CMario::instance = NULL;
 
@@ -181,6 +182,16 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				{
 					StopPoint *up = dynamic_cast<StopPoint *>(e->obj);
 					isGoingStair = false;
+				}
+				if (dynamic_cast<CDoor *>(e->obj))
+				{
+					CDoor *door = dynamic_cast<CDoor *>(e->obj);
+					if ( door->isHit == false)
+					{
+						door->SetState(DOOR_STATE_OPEN);
+						isHit = true;
+						door->collision = false;
+					}
 				}
 			}
 		}

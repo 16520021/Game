@@ -128,6 +128,7 @@
     <ClInclude Include="CastleGround.h" />
     <ClInclude Include="Cell.h" />
     <ClInclude Include="Dog.h" />
+    <ClInclude Include="Door.h" />
     <ClInclude Include="Ground.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="debug.h" />
@@ -160,6 +161,7 @@
     <ClCompile Include="CastleGround.cpp" />
     <ClCompile Include="Cell.cpp" />
     <ClCompile Include="Dog.cpp" />
+    <ClCompile Include="Door.cpp" />
     <ClCompile Include="Ground.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="debug.cpp" />
