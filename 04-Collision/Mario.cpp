@@ -103,31 +103,13 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				if (dynamic_cast<CGoomba *>(e->obj))
 				{
 					CGoomba *goomba = dynamic_cast<CGoomba *>(e->obj);
-
-					// jump on top >> kill Goomba and deflect a bit 
-					if (e->ny < 0)
+					if (untouchable == 0)
 					{
 						if (goomba->GetState() != GOOMBA_STATE_DIE)
 						{
-							goomba->SetState(GOOMBA_STATE_DIE);
-							vy = -MARIO_JUMP_DEFLECT_SPEED;
+								StartUntouchable();
+								curHealth -= 1;
 						}
-					}
-					else if (e->nx != 0)
-					{
-						/*if (untouchable==0)
-						{
-							if (goomba->GetState()!=GOOMBA_STATE_DIE)
-							{
-								if (level > MARIO_LEVEL_SMALL)
-								{
-									level = MARIO_LEVEL_SMALL;
-									StartUntouchable();
-								}
-								else
-									SetState(MARIO_STATE_DIE);
-							}
-						}*/
 					}
 				}
 				if (dynamic_cast<CHeart *>(e->obj))
@@ -135,7 +117,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 					CHeart *heart = dynamic_cast<CHeart *>(e->obj);
 					if (heart->GetState() != HEART_STATE_DESTROYED)
 						heart->SetState(HEART_STATE_DESTROYED);
-					this->curHeart += 1;
+					this->curHeart += 15;
 				}
 				if (dynamic_cast<CKnifeIcon *>(e->obj))
 				{
@@ -189,8 +171,10 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 					if ( door->isHit == false)
 					{
 						door->SetState(DOOR_STATE_OPEN);
-						isHit = true;
+						door->isHit = true;
 						door->collision = false;
+						this->autoMove = true;
+						this->SetState(MARIO_STATE_WALKING_RIGHT);
 					}
 				}
 			}

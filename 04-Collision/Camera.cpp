@@ -1,10 +1,14 @@
 #include "Camera.h"
 #include "Cell.h"
+#include "Door.h"
+#include "Mario.h"
 CCamera*CCamera::instance = NULL;
 
 CCamera::CCamera()
 {
 	lastCellCollided = 0;
+	locked = false;
+	autoMove = false;
 }
 
 
@@ -78,36 +82,58 @@ void CCamera::CameraRun()
 	}
 }
 
-void CCamera::CameraRunStage2(vector<LPGAMEOBJECT> grid)
+void CCamera::CameraRunStage2(DWORD dt,vector<LPGAMEOBJECT> grid)
 {
+	CGameObject::Update(dt, &grid);
 	int a, b;
 	a = y + height / 2;
 	b = x + width / 2;
 	this->nx = player->nx;
 	if ((player->x + player->dx > b && player->dx > 0) || (player->x + player->dx < b && player->dx < 0))
 	{
-		this->dx = player->dx;
+		CMario * mario = CMario::GetInstance();
+		if (locked == false)
+		{
+			if (autoMove == false)
+				this->dx = player->dx;
+			else if (mario->autoMove == false)
+				this->autoMove = false;
+			else
+			{
+				if (this->x - mario->x < -10)
+				{
+					this->vx += 0.0005f*dt;
+				}
+			}
+		}
+		else
+		{
+			if (player->dx < 0)
+			{
+				this->dx = player->dx;
+				locked = false;
+			}
+			else if (mario->autoMove == true)
+			{
+				this->autoMove = true;
+				locked = false;
+			}
+			else dx = 0;
+		}
 	}
 	else
 		dx = 0;
-	if (player->x + player->dx < 0)
-	{
-		player->x = 0;
-		player->dx = 0;
-		this->dx = 0;
-	}
-	if(x!=0) x = player->x - 256;
+
 	if (x < 0)
 	{
 		x = 0;
 		return;
 	}
-	if (x > 512 * 9)
+	if (x > 512 * 8)
 	{
-		x = 512 * 9;
+		x = 512 * 8;
 		return;
 	}
-
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
 	CalcPotentialCollisions(&grid, coEvents);
@@ -129,14 +155,20 @@ void CCamera::CameraRunStage2(vector<LPGAMEOBJECT> grid)
 				{
 					cell->objects.at(i)->isActive = true;
 				}
-				if(i == 0 && this->nx > 0 && coEventsResult.size()!= 1)
-					lastCellCollided = cell->GetCellId()-1;
+				if (i == 0 && this->nx > 0 && coEventsResult.size() != 1)
+					lastCellCollided = cell->GetCellId() - 1;
 				else
 				{
-					if (i == coEvents.size() - 1 && this->nx < 0 && coEventsResult.size()!= 1)
-						lastCellCollided = cell->GetCellId()+1;
+					if (i == coEvents.size() - 1 && this->nx < 0 && coEventsResult.size() != 1)
+						lastCellCollided = cell->GetCellId() + 1;
 				}
 				cell->isActive = true;
+			}
+			if (dynamic_cast<CDoor*>(e->obj))
+			{
+				CDoor *door = dynamic_cast<CDoor *>(e->obj);
+				if (door->state == DOOR_STATE_CLOSE && door->isHit == false)
+					this->locked = true;
 			}
 		}
 	}

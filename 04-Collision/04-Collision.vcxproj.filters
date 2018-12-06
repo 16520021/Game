@@ -207,4 +207,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="map2.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="map1.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+  </ItemGroup>
 </Project>

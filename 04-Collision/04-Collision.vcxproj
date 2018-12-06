@@ -188,6 +188,10 @@
     <ClCompile Include="TileMap.cpp" />
     <ClCompile Include="Whip.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="map1.txt" />
+    <Text Include="map2.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

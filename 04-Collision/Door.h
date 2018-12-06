@@ -5,7 +5,8 @@
 
 #define DOOR_ANI_CLOSE		0
 #define DOOR_ANI_OPEN		1
-#define DOOR_BBOX_WIDTH		16
+#define DOOR_ANI_HOLDING	2
+#define DOOR_BBOX_WIDTH		5
 #define DOOR_BBOX_HEIGHT	96
 class CDoor :
 	public CGameObject

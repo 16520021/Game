@@ -7,6 +7,8 @@ public:
 	int width;
 	int height;
 	int lastCellCollided;
+	bool locked;
+	bool autoMove;
 	LPGAMEOBJECT player;
 public:
 	CCamera();
@@ -17,7 +19,7 @@ public:
 	D3DXVECTOR2 setPositionInCam(float wx, float wy);
 	void UpdatePosition();
 	void CameraRun();
-	void CameraRunStage2(vector<LPGAMEOBJECT> grid);
+	void CameraRunStage2(DWORD dt,vector<LPGAMEOBJECT> grid);
 	virtual void GetBoundingBox(float &l, float &t, float &r, float &b);
 };
 

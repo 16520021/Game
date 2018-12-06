@@ -13,9 +13,9 @@ void CDoor::Render()
 {
 	if (isActive == true)
 	{
+		int ani = DOOR_ANI_HOLDING;
 		if (isOpened == false)
 		{
-			int ani;
 			if (state == DOOR_STATE_CLOSE)
 				ani = DOOR_ANI_CLOSE;
 			else
@@ -23,8 +23,8 @@ void CDoor::Render()
 				ani = DOOR_ANI_OPEN;
 				isOpened = true;
 			}
-			animations[ani]->Render(x, y);
 		}
+		animations[ani]->Render(x, y);
 	}
 }
 
@@ -35,8 +35,12 @@ void CDoor::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		if (isHit == true)
 		{
 			CMario *mario = CMario::GetInstance();
-			if (mario->x > (this->x + DOOR_BBOX_WIDTH))
+			if (mario->x > (this->x + DOOR_BBOX_WIDTH) + 50)
+			{
+				mario->autoMove = false;
 				this->SetState(DOOR_STATE_CLOSE);
+			}
+			else mario->SetState(MARIO_STATE_WALKING_RIGHT);
 		}
 	}
 		

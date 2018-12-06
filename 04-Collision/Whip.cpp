@@ -61,7 +61,6 @@ void Whip::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 						if (heart->GetState() == HEART_STATE_LIVE)
 						{
 							heart->isHit = true;
-							mario->curHeart += 15;
 						}
 					}
 				}

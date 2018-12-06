@@ -49,6 +49,7 @@ class CStage2
 	CStatus *stt;
 	vector<LPGAMEOBJECT> objects;
 	vector<LPGAMEOBJECT> coObjects;
+	vector<LPGAMEOBJECT> coWithCam;
 public:
 	bool isRunning;
 	CStage2();

@@ -1,16 +1,20 @@
 #include "Status.h"
 #include "Mario.h"
-
+#include "debug.h"
 
 
 CStatus::CStatus(LPDIRECT3DDEVICE9 device)
 {
 	font = NULL;
-	D3DXCreateFont(device, 20, 0, FW_BOLD, 1, false,
+	HRESULT hr = D3DXCreateFont(device, 20, 0, FW_BOLD, 1, false,
 		DEFAULT_CHARSET, OUT_DEFAULT_PRECIS,
 		ANTIALIASED_QUALITY, FF_DONTCARE,
 		L"Verdana Bold", &font);
 	SetRect(&zone, 0, 0, 512, 96);
+	if (!SUCCEEDED(hr))
+	{
+		DebugOut(L"error");
+	}
 	hthBar = new HealthBar();
 	subBar = new SubWeaponBar();
 	heart = new CHeart();
@@ -59,7 +63,10 @@ void CStatus::DrawStatusBar(float camX,float camY)
 	status = "  SCORE - " + convertScoreFormat(CMario::GetInstance()->point) +"        TIME "+ "time here" +"      STAGE 01"  +"\n" +
 		"\n  PLAYER                                                   - " + convertTwoDigitFormat(CMario::GetInstance()->curHeart) +
 		"\n  ENEMY " + "Boheal";	
-	font->DrawTextA(NULL, status.c_str(), -1, &zone, DT_LEFT, D3DCOLOR_XRGB(255, 255, 255));
+	if (font)
+	{
+		font->DrawTextA(NULL, status.c_str(), -1, &zone, DT_LEFT, D3DCOLOR_XRGB(255, 255, 255));
+	}
 	hthBar->Render(camX,camY);
 	subBar->Render(camX, camY);
 	heart->SetPosition(camX + 360, camY + 10);

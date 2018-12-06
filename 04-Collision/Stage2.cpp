@@ -97,15 +97,20 @@ void CStage2::LoadStage2()
 	ani->Add(20);
 	ani->Add(21);
 	animations->Add(15, ani);
+	ani = new CAnimation(100);
+	ani->Add(21);
+	animations->Add(16, ani);
 
 	map = new CTileMap(2);
-
+//------------- DOOR SECTION --------------------//
 	door = new CDoor();
 	door->SetPosition(81 * 32 + 16, 126);
 	door->SetState(DOOR_STATE_CLOSE);
 	door->AddAnimation(14);
 	door->AddAnimation(15);
+	door->AddAnimation(16);
 	objects.push_back(door);
+	coWithCam.push_back(door);
 
 //----------------WEAPON SECTION ----------------//
 	whip= Whip::GetInstance();
@@ -222,6 +227,7 @@ void CStage2::LoadStage2()
 	objects.push_back(stair->stop);
 //------------MARIO SECTION --------------//
 	mario = CMario::GetInstance();
+	mario->autoMove = false;
 	mario->SetWhip(whip);
 	mario->SetPosition(50.0f, 200.0f);
 	mario->SetState(MARIO_STATE_IDLE);
@@ -240,25 +246,26 @@ void CStage2::LoadStage2()
 				cellsSys->GetCell(i)->Add(objects.at(k));
 		}
 	}
-	game->cam->InitPlayer(mario);
-}
-
-void CStage2::Update(DWORD dt)
-{
-	vector<LPGAMEOBJECT> cellArr;
-	coObjects.clear();
 	for (int i = 0; i < cellsSys->cells.size(); i++) // chuyen doi CCells thanh LPGAMEOBJECT
 	{
 		LPCELL cell = new CCell();
 		cell = cellsSys->GetCell(i);
-		cellArr.push_back(cell);
+		coWithCam.push_back(cell);
 	}
-	game->GetInstance()->cam->CameraRunStage2(cellArr);
+	game->cam->InitPlayer(mario);
+	LPDIRECT3DDEVICE9 d3ddv = game->GetDirect3DDevice();
+	stt = new CStatus(d3ddv);
+}
+
+void CStage2::Update(DWORD dt)
+{
+	coObjects.clear();
+	game->GetInstance()->cam->CameraRunStage2(dt,coWithCam);
 	int lastCellId = game->GetInstance()->cam->lastCellCollided;
 	if (lastCellId >= 0)
 	{
 		LPCELL cell = cellsSys->GetCell(lastCellId);
-		if (cell->isActive == true)
+		if (cell->isActive == true && cell != NULL)
 		{
 			if (cell->x + cell->width < mario->x && mario->nx > 0)
 			{
@@ -266,7 +273,6 @@ void CStage2::Update(DWORD dt)
 				cell->isActive = false;
 				for (int i = 0; i < cell->objects.size(); i++)
 				{
-					DebugOut(L"disable object:%d", i);
 					objects[i]->isActive = false;
 				}
 			}
@@ -303,7 +309,6 @@ void CStage2::Render()
 {
 	LPDIRECT3DDEVICE9 d3ddv = game->GetDirect3DDevice();
 	LPDIRECT3DSURFACE9 bb = game->GetBackBuffer();
-	stt = new CStatus(d3ddv);
 	LPD3DXSPRITE spriteHandler = game->GetSpriteHandler();
 	map->SetCam(game);
 	float camx = 0, camy = 0;

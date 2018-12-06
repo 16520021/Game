@@ -440,7 +440,8 @@ int RunStage2()
 		if (dt >= tickPerFrame)
 		{
 			frameStart = now;
-			game->ProcessKeyboard();
+			if(mario->autoMove != true)
+				game->ProcessKeyboard();
 			UpdateStage2(dt);
 			RenderStage2();
 		}
