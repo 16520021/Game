@@ -20,11 +20,12 @@ class CGoomba : public CGameObject
 	virtual void GetBoundingBox(float &left, float &top, float &right, float &bottom);
 	virtual void Update(DWORD dt,vector<LPGAMEOBJECT> *coObjects);
 	virtual void Render();
-
+	LPGAMEOBJECT heart;
 
 public: 	
 	CGoomba();
 	void SetBoundingCell(float x, float y) { BoundingCell.x = int(x / 512) * 512; BoundingCell.y = y; };
+	void AddItem(LPGAMEOBJECT item) { heart = item; };
 	virtual void SetState(int state);
 	~CGoomba();
 };

@@ -27,6 +27,10 @@ void CCandle::Render()
 			animations[ani]->Render(x, y);
 			RenderBoundingBox();
 		}
+		else
+		{
+			if (heart != NULL) heart->Render();
+		}
 	}
 }
 
@@ -41,6 +45,23 @@ void CCandle::SetState(int state)
 	}
 }
 
+
+void CCandle::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
+{
+	if (isActive == true)
+	{
+		if (heart != NULL)
+		{
+			float a, b;
+			if (state != CANDLE_STATE_DESTROYED)
+			{
+				GetPosition(a, b);
+				heart->SetPosition(a, b);
+			}
+			heart->Update(dt, coObjects);
+		}
+	}
+}
 
 void CCandle::GetBoundingBox(float & l, float & t, float & r, float & b)
 {

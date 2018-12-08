@@ -18,6 +18,7 @@ void CStage2::LoadStage2()
 	textures->Add(ID_TEX_DOG_LEFT, L"textures\\dog_left.png", D3DCOLOR_XRGB(255, 0, 255));
 	textures->Add(ID_TEX_CANDLE, L"textures\\candle.png", D3DCOLOR_XRGB(255, 0, 255));
 	textures->Add(ID_TEX_DOOR, L"textures\\door.bmp", D3DCOLOR_XRGB(255, 0, 255));
+	textures->Add(ID_TEX_CROSS, L"textures\\cross.bmp", D3DCOLOR_XRGB(255, 255, 255));
 
 	CSprites *sprites = CSprites::GetInstance();
 	CAnimations *animations = CAnimations::GetInstance();
@@ -52,6 +53,9 @@ void CStage2::LoadStage2()
 	sprites->Add(19, 0, 0, 16, 96, texDoor);
 	sprites->Add(20, 64, 0, 96, 96, texDoor);
 	sprites->Add(21, 96, 0, 144, 96, texDoor);
+
+	LPDIRECT3DTEXTURE9 texCross = textures->Get(ID_TEX_CROSS);	//CROSS
+	sprites->Add(22, 0, 0, 64, 64, texCross);
 
 	LPANIMATION ani;
 
@@ -101,8 +105,13 @@ void CStage2::LoadStage2()
 	ani->Add(21);
 	animations->Add(16, ani);
 
-	map = new CTileMap(2);
-//------------- DOOR SECTION --------------------//
+	ani = new CAnimation(100);		//CROSS
+	ani->Add(22);
+	animations->Add(17, ani);
+
+	map = new CTileMap(L"textures\\map1_tiled.PNG",64,64,14,8);
+	map->InitMap("map2.txt", MAP_LENGTH);
+	//------------- DOOR SECTION --------------------//
 	door = new CDoor();
 	door->SetPosition(81 * 32 + 16, 126);
 	door->SetState(DOOR_STATE_CLOSE);
@@ -126,9 +135,23 @@ void CStage2::LoadStage2()
 		candle = new CCandle();
 		candle->SetState(CANDLE_STATE_LIVE);
 		candle->SetPosition(i * 200, 350);
+		CHeart *heart = new CHeart();
+		heart->AddAnimation(903);
+		heart->SetState(HEART_STATE_LIVE);
+		candle->AddItem(heart);
+		objects.push_back(heart);
 		objects.push_back(candle);
 	}
-
+	candle = new CCandle();
+	candle->SetState(CANDLE_STATE_LIVE);
+	candle->SetPosition(78 * 32,158);
+	CCross *cross = new CCross();
+	cross->AddAnimation(17);
+	cross->SetState(CROSS_STATE_LIVE);
+	cross->SetPosition(78 * 32, 158);
+	candle->AddItem(cross);
+	objects.push_back(cross);
+	objects.push_back(candle);
 // --------------GROUND SECTION---------------//	
 	for (int i = 0; i < 144; i++)
 	{
@@ -180,6 +203,11 @@ void CStage2::LoadStage2()
 		goomba->SetPosition(i * 200, 352);
 		goomba->SetBoundingCell(i * 200,320);
 		goomba->SetState(GOOMBA_STATE_WALKING_LEFT);
+		CHeart *heart = new CHeart();
+		heart->AddAnimation(903);
+		heart->SetState(HEART_STATE_LIVE);
+		goomba->AddItem(heart);
+		objects.push_back(heart);
 		objects.push_back(goomba);
 	}
 	for (int i = 0; i < 6; i++)
@@ -246,7 +274,7 @@ void CStage2::LoadStage2()
 				cellsSys->GetCell(i)->Add(objects.at(k));
 		}
 	}
-	for (int i = 0; i < cellsSys->cells.size(); i++) // chuyen doi CCells thanh LPGAMEOBJECT
+	for (int i = 0; i < cellsSys->cells.size(); i++) // nạp vào mảng các vật va chạm vs camera
 	{
 		LPCELL cell = new CCell();
 		cell = cellsSys->GetCell(i);
@@ -301,6 +329,14 @@ void CStage2::Update(DWORD dt)
 	{
 		coObjects[i]->Update(dt, &coObjects);
 	}
+	if (mario->reachCheckPoint == true)
+	{
+		for (int i = 0; i < objects.size(); i++)
+		{
+			if (objects[i]->tag == 7)
+				objects[i]->SetState(GOOMBA_STATE_DIE);
+		}
+	}
 	mario->Update(dt, &coObjects);
 	game->GetInstance()->cam->UpdatePosition();
 }
@@ -316,7 +352,13 @@ void CStage2::Render()
 	if (d3ddv->BeginScene())
 	{
 		// Clear back buffer with a color
-		d3ddv->ColorFill(bb, NULL, BACKGROUND_COLOR);
+		if(mario->reachCheckPoint == false)
+			d3ddv->ColorFill(bb, NULL, BACKGROUND_COLOR);
+		else
+		{
+			d3ddv->ColorFill(bb, NULL, D3DCOLOR_XRGB(255, 255, 255));
+			mario->reachCheckPoint = false;
+		}
 
 		spriteHandler->Begin(D3DXSPRITE_ALPHABLEND);
 		map->MapLvlRender();

@@ -2,15 +2,19 @@
 #include "Sprites.h"
 #include "Textures.h"
 #include "Game.h"
-class CTileMap :public CSprites
+class CTileMap
 {
 	CTextures *textures;
 	CSprites *sprites;
-	int maplvl;
+	int tileWidth;
+	int tileHeight;
+	int mapLength;
 	CGame *game;
+	vector<int> map;
 public:
-	CTileMap(int lvl = 1);
+	CTileMap(LPWSTR texPath, int tileWith, int tileHeight,int numOfTileCol,int numOfTileRow);
 	CSprite *GetTile(int spriteID) { return sprites->Get(spriteID);};
+	void InitMap(string filePath, int mapLength);
 	void SetCam(CGame *game) { this->game = CGame::GetInstance(); this->game = game; };
 	void MapLvlRender();
 	~CTileMap();

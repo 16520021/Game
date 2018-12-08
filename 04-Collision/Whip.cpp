@@ -6,6 +6,7 @@
 #include "Candle.h"
 #include "Mario.h"
 #include "Axe.h"
+#include "Cross.h"
 Whip::Whip()
 {
 	tag = 1;
@@ -80,6 +81,17 @@ void Whip::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 					{
 						if (wicon->collision == true)
 							wicon->isHit = true;
+					}
+				}
+				if (dynamic_cast<CCross *>(e->obj))
+				{
+					CCross *cross = dynamic_cast<CCross *>(e->obj);
+					if (e->nx == 0)
+					{
+						if (cross->GetState() == CROSS_STATE_LIVE)
+						{
+							cross->isHit = true;
+						}
 					}
 				}
 				if (dynamic_cast<CGoomba *>(e->obj))

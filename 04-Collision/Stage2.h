@@ -17,6 +17,7 @@
 #include "Axe.h"
 #include "Status.h"
 #include "Door.h"
+#include "Cross.h"
 
 #define SCREEN_WIDTH		512
 #define SCREEN_HEIGHT		544
@@ -31,7 +32,8 @@
 #define ID_TEX_CANDLE		16
 #define ID_TEX_DOOR			17
 #define ID_TEX_AXE			18
-#define BACKGROUND_COLOR	D3DCOLOR_XRGB(255,255,200)
+#define ID_TEX_CROSS		22
+#define BACKGROUND_COLOR	D3DCOLOR_XRGB(0,0,0)
 class CStage2
 {
 	CGame *game;
@@ -47,6 +49,8 @@ class CStage2
 	CAxeIcon *axe;
 	CDoor *door;
 	CStatus *stt;
+	CHeart *heart;
+	CCross *cross;
 	vector<LPGAMEOBJECT> objects;
 	vector<LPGAMEOBJECT> coObjects;
 	vector<LPGAMEOBJECT> coWithCam;

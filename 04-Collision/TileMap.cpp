@@ -22,73 +22,55 @@ void ReadArrayFromTxt(string FileName,vector<int> &map ,char delim = ' ')
 	while (!inputFile.eof())
 	{
 		inputFile >> strs;
-		splitString(strs, map, ',');
+		splitString(strs, map, delim);
 	}
 	inputFile.close();
 }
 
-CTileMap::CTileMap(int lvl)
+CTileMap::CTileMap(LPWSTR texPath, int tWith,int tHeight,int numOfTileCol,int numOfTileRow)
 {
-	maplvl = lvl;
+	this->tileWidth = tWith;
+	this->tileHeight = tHeight;
 	sprites = new CSprites();
 	textures = new CTextures();
 	int spriteID = 0;
-	textures->Add(1, L"textures\\map1_tiled.PNG", D3DCOLOR_XRGB(255, 0, 255));
-	for (int i = 0; i < 14; i++)
+	textures->Add(1,texPath, D3DCOLOR_XRGB(255, 0, 255));
+	for (int i = 0; i < numOfTileCol; i++)
 	{
-		sprites->Add(spriteID++, i * 64, 0, 64 * (i + 1), 64, textures->Get(1));
-		sprites->Add(spriteID++, i * 64, 64, 64 * (i + 1), 64 * 2, textures->Get(1));
-		sprites->Add(spriteID++, i * 64, 64 * 2, 64 * (i + 1), 64 * 3, textures->Get(1));
-		sprites->Add(spriteID++, i * 64, 64 * 3, 64 * (i + 1), 64 * 4, textures->Get(1));
-		sprites->Add(spriteID++, i * 64, 64 * 4, 64 * (i + 1), 64 * 5, textures->Get(1));
-		sprites->Add(spriteID++, i * 64, 64 * 5, 64 * (i + 1), 64 * 6, textures->Get(1));
-		sprites->Add(spriteID++, i * 64, 64 * 6, 64 * (i + 1), 64 * 7, textures->Get(1));
-		sprites->Add(spriteID++, i * 64, 64 * 7, 64 * (i + 1), 64 * 8, textures->Get(1));
+		for (int k = 0; k < numOfTileRow; k++)
+		{
+			sprites->Add(spriteID++, i * tileWidth, tileHeight * k, tileWidth * (i + 1), tileHeight * (k + 1), textures->Get(1));
+		}
 	}
 }
 
-
-
-void CTileMap::MapLvlRender()
+void CTileMap::InitMap(string filePath, int mapLength)
 {
-	if (maplvl == 1)
+	ReadArrayFromTxt(filePath, this->map, ',');
+	this->mapLength = mapLength;
+}
+
+
+//NOTE : chuyen cac hang so ve define
+void CTileMap::MapLvlRender() // dua duong dan vao day
+{
+	int startCol = int(game->GetInstance()->cam->x / tileWidth);					// IMPROVE FOR SCROLLING LVL MAP
+	int endCol = startCol + int(game->GetInstance()->cam->width / tileWidth);
+	int numOfCol = mapLength / tileWidth;
+	int startRow = int(game->GetInstance()->cam->y / tileHeight);
+	int endRow = startRow + (map.size() / numOfCol);			//vi Map khong co do sau Y
+	float offsetX = -game->GetInstance()->cam->x + startCol * tileHeight;
+	float offsetY = -game->GetInstance()->cam->y + startRow * tileHeight;
+	for (int c = startCol; c <= endCol; c++)
 	{
-		vector<int> Map;
-		ReadArrayFromTxt("map1.txt", Map, ',');
-		for (int i = 0; i < Map.size();i++) {		//STATIC MAP - need to improve in map 2
-			CSprite *tile = sprites->Get(Map[i]);
-			float x = i % 23;
-			float y = i / 23;
-			tile->Draw(x*64, y*64);
-		}
-	}
-	else if (maplvl == 2)
-	{
-		vector<int> Map;
-		ReadArrayFromTxt("map2.txt", Map, ',');
-		//for (int i = 0; i < 72*7; i++) {
-		//	CSprite *tile = sprites->Get(Map[i]);
-		//	float x = i % 72;		//act as column
-		//	float y = i / 72;		//act as row
-		//	tile->Draw(x * 64, y * 64);
-		//}
-		int startCol = int(game->GetInstance()->cam->x / 64);					// IMPROVE FOR SCROLLING LVL MAP
-		int endCol =startCol + int(game->GetInstance()->cam->width / 64);
-		int startRow = int(game->GetInstance()->cam->y / 64);
-		int endRow = 6;
-		float offsetX = -game->GetInstance()->cam->x + startCol * 64;
-		float offsetY = -game->GetInstance()->cam->y + startRow * 64;
-		for (int c = startCol; c <= endCol; c++)
+		for (int r = startRow; r < endRow; r++)
 		{
-			for (int r = startRow; r <= endRow; r++)
-			{
-				int i = 72 * r + c;
-				CSprite *tile = sprites->Get(Map[i]);;
-				float x = (c - startCol) * 64 + offsetX;
-				float y = (r - startRow) * 64 + offsetY;
-				if(tile != NULL)
-					tile->Draw(x + game->GetInstance()->cam->x, y + game->GetInstance()->cam->y);
-			}
+			int i = numOfCol * r + c;
+			CSprite *tile = sprites->Get(map[i]);;
+			float x = (c - startCol) * tileWidth + offsetX;
+			float y = (r - startRow) * tileHeight + offsetY;
+			if (tile != NULL)
+				tile->Draw(x + game->GetInstance()->cam->x, y + game->GetInstance()->cam->y);
 		}
 	}
 }

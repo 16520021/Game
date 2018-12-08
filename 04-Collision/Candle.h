@@ -11,10 +11,13 @@
 class CCandle :
 	public CGameObject
 {
+	LPGAMEOBJECT heart;
 public:
 	CCandle();
 	virtual void Render();
 	virtual void SetState(int state);
+	void AddItem(LPGAMEOBJECT item) { heart = item; };
+	virtual void Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects);
 	virtual void GetBoundingBox(float &l, float &t, float &r, float &b);
 	~CCandle();
 };

@@ -6,6 +6,7 @@
 
 #include "Goomba.h"
 #include "Heart.h"
+#include "Cross.h"
 #include "Stair.h"
 #include "Door.h"
 
@@ -119,6 +120,13 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 						heart->SetState(HEART_STATE_DESTROYED);
 					this->curHeart += 15;
 				}
+				if (dynamic_cast<CCross *>(e->obj))
+				{
+					CCross *cross = dynamic_cast<CCross *>(e->obj);
+					if (cross->GetState() != HEART_STATE_DESTROYED)
+						cross->SetState(HEART_STATE_DESTROYED);
+					this->reachCheckPoint = true;
+				}
 				if (dynamic_cast<CKnifeIcon *>(e->obj))
 				{
 					CKnifeIcon *n = dynamic_cast<CKnifeIcon *>(e->obj);
@@ -218,7 +226,7 @@ void CMario::Render()
 
 						if (state == MARIO_STATE_ATK_RIGHT)
 						{
-							attackTime += 0.001f;
+							attackTime += dt;
 							if (isSitting == false)
 							{
 								ani = MARIO_ANI_ATK_RIGHT;
@@ -236,7 +244,7 @@ void CMario::Render()
 
 						if (state == MARIO_STATE_ATK_LEFT)
 						{
-							attackTime += 0.001f;
+							attackTime += dt;
 							if (isSitting == false)
 							{
 								ani = MARIO_ANI_ATK_LEFT;
@@ -254,7 +262,7 @@ void CMario::Render()
 					if (state == MARIO_STATE_ATK_RIGHT)
 					{
 						ani = MARIO_ANI_ATK_RIGHT;
-						attackTime += 0.001f;
+						attackTime += dt;
 					}
 				}
 				else
@@ -263,10 +271,10 @@ void CMario::Render()
 					if (state == MARIO_STATE_ATK_LEFT)
 					{
 						ani = MARIO_ANI_ATK_LEFT;
-						attackTime += 0.001f;
+						attackTime += dt;
 					}
 				}
-				if (attackTime >= 0.007f)
+				if (attackTime >= 200)
 				{
 					SetState(MARIO_STATE_IDLE);
 					if (nx > 0)
@@ -281,8 +289,16 @@ void CMario::Render()
 							ani = MARIO_ANI_BIG_IDLE_LEFT;
 						else ani = MARIO_ANI_SIT_LEFT;
 					}
+					animations[MARIO_ANI_ATK_RIGHT]->SetCurrentFrame(-1);
+					animations[MARIO_ANI_ATK_LEFT]->SetCurrentFrame(-1);
+					animations[MARIO_ANI_SIT_ATK_LEFT]->SetCurrentFrame(-1);
+					animations[MARIO_ANI_SIT_ATK_RIGHT]->SetCurrentFrame(-1);
+					mainWeap->animations[WHIP_ANI_ATK_LEFT]->SetCurrentFrame(-1);
+					mainWeap->animations[WHIP_ANI_ATK_RIGHT]->SetCurrentFrame(-1);
+					mainWeap->animations[WHIP_ANI_ATK_LEFT_1]->SetCurrentFrame(-1);
+					mainWeap->animations[WHIP_ANI_ATK_RIGHT_1]->SetCurrentFrame(-1);
+					attackTime = 0;
 					isAttacking = false;
-					attackTime = 0.0f;
 				}
 			}
 		}

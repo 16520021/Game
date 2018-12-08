@@ -28,7 +28,8 @@ void CStage1::InitStage1()
 	textures->Add(ID_TEX_AXE, L"textures\\axe.png", D3DCOLOR_XRGB(255, 0, 255));
 	textures->Add(ID_TEX_SUBWEAPON_BAR, L"textures\\redEdge.bmp", D3DCOLOR_XRGB(255, 0, 255));
 
-	map1 = new CTileMap(1);
+	map1 = new CTileMap(L"textures\\map1_tiled.PNG", 64, 64, 14, 8);
+	map1->InitMap("map1.txt", MAP_LENGTH);
 	CSprites * sprites = CSprites::GetInstance();
 	CAnimations * animations = CAnimations::GetInstance();
 
@@ -306,6 +307,7 @@ void CStage1::InitStage1()
 	heart->AddAnimation(903);
 	heart->SetPosition(300, 320);
 	heart->SetState(HEART_STATE_LIVE);
+	heart->isActive = true;
 	objects.push_back(heart);
 	for (int i = 0; i < 45; i++)
 	{

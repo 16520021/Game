@@ -1,23 +1,24 @@
-#include "Heart.h"
+#include "Cross.h"
 
 
-CHeart::CHeart()
+
+CCross::CCross()
 {
-	tag = 101;
+	tag = 3;
 }
 
-void CHeart::Update(DWORD dt, vector<LPGAMEOBJECT>* coObject)
+void CCross::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	if (isActive == true)
 	{
 		if (isHit == true)
 		{
-			CGameObject::Update(dt, coObject);
-			vy += 0.0001f*dt;
+			CGameObject::Update(dt, coObjects);
+			vy += GRAVITY*dt;
 			vector<LPCOLLISIONEVENT> coEvents;
 			vector<LPCOLLISIONEVENT> coEventsResult;
 			coEvents.clear();
-			CalcPotentialCollisions(coObject, coEvents);
+			CalcPotentialCollisions(coObjects, coEvents);
 			if (coEvents.size() == 0)
 			{
 				y += dy;
@@ -29,6 +30,7 @@ void CHeart::Update(DWORD dt, vector<LPGAMEOBJECT>* coObject)
 				FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny);
 				// block 
 				// nx*0.4f : need to push out a bit to avoid overlapping next frame
+				x += min_tx*dx + nx*0.4f;		// nx*0.4f : need to push out a bit to avoid overlapping next frame
 				y += min_ty*dy + ny*0.4f;
 
 				if (nx != 0) vx = 0;
@@ -38,33 +40,32 @@ void CHeart::Update(DWORD dt, vector<LPGAMEOBJECT>* coObject)
 	}
 }
 
-void CHeart::Render()
+void CCross::Render()
 {
 	if (isActive == true)
 	{
 		if (isHit == true && collision == true)
 		{
-			if (GetState() == HEART_STATE_LIVE)
+			if (GetState() == CROSS_STATE_LIVE)
 				animations[0]->Render(x, y);
 			RenderBoundingBox();
 		}
 	}
 }
 
-void CHeart::SetState(int state)
+void CCross::SetState(int state)
 {
 	CGameObject::SetState(state);
 	switch (state)
 	{
-	case HEART_STATE_DESTROYED:
+	case CROSS_STATE_DESTROYED:
 		collision = false;
 	default:
 		break;
 	}
 }
 
-
-void CHeart::GetBoundingBox(float & l, float & t, float & r, float & b)
+void CCross::GetBoundingBox(float & l, float & t, float & r, float & b)
 {
 	l = x;
 	t = y;
@@ -72,6 +73,7 @@ void CHeart::GetBoundingBox(float & l, float & t, float & r, float & b)
 	b = y + HEART_BBOX_HEIGHT;
 }
 
-CHeart::~CHeart()
+
+CCross::~CCross()
 {
 }

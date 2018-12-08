@@ -20,6 +20,7 @@ CStatus::CStatus(LPDIRECT3DDEVICE9 device)
 	heart = new CHeart();
 	heart->isHit = true;
 	heart->collision = true;
+	heart->isActive = true;
 }
 
 string convertScoreFormat(int score)

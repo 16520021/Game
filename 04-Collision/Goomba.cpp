@@ -21,7 +21,6 @@ void CGoomba::Update(DWORD dt,vector<LPGAMEOBJECT> *coObjects)
 
 		x += dx;
 		y += dy;
-		GetPosition(a, b);
 		if (vx < 0 && x < BoundingCell.x)
 		{
 			SetState(GOOMBA_STATE_WALKING_RIGHT) ;
@@ -30,6 +29,15 @@ void CGoomba::Update(DWORD dt,vector<LPGAMEOBJECT> *coObjects)
 		{
 			SetState(GOOMBA_STATE_WALKING_LEFT);
 		}	
+		if (heart != NULL)
+		{
+			if (state != GOOMBA_STATE_DIE)
+			{
+				GetPosition(a, b);
+				heart->SetPosition(a, b);
+			}
+			heart->Update(dt, coObjects);
+		}
 	}
 }
 
@@ -45,6 +53,7 @@ void CGoomba::Render()
 				ani = GOOMBA_ANI_DIE;
 				isHit = true;
 				collision = false;
+				isActive = false;
 			}
 			else if (GetState() == GOOMBA_STATE_WALKING_LEFT)
 			{
@@ -54,12 +63,15 @@ void CGoomba::Render()
 			animations[ani]->Render(x, y);
 		}
 	}
+	if (heart != NULL)
+		heart->Render();
 }
 
 CGoomba::CGoomba()
 {
 	tag = 7;
 	point = 100;
+	heart = NULL;
 }
 
 void CGoomba::SetState(int state)
