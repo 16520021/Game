@@ -25,6 +25,7 @@ public:
 	vector<LPCELL> cells;
 	CCells();
 	void Add(float id, float x, float y, float scr_width, int scr_height);
+	int LastCellId();
 	LPCELL GetCell(int id);
 	~CCells();
 };

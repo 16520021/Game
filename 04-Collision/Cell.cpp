@@ -45,6 +45,11 @@ void CCells::Add(float id, float x, float y, float scr_width, int scr_height)
 	this->cells.push_back(cell);
 }
 
+int CCells::LastCellId()
+{
+	return cells[cells.size() - 1]->GetCellId();
+}
+
 LPCELL CCells::GetCell(int id)
 {
 	for (int i = 0; i < this->cells.size(); i++)

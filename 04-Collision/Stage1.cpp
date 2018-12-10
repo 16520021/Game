@@ -71,6 +71,9 @@ void CStage1::InitStage1()
 	sprites->Add(10047, 0, 330, 60, 396, texMario);
 	sprites->Add(10048, 60, 330, 120, 396, texMario);
 
+	sprites->Add(10049, 420, 66, 479, 132, texMario);
+	sprites->Add(10050, 0, 263, 60, 329, texMario);
+
 	sprites->Add(10099, 215, 120, 231, 135, texMario);		// die 
 
 
@@ -181,6 +184,14 @@ void CStage1::InitStage1()
 	ani->Add(10048);
 	animations->Add(803, ani);
 
+	ani = new CAnimation(100); //HURT RIGHT
+	ani->Add(10049);
+	animations->Add(808, ani);	
+
+	ani = new CAnimation(100); //HURT LEFT
+	ani->Add(10050);
+	animations->Add(809, ani);
+
 	ani = new CAnimation(100);		// Mario die
 	ani->Add(10099);
 	animations->Add(599, ani);
@@ -286,6 +297,8 @@ void CStage1::InitStage1()
 	mario->AddAnimation(801);		//sit left
 	mario->AddAnimation(802);		//sit atk right
 	mario->AddAnimation(803);		//sit atk left
+	mario->AddAnimation(808);		//hurt right
+	mario->AddAnimation(809);		//hurt left
 
 	mario->SetWhip(whip);
 	mario->SetPosition(50.0f, 0);

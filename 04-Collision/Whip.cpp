@@ -7,6 +7,7 @@
 #include "Mario.h"
 #include "Axe.h"
 #include "Cross.h"
+#include "Bat.h"
 Whip::Whip()
 {
 	tag = 1;
@@ -103,6 +104,18 @@ void Whip::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 						{
 							goomba->SetState(GOOMBA_STATE_DIE);
 							mario->point += goomba->point;
+						}
+					}
+				}
+				if (dynamic_cast<CBat *>(e->obj))
+				{
+					CBat *bat = dynamic_cast<CBat *>(e->obj);
+					if (e->nx == 0)
+					{
+						if (bat->state != BAT_STATE_DESTROYED)
+						{
+							bat->SetState(BAT_STATE_DESTROYED);
+							mario->point += bat->point;
 						}
 					}
 				}

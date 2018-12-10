@@ -99,10 +99,7 @@ void CSampleKeyHander::OnKeyDown(int KeyCode)
 	case DIK_A: // reset
 		if (mario != NULL)
 		{
-			mario->SetState(MARIO_STATE_IDLE);
-			mario->SetLevel(MARIO_LEVEL_BIG);
-			mario->SetPosition(50.0f, 50.0f);
-			mario->SetSpeed(0, 0);
+			stage1->isRunning = false;
 		}
 		break;
 	case DIK_TAB:
@@ -174,7 +171,7 @@ void CSampleKeyHander::KeyState(BYTE *states)
 		{
 			if (game->IsKeyDown(DIK_DOWN) && mario->isAttacking == false)
 				mario->SetState(MARIO_STATE_SIT);
-			if (mario->GetState() == MARIO_STATE_ATK_LEFT || mario->GetState() == MARIO_STATE_ATK_RIGHT)
+			if (mario->GetState() == MARIO_STATE_ATK_LEFT || mario->GetState() == MARIO_STATE_ATK_RIGHT ||  mario->GetState() == MARIO_STATE_HURT)
 			{
 					
 			}

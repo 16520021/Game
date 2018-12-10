@@ -5,6 +5,7 @@
 CStage2::CStage2()
 {
 	isRunning = true;
+	flashTimes = 0;
 }
 
 void CStage2::LoadStage2()
@@ -19,6 +20,7 @@ void CStage2::LoadStage2()
 	textures->Add(ID_TEX_CANDLE, L"textures\\candle.png", D3DCOLOR_XRGB(255, 0, 255));
 	textures->Add(ID_TEX_DOOR, L"textures\\door.bmp", D3DCOLOR_XRGB(255, 0, 255));
 	textures->Add(ID_TEX_CROSS, L"textures\\cross.bmp", D3DCOLOR_XRGB(255, 255, 255));
+	textures->Add(ID_TEX_BAT, L"textures\\bat.png", D3DCOLOR_XRGB(255, 0, 255));
 
 	CSprites *sprites = CSprites::GetInstance();
 	CAnimations *animations = CAnimations::GetInstance();
@@ -56,6 +58,12 @@ void CStage2::LoadStage2()
 
 	LPDIRECT3DTEXTURE9 texCross = textures->Get(ID_TEX_CROSS);	//CROSS
 	sprites->Add(22, 0, 0, 64, 64, texCross);
+
+	LPDIRECT3DTEXTURE9 texBat = textures->Get(ID_TEX_BAT);		//BAT
+	sprites->Add(23, 0, 0, 32, 32, texBat);
+	sprites->Add(24, 32, 0, 64, 32, texBat);
+	sprites->Add(25, 64, 0, 96, 32, texBat);
+	sprites->Add(26, 96, 0, 128, 32, texBat);
 
 	LPANIMATION ani;
 
@@ -109,6 +117,13 @@ void CStage2::LoadStage2()
 	ani->Add(22);
 	animations->Add(17, ani);
 
+	ani = new CAnimation(100);		//BAT
+	ani->Add(23);
+	ani->Add(24);
+	ani->Add(25);
+	ani->Add(26);
+	animations->Add(18, ani);
+
 	map = new CTileMap(L"textures\\map1_tiled.PNG",64,64,14,8);
 	map->InitMap("map2.txt", MAP_LENGTH);
 	//------------- DOOR SECTION --------------------//
@@ -153,7 +168,13 @@ void CStage2::LoadStage2()
 	objects.push_back(cross);
 	objects.push_back(candle);
 // --------------GROUND SECTION---------------//	
-	for (int i = 0; i < 144; i++)
+	for (int i = 0; i < 84; i++)
+	{
+		ground = new CCastleGround();
+		ground->SetPosition(i * 32, 416);
+		objects.push_back(ground);
+	}
+	for (int i = 87; i < 144; i++)
 	{
 		ground = new CCastleGround();
 		ground->SetPosition(i * 32, 416);
@@ -221,6 +242,13 @@ void CStage2::LoadStage2()
 		goomba->SetState(GOOMBA_STATE_WALKING_LEFT);
 		objects.push_back(goomba);
 	}
+// ------------BAT SECTION--------------------//
+	bat = new CBat();
+	bat->AddAnimation(18);
+	bat->AddAnimation(703);
+	bat->SetPosition(99*32, 222);
+	bat->SetState(BAT_STATE_LIVE);
+	objects.push_back(bat);
 // ------------STAIR SECTION------------------//
 	stair = new CStair();
 	stair->start->SetPosition(30 * 32, 416);
@@ -290,7 +318,7 @@ void CStage2::Update(DWORD dt)
 	coObjects.clear();
 	game->GetInstance()->cam->CameraRunStage2(dt,coWithCam);
 	int lastCellId = game->GetInstance()->cam->lastCellCollided;
-	if (lastCellId >= 0)
+	if (lastCellId >= 0 && lastCellId < cellsSys->LastCellId())
 	{
 		LPCELL cell = cellsSys->GetCell(lastCellId);
 		if (cell->isActive == true && cell != NULL)
@@ -356,8 +384,13 @@ void CStage2::Render()
 			d3ddv->ColorFill(bb, NULL, BACKGROUND_COLOR);
 		else
 		{
-			d3ddv->ColorFill(bb, NULL, D3DCOLOR_XRGB(255, 255, 255));
-			mario->reachCheckPoint = false;
+			if (flashTimes % 2 == 0)
+			{
+				d3ddv->ColorFill(bb, NULL, D3DCOLOR_XRGB(255, 255, 255));
+			}
+			else d3ddv->ColorFill(bb, NULL, BACKGROUND_COLOR);
+			flashTimes++;
+			if(flashTimes == FLASH_TIMES) mario->reachCheckPoint = false;
 		}
 
 		spriteHandler->Begin(D3DXSPRITE_ALPHABLEND);

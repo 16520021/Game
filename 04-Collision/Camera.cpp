@@ -102,7 +102,7 @@ void CCamera::CameraRunStage2(DWORD dt,vector<LPGAMEOBJECT> grid)
 			{
 				if (this->x - mario->x < -10)
 				{
-					this->vx += 0.0005f*dt;
+					this->vx += CAM_SPEED*dt;
 				}
 			}
 		}

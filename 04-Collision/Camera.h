@@ -1,5 +1,6 @@
 #pragma once
 #include "GameObject.h"
+#define CAM_SPEED 0.0005f
 class CCamera: public CGameObject
 {
 public:

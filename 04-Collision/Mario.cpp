@@ -75,6 +75,9 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		{
 			untouchable_start = 0;
 			untouchable = 0;
+			if (state != MARIO_STATE_WALKING_LEFT && state != MARIO_STATE_WALKING_RIGHT && isAttacking == false)
+				SetState(MARIO_STATE_IDLE);
+			autoMove = false;
 		}
 
 		// No collision occured, proceed normally
@@ -108,8 +111,9 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 					{
 						if (goomba->GetState() != GOOMBA_STATE_DIE)
 						{
-								StartUntouchable();
-								curHealth -= 1;
+							StartUntouchable();
+							SetState(MARIO_STATE_HURT);
+							curHealth -= 1;
 						}
 					}
 				}
@@ -212,6 +216,11 @@ void CMario::Render()
 	{
 		if (state == MARIO_STATE_DIE)
 			ani = MARIO_ANI_DIE;
+		else if (state == MARIO_STATE_HURT)
+		{
+			if (nx > 0) ani = MARIO_ANI_HURT_LEFT;
+			else ani = MARIO_ANI_HURT_RIGHT;
+		}
 		else
 		{
 			if (level == MARIO_LEVEL_BIG)
@@ -390,6 +399,14 @@ void CMario::SetState(int state)
 		if (isGoingStair == 0) vy = 0; //sit on stair
 		vx = 0;
 		isSitting = true;
+		break;
+	case MARIO_STATE_HURT:
+		if (nx > 0)
+			vx = -MARIO_HURT_DEFLECT_SPEED_X;
+		else
+			vx = MARIO_HURT_DEFLECT_SPEED_X;
+		vy = -MARIO_HURT_DEFLECT_SPEED_Y;
+		autoMove = true;
 		break;
 	case MARIO_STATE_DIE:
 		vy = -MARIO_DIE_DEFLECT_SPEED;
