@@ -4,7 +4,7 @@
 
 CBat::CBat()
 {
-	tag = 14;
+	tag = 15;
 	point = 100;
 	flyingAngle = 0;
 	startPoint = 0;

@@ -100,9 +100,9 @@ void Whip::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 					CGoomba *goomba = dynamic_cast<CGoomba *>(e->obj);
 					if (e->nx == 0)
 					{
-						if (goomba->state != GOOMBA_STATE_DIE)
+						if (goomba->state != GOOMBA_STATE_BURN)
 						{
-							goomba->SetState(GOOMBA_STATE_DIE);
+							goomba->SetState(GOOMBA_STATE_BURN);
 							mario->point += goomba->point;
 						}
 					}

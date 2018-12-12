@@ -4,7 +4,7 @@
 
 CCross::CCross()
 {
-	tag = 3;
+	tag = 14;
 }
 
 void CCross::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)

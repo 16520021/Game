@@ -31,6 +31,7 @@ void CStage2::LoadStage2()
 	textures->Add(ID_TEX_DOOR, L"textures\\door.bmp", D3DCOLOR_XRGB(255, 0, 255));
 	textures->Add(ID_TEX_CROSS, L"textures\\cross.bmp", D3DCOLOR_XRGB(255, 255, 255));
 	textures->Add(ID_TEX_BAT, L"textures\\bat.png", D3DCOLOR_XRGB(255, 0, 255));
+	textures->Add(ID_BURNING, L"textures\\burning.png", D3DCOLOR_XRGB(255, 0, 255));
 
 	CSprites *sprites = CSprites::GetInstance();
 	CAnimations *animations = CAnimations::GetInstance();
@@ -75,6 +76,11 @@ void CStage2::LoadStage2()
 	sprites->Add(25, 64, 0, 96, 32, texBat);
 	sprites->Add(26, 96, 0, 128, 32, texBat);
 
+	LPDIRECT3DTEXTURE9 texBurn = textures->Get(ID_BURNING);		//BURN
+	sprites->Add(27, 0, 0, 40, 44, texBurn);
+	sprites->Add(28, 40, 0, 80, 44, texBurn);
+	sprites->Add(29, 80, 0, 120, 44, texBurn);
+
 	LPANIMATION ani;
 
 
@@ -87,7 +93,9 @@ void CStage2::LoadStage2()
 	ani->Add(30003);
 	ani->Add(30004);
 	animations->Add(702, ani);
-	ani = new CAnimation(1000);		// Goomba die
+	ani = new CAnimation(100);		// Goomba die
+	ani->Add(30005);
+	ani->Add(30005);
 	ani->Add(30005);
 	animations->Add(703, ani);
 
@@ -133,6 +141,13 @@ void CStage2::LoadStage2()
 	ani->Add(25);
 	ani->Add(26);
 	animations->Add(18, ani);
+
+	ani = new CAnimation(100);
+	ani->Add(27);
+	ani->Add(28);
+	ani->Add(29);
+	ani->Add(29);
+	animations->Add(19, ani);
 
 	map = new CTileMap(L"textures\\map1_tiled.PNG",64,64,14,8);
 	map->InitMap("map2.txt", MAP_LENGTH);
@@ -273,6 +288,7 @@ void CStage2::LoadStage2()
 		goomba->AddAnimation(702);
 		goomba->AddAnimation(701);
 		goomba->AddAnimation(703);
+		goomba->AddAnimation(19);
 		goomba->SetPosition(i * 200, 352);
 		goomba->SetBoundingCell(i * 200,320);
 		goomba->SetState(GOOMBA_STATE_WALKING_LEFT);
@@ -289,6 +305,7 @@ void CStage2::LoadStage2()
 		goomba->AddAnimation(702);
 		goomba->AddAnimation(701);
 		goomba->AddAnimation(703);
+		goomba->AddAnimation(19);
 		goomba->SetPosition(50 * 32 + i * 80, 352);
 		goomba->SetBoundingCell(50 * 32 + i * 80, 320);
 		goomba->SetState(GOOMBA_STATE_WALKING_LEFT);
@@ -430,7 +447,7 @@ void CStage2::Update(DWORD dt)
 		for (int i = 0; i < objects.size(); i++)
 		{
 			if (objects[i]->tag == 7)
-				objects[i]->SetState(GOOMBA_STATE_DIE);
+				objects[i]->SetState(GOOMBA_STATE_BURN);
 		}
 	}
 	if (mario->x >= GOING_DOWN_POINT_LEFT_X && mario->x < GOING_DOWN_POINT_LEFT_X-64)
