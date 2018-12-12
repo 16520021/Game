@@ -16,10 +16,12 @@
 class CBat:public CGameObject
 {
 	int flyingAngle;
+	int startPoint;
 public:
 	CBat();
 	~CBat();
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT> *colliable_objects = NULL);
+	void SetStartPoint(int start) { startPoint = start; };
 	virtual void Render();
 	void SetState(int state);
 

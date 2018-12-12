@@ -7,6 +7,7 @@ CBat::CBat()
 	tag = 14;
 	point = 100;
 	flyingAngle = 0;
+	startPoint = 0;
 }
 
 
@@ -20,7 +21,7 @@ void CBat::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 	if (isActive == true)
 	{
 		CGameObject::Update(dt, colliable_objects);
-		y = 50 * sin(flyingAngle * 0.75 * PI/180) + 222;
+		y = 50 * sin(flyingAngle * 0.75 * PI/180) + startPoint;
 		x += dx;
 		flyingAngle += 10;
 	}

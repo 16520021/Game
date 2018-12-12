@@ -100,7 +100,7 @@ void CCamera::CameraRunStage2(DWORD dt,vector<LPGAMEOBJECT> grid)
 				this->autoMove = false;
 			else
 			{
-				if (this->x - mario->x < -10)
+				if (this->x - mario->x < -20)
 				{
 					this->vx += CAM_SPEED*dt;
 				}

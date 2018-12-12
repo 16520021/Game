@@ -1,11 +1,21 @@
 ﻿#include "Stage2.h"
 #include "debug.h"
-
+#include "SubStage.h"
+CStage2 *CStage2::instance = NULL;
 
 CStage2::CStage2()
 {
 	isRunning = true;
 	flashTimes = 0;
+}
+
+CStage2 * CStage2::GetInstance()
+{
+	if (instance == NULL)
+	{
+		instance = new CStage2();
+	}
+	return instance;
 }
 
 void CStage2::LoadStage2()
@@ -174,7 +184,7 @@ void CStage2::LoadStage2()
 		ground->SetPosition(i * 32, 416);
 		objects.push_back(ground);
 	}
-	for (int i = 87; i < 144; i++)
+	for (int i = 85; i < 144; i++)
 	{
 		ground = new CCastleGround();
 		ground->SetPosition(i * 32, 416);
@@ -202,6 +212,48 @@ void CStage2::LoadStage2()
 	{
 		ground = new CCastleGround();
 		ground->SetPosition(73 * 32 + i * 32, 222);
+		objects.push_back(ground);
+	}
+	for (int i = 0; i < 13; i++)
+	{
+		ground = new CCastleGround();
+		ground->SetPosition(108 * 32 + i * 32, 222);
+		objects.push_back(ground);
+	}
+	for (int i = 0; i < 3; i++)
+	{
+		ground = new CCastleGround();
+		ground->SetPosition(90 * 32 + i * 32, 286);
+		objects.push_back(ground);
+	}
+	for (int i = 0; i < 3; i++)
+	{
+		ground = new CCastleGround();
+		ground->SetPosition(90 * 32 + i * 32, 286);
+		objects.push_back(ground);
+	}
+	for (int i = 0; i < 6; i++)
+	{
+		ground = new CCastleGround();
+		ground->SetPosition(122 * 32 + i * 32, 286);
+		objects.push_back(ground);
+	}
+	for (int i = 0; i < 5; i++)
+	{
+		ground = new CCastleGround();
+		ground->SetPosition(81 * 32 + 16, 384 + 32 * i);
+		objects.push_back(ground);
+	}
+	for (int i = 0; i < 5; i++)
+	{
+		ground = new CCastleGround();
+		ground->SetPosition(98 * 32, 384 + 32 * i);
+		objects.push_back(ground);
+	}
+	for (int i = 0; i < 6; i++)
+	{
+		ground = new CCastleGround();
+		ground->SetPosition(98 * 32 + i*32,  254);
 		objects.push_back(ground);
 	}
 // ------------DOG SECTION--------------------//
@@ -247,6 +299,7 @@ void CStage2::LoadStage2()
 	bat->AddAnimation(18);
 	bat->AddAnimation(703);
 	bat->SetPosition(99*32, 222);
+	bat->SetStartPoint(222);
 	bat->SetState(BAT_STATE_LIVE);
 	objects.push_back(bat);
 // ------------STAIR SECTION------------------//
@@ -281,6 +334,9 @@ void CStage2::LoadStage2()
 	objects.push_back(stair->start1);
 	objects.push_back(stair->start);
 	objects.push_back(stair->stop);
+	stair = new CStair();
+	stair->start->SetPosition(84 * 32, 416);
+	objects.push_back(stair->start);
 //------------MARIO SECTION --------------//
 	mario = CMario::GetInstance();
 	mario->autoMove = false;
@@ -316,9 +372,21 @@ void CStage2::LoadStage2()
 void CStage2::Update(DWORD dt)
 {
 	coObjects.clear();
-	game->GetInstance()->cam->CameraRunStage2(dt,coWithCam);
+ 	if (mario->goingUp1 == true)
+	{
+		mario->SetPosition(GOING_DOWN_POINT_LEFT_X, GOING_DOWN_POINT_LEFT_Y);
+		game->GetInstance()->cam->SetPosition(GOING_DOWN_POINT_LEFT_X - 50, 0);
+		mario->goingUp1 = false;
+	}
+	else if (mario->goingUp2 == true)
+	{
+		mario->SetPosition(GOING_DOWN_POINT_RIGHT_X, GOING_DOWN_POINT_RIGHT_Y);
+		game->GetInstance()->cam->SetPosition(GOING_DOWN_POINT_RIGHT_X - 50, 0);
+		mario->goingUp2 = false;
+	}
+	game->GetInstance()->cam->CameraRunStage2(dt, coWithCam);
 	int lastCellId = game->GetInstance()->cam->lastCellCollided;
-	if (lastCellId >= 0 && lastCellId < cellsSys->LastCellId())
+	if (lastCellId >= 0 && lastCellId <= cellsSys->LastCellId())
 	{
 		LPCELL cell = cellsSys->GetCell(lastCellId);
 		if (cell->isActive == true && cell != NULL)
@@ -365,48 +433,66 @@ void CStage2::Update(DWORD dt)
 				objects[i]->SetState(GOOMBA_STATE_DIE);
 		}
 	}
+	if (mario->x >= GOING_DOWN_POINT_LEFT_X && mario->x < GOING_DOWN_POINT_LEFT_X-64)
+	{
+		mario->goingDown1 = true;
+		mario->goingDown2 = false;
+	}
+	else if(mario->x >= GOING_DOWN_POINT_RIGHT_X && mario->x < GOING_DOWN_POINT_RIGHT_X + 64 )
+	{
+		mario->goingDown2 = true;
+		mario->goingDown1 = false;
+	}
+	if (mario->y + MARIO_BIG_BBOX_HEIGHT >= LIMIT_POINT_Y)
+	{
+		isRunning = false;
+		SubStage *sub = SubStage::GetInstance();
+		sub->isRunning = true;
+	}
 	mario->Update(dt, &coObjects);
 	game->GetInstance()->cam->UpdatePosition();
 }
 
 void CStage2::Render()
 {
-	LPDIRECT3DDEVICE9 d3ddv = game->GetDirect3DDevice();
-	LPDIRECT3DSURFACE9 bb = game->GetBackBuffer();
-	LPD3DXSPRITE spriteHandler = game->GetSpriteHandler();
-	map->SetCam(game);
-	float camx = 0, camy = 0;
-	game->GetInstance()->cam->GetPosition(camx, camy);
-	if (d3ddv->BeginScene())
+	if (isRunning == true)
 	{
-		// Clear back buffer with a color
-		if(mario->reachCheckPoint == false)
-			d3ddv->ColorFill(bb, NULL, BACKGROUND_COLOR);
-		else
+		LPDIRECT3DDEVICE9 d3ddv = game->GetDirect3DDevice();
+		LPDIRECT3DSURFACE9 bb = game->GetBackBuffer();
+		LPD3DXSPRITE spriteHandler = game->GetSpriteHandler();
+		map->SetCam(game);
+		float camx = 0, camy = 0;
+		game->GetInstance()->cam->GetPosition(camx, camy);
+		if (d3ddv->BeginScene())
 		{
-			if (flashTimes % 2 == 0)
+			// Clear back buffer with a color
+			if (mario->reachCheckPoint == false)
+				d3ddv->ColorFill(bb, NULL, BACKGROUND_COLOR);
+			else
 			{
-				d3ddv->ColorFill(bb, NULL, D3DCOLOR_XRGB(255, 255, 255));
+				if (flashTimes % 2 == 0)
+				{
+					d3ddv->ColorFill(bb, NULL, D3DCOLOR_XRGB(255, 255, 255));
+				}
+				else d3ddv->ColorFill(bb, NULL, BACKGROUND_COLOR);
+				flashTimes++;
+				if (flashTimes == FLASH_TIMES) mario->reachCheckPoint = false;
 			}
-			else d3ddv->ColorFill(bb, NULL, BACKGROUND_COLOR);
-			flashTimes++;
-			if(flashTimes == FLASH_TIMES) mario->reachCheckPoint = false;
-		}
 
-		spriteHandler->Begin(D3DXSPRITE_ALPHABLEND);
-		map->MapLvlRender();
-		for (int i = 0; i < coObjects.size(); i++)
-		{
-			coObjects[i]->Render();
+			spriteHandler->Begin(D3DXSPRITE_ALPHABLEND);
+			map->MapLvlRender();
+			for (int i = 0; i < coObjects.size(); i++)
+			{
+				coObjects[i]->Render();
+			}
+			stt->DrawStatusBar(camx, camy);
+			mario->Render();
+			spriteHandler->End();
+			d3ddv->EndScene();
 		}
-		stt->DrawStatusBar(camx, camy);
-		mario->Render();
-		spriteHandler->End();
-		d3ddv->EndScene();
+		// Display back buffer content to the screen
+		d3ddv->Present(NULL, NULL, NULL, NULL);
 	}
-
-	// Display back buffer content to the screen
-	d3ddv->Present(NULL, NULL, NULL, NULL);
 }
 
 

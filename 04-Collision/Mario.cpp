@@ -25,11 +25,11 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
 	// Calculate dx, dy 
 	CGameObject::Update(dt, coObjects);
-	
+
 	if (coObjects->size() != 0)
 	{
 		// Simple fall down
-		if(isGoingStair != true)
+		if (isGoingStair != true)
 			vy += MARIO_GRAVITY*dt;
 		vector<LPCOLLISIONEVENT> coEvents;
 		vector<LPCOLLISIONEVENT> coEventsResult;
@@ -37,14 +37,14 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 		for (int i = 0; i < coObjects->size(); i++)
 		{
-			if (coObjects->at(i)->tag != 2 && coObjects->at(i)->tag !=101 && coObjects->at(i)->tag !=5 
-				&& coObjects->at(i)->tag != 4 && coObjects->at(i)->tag !=9 && coObjects->at(i)->tag != 6 )
+			if (coObjects->at(i)->tag != 2 && coObjects->at(i)->tag != 101 && coObjects->at(i)->tag != 5
+				&& coObjects->at(i)->tag != 4 && coObjects->at(i)->tag != 9 && coObjects->at(i)->tag != 6)
 			{
 				filterCoObjs.push_back(coObjects->at(i));
 			}
-			else if (coObjects->at(i)->tag == 101 )
+			else if (coObjects->at(i)->tag == 101)
 			{
-				if( coObjects->at(i)->isHit == true)
+				if (coObjects->at(i)->isHit == true)
 					filterCoObjs.push_back(coObjects->at(i));
 			}
 			else if (coObjects->at(i)->tag == 5)
@@ -75,9 +75,9 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		{
 			untouchable_start = 0;
 			untouchable = 0;
-			if (state != MARIO_STATE_WALKING_LEFT && state != MARIO_STATE_WALKING_RIGHT && isAttacking == false)
+			if (state != MARIO_STATE_WALKING_LEFT && state != MARIO_STATE_WALKING_RIGHT && isAttacking == false && isGoingStair == false)
 				SetState(MARIO_STATE_IDLE);
-			autoMove = false;
+			if (isHit == true) { isHit = false; autoMove = false; };
 		}
 
 		// No collision occured, proceed normally
@@ -98,7 +98,11 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 			if (nx != 0) vx = 0;
 			if (ny != 0) vy = 0;
-
+			if (isGoingStair == true && (goingDown1 == true || goingDown2 == true))
+			{
+				x += dx;
+				y += dy;
+			}
 			// Collision logic with Goombas
 			for (UINT i = 0; i < coEventsResult.size(); i++)
 			{
@@ -107,15 +111,18 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				if (dynamic_cast<CGoomba *>(e->obj))
 				{
 					CGoomba *goomba = dynamic_cast<CGoomba *>(e->obj);
-					if (untouchable == 0)
+					/*if (untouchable == 0)
 					{
 						if (goomba->GetState() != GOOMBA_STATE_DIE)
 						{
 							StartUntouchable();
 							SetState(MARIO_STATE_HURT);
+							isAttacking = false;
+							isHit = true;
+							autoMove = true;
 							curHealth -= 1;
 						}
-					}
+					}*/
 				}
 				if (dynamic_cast<CHeart *>(e->obj))
 				{
@@ -180,7 +187,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				if (dynamic_cast<CDoor *>(e->obj))
 				{
 					CDoor *door = dynamic_cast<CDoor *>(e->obj);
-					if ( door->isHit == false)
+					if (door->isHit == false)
 					{
 						door->SetState(DOOR_STATE_OPEN);
 						door->isHit = true;
@@ -406,7 +413,6 @@ void CMario::SetState(int state)
 		else
 			vx = MARIO_HURT_DEFLECT_SPEED_X;
 		vy = -MARIO_HURT_DEFLECT_SPEED_Y;
-		autoMove = true;
 		break;
 	case MARIO_STATE_DIE:
 		vy = -MARIO_DIE_DEFLECT_SPEED;

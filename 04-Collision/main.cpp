@@ -31,6 +31,7 @@
 #include "IntroMenu.h"
 #include "Stage1.h"
 #include "Stage2.h"
+#include "SubStage.h"
 #define WINDOW_CLASS_NAME L"SampleWindow"
 #define MAIN_WINDOW_TITLE L"04 - Collision"
 
@@ -46,6 +47,7 @@ CIntroScene *intro;
 CIntroMenu *menu;
 CStage1 *stage1;
 CStage2 *stage2;
+SubStage *substage;
 class CSampleKeyHander: public CKeyEventHandler
 {
 	virtual void KeyState(BYTE *states);
@@ -219,6 +221,10 @@ void LoadStage2()
 {
 	stage2->LoadStage2();
 }
+void LoadSubStage()
+{
+	substage->LoadSub();
+}
 /*
 	Update world status for this frame
 	dt: time period between beginning of last frame and beginning of this frame
@@ -236,6 +242,10 @@ void UpdateStage1(DWORD dt)
 void UpdateStage2(DWORD dt)
 {
 	stage2->Update(dt);
+}
+void UpdateSubStage(DWORD dt)
+{
+	substage->Update(dt);
 }
 /*
 	Render a frame 
@@ -256,6 +266,10 @@ void RenderStage1()
 void RenderStage2()
 {
 	stage2->Render();
+}
+void RenderSubStage()
+{
+	substage->Render();
 }
 HWND CreateGameWindow(HINSTANCE hInstance, int nCmdShow, int ScreenWidth, int ScreenHeight)
 {
@@ -427,6 +441,7 @@ int RunStage2()
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
+		if (stage2->isRunning == false) done = 1;
 
 		DWORD now = GetTickCount();
 
@@ -448,18 +463,56 @@ int RunStage2()
 
 	return 1;
 }
+int RunSubStage()
+{
+	MSG msg;
+	int done = 0;
+	DWORD frameStart = GetTickCount();
+	DWORD tickPerFrame = 1000 / MAX_FRAME_RATE;
+
+	while (!done)
+	{
+		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		{
+			if (msg.message == WM_QUIT) done = 1;
+
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+		if (substage->isRunning == false) done = 1;
+		DWORD now = GetTickCount();
+
+		// dt: the time between (beginning of last frame) and now
+		// this frame: the frame we are about to render
+		DWORD dt = now - frameStart;
+
+		if (dt >= tickPerFrame)
+		{
+			frameStart = now;
+			game->ProcessKeyboard();
+			UpdateSubStage(dt);
+			RenderSubStage();
+		}
+		else
+			Sleep(tickPerFrame - dt);
+	}
+
+	return 1;
+}
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	HWND hWnd = CreateGameWindow(hInstance, nCmdShow, SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	stage1 = new CStage1();
-	stage2 = new CStage2();
+	stage2 = CStage2::GetInstance();
+	substage = SubStage::GetInstance();
 	game = CGame::GetInstance();
 	game->Init(hWnd);
 	keyHandler = new CSampleKeyHander();
 	game->InitKeyboard(keyHandler);
 	stage1->SetGameController(game);
 	stage2->SetGameController(game);
+	substage->SetGameController(game);
 	SetWindowPos(hWnd, 0, 0, 0, SCREEN_WIDTH , SCREEN_HEIGHT , SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER);
 	//LoadIntroMenu();
 	//RunIntroMenu();
@@ -470,7 +523,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	LoadStage1();
 	RunStage1();
+	int done = 0;
 	LoadStage2();
-	RunStage2();
+	while (done == 0)
+	{
+		RunStage2();
+		LoadSubStage();
+		RunSubStage();
+		if (stage2->isRunning == false && substage->isRunning == false) done = 1;
+	} 
 	return 0;
 }

@@ -5,7 +5,7 @@
 #include "Axe.h"
 
 
-#define MARIO_WALKING_SPEED		0.1f
+#define MARIO_WALKING_SPEED		0.5f
 //0.1f
 #define MARIO_JUMP_SPEED_Y		0.7f
 #define MARIO_JUMP_DEFLECT_SPEED 0.2f
@@ -74,6 +74,10 @@ public:
 	bool SubWeapUsed;
 	bool autoMove;			//disable keyboard
 	bool isGoingStair;
+	bool goingDown1;
+	bool goingUp1;
+	bool goingDown2;
+	bool goingUp2;
 	CMario() : CGameObject()
 	{
 		level = MARIO_LEVEL_BIG;
@@ -84,6 +88,10 @@ public:
 		SubWeapUsed = false;
 		reachCheckPoint = false;
 		autoMove = false;
+		goingDown1 = false;
+		goingDown2 = false;
+		goingUp1 = false;
+		goingUp2 = false;
 		subWeapInUse = 0;
 		mainWeap = new Whip();
 		knife = NULL;
@@ -104,7 +112,7 @@ public:
 	LPGAMEOBJECT GetSubWeapon(int tag) { if (knife != NULL && tag == knife->tag) return knife; else if ( axe != NULL && tag == axe->tag) return axe; else return NULL; };
 	Whip *GetWhip() { return mainWeap; };
 	void SetLevel(int l) { level = l; }
-	void StartUntouchable() { untouchable = 1; untouchable_start = GetTickCount(); }
+	void StartUntouchable() { untouchable = 1; untouchable_start = GetTickCount(); };
 
 	virtual void GetBoundingBox(float &left, float &top, float &right, float &bottom);
 };

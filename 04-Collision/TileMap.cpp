@@ -66,11 +66,14 @@ void CTileMap::MapLvlRender() // dua duong dan vao day
 		for (int r = startRow; r < endRow; r++)
 		{
 			int i = numOfCol * r + c;
-			CSprite *tile = sprites->Get(map[i]);;
-			float x = (c - startCol) * tileWidth + offsetX;
-			float y = (r - startRow) * tileHeight + offsetY;
-			if (tile != NULL)
-				tile->Draw(x + game->GetInstance()->cam->x, y + game->GetInstance()->cam->y);
+			if (i <= map.size() - 1)
+			{
+				CSprite *tile = sprites->Get(map[i]);
+				float x = (c - startCol) * tileWidth + offsetX;
+				float y = (r - startRow) * tileHeight + offsetY;
+				if (tile != NULL)
+					tile->Draw(x + game->GetInstance()->cam->x, y + game->GetInstance()->cam->y);
+			}
 		}
 	}
 }
