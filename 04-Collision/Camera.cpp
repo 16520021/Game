@@ -123,7 +123,12 @@ void CCamera::CameraRunStage2(DWORD dt,vector<LPGAMEOBJECT> grid)
 	}
 	else
 		dx = 0;
-
+	if (player->x + player->dx < 0)
+	{
+		player->x = 0;
+		player->dx = 0;
+		this->dx = 0;
+	}
 	if (x < 0)
 	{
 		x = 0;

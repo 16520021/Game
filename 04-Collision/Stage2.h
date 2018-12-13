@@ -37,6 +37,9 @@
 #define ID_TEX_CROSS		22
 #define ID_TEX_BAT			23
 #define ID_BURNING			24
+#define ID_FISH_BULLET		25
+#define ID_FISH_LEFT		26
+#define ID_FISH_RIGHT		27
 #define BACKGROUND_COLOR	D3DCOLOR_XRGB(0,0,0)
 #define FLASH_TIMES			10
 #define GOING_DOWN_POINT_RIGHT_X    104 * 32

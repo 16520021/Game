@@ -17,6 +17,7 @@ void CHeart::Update(DWORD dt, vector<LPGAMEOBJECT>* coObject)
 			vector<LPCOLLISIONEVENT> coEvents;
 			vector<LPCOLLISIONEVENT> coEventsResult;
 			coEvents.clear();
+			if (state != HEART_STATE_DESTROYED)  collision = true;
 			CalcPotentialCollisions(coObject, coEvents);
 			if (coEvents.size() == 0)
 			{
@@ -42,7 +43,7 @@ void CHeart::Render()
 {
 	if (isActive == true)
 	{
-		if (isHit == true && collision == true)
+		if (isHit == true)
 		{
 			if (GetState() == HEART_STATE_LIVE)
 				animations[0]->Render(x, y);

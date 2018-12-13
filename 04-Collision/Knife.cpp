@@ -5,6 +5,7 @@
 #include "Goomba.h"
 #include "debug.h"
 #include "Candle.h"
+#include "Heart.h"
 
 CKnife* CKnife::instance = NULL;
 
@@ -79,6 +80,7 @@ void CKnife::Update(DWORD dt, vector<LPGAMEOBJECT>* coObject)
 							candle->SetState(CANDLE_STATE_DESTROYED);
 							mario->point += candle->point;
 						}
+						this->isActive = false;
 					}
 				}
 				for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];

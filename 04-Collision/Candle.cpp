@@ -23,13 +23,10 @@ void CCandle::Render()
 				ani = CANDLE_ANI_DESTROYED;
 				collision = false;
 				isHit = true;
+				if (heart != NULL) heart->Render();
 			}
 			animations[ani]->Render(x, y);
 			RenderBoundingBox();
-		}
-		else
-		{
-			if (heart != NULL) heart->Render();
 		}
 	}
 }
@@ -57,6 +54,10 @@ void CCandle::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				GetPosition(a, b);
 				heart->SetPosition(a, b);
+				heart->collision = false;
+			}
+			else {
+				heart->isHit = true;
 			}
 			heart->Update(dt, coObjects);
 		}

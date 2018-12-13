@@ -32,6 +32,9 @@ void CStage2::LoadStage2()
 	textures->Add(ID_TEX_CROSS, L"textures\\cross.bmp", D3DCOLOR_XRGB(255, 255, 255));
 	textures->Add(ID_TEX_BAT, L"textures\\bat.png", D3DCOLOR_XRGB(255, 0, 255));
 	textures->Add(ID_BURNING, L"textures\\burning.png", D3DCOLOR_XRGB(255, 0, 255));
+	textures->Add(ID_FISH_BULLET, L"textures\\fire.png", D3DCOLOR_XRGB(255, 0, 255));
+	textures->Add(ID_FISH_LEFT, L"textures\\fish_left.png", D3DCOLOR_XRGB(255, 0, 255));
+	textures->Add(ID_FISH_RIGHT, L"textures\\fish_right.png", D3DCOLOR_XRGB(255, 0, 255));
 
 	CSprites *sprites = CSprites::GetInstance();
 	CAnimations *animations = CAnimations::GetInstance();
@@ -80,6 +83,18 @@ void CStage2::LoadStage2()
 	sprites->Add(27, 0, 0, 40, 44, texBurn);
 	sprites->Add(28, 40, 0, 80, 44, texBurn);
 	sprites->Add(29, 80, 0, 120, 44, texBurn);
+
+	LPDIRECT3DTEXTURE9 texBullet = textures->Get(ID_FISH_BULLET);		//FISH BULLET
+	sprites->Add(30, 0, 0, 14, 12, texBullet);
+
+	LPDIRECT3DTEXTURE9  texFish = textures->Get(ID_FISH_RIGHT);
+	sprites->Add(31, 0, 0, 32, 64, texFish);
+	sprites->Add(32, 32, 0, 64, 64, texFish);
+	sprites->Add(33, 64, 0, 96, 64, texFish);
+	texFish = textures->Get(ID_FISH_LEFT);
+	sprites->Add(34, 0, 0, 32, 64, texFish);
+	sprites->Add(35, 32, 0, 64, 64, texFish);
+	sprites->Add(36, 64, 0, 96, 64, texFish);
 
 	LPANIMATION ani;
 
@@ -142,12 +157,34 @@ void CStage2::LoadStage2()
 	ani->Add(26);
 	animations->Add(18, ani);
 
-	ani = new CAnimation(100);
+	ani = new CAnimation(100);		//BURN
 	ani->Add(27);
 	ani->Add(28);
 	ani->Add(29);
 	ani->Add(29);
 	animations->Add(19, ani);
+
+	ani = new CAnimation(100);		//FISH BULLET
+	ani->Add(30);
+	animations->Add(20, ani);
+
+	ani = new CAnimation(100); //FISH WALKING RIGHT
+	ani->Add(31);
+	ani->Add(32);
+	animations->Add(21, ani);
+
+	ani = new CAnimation(100);	//FISH ATK RIGHT
+	ani->Add(33);
+	animations->Add(22, ani);
+
+	ani = new CAnimation(100);	//FISH ATK LEFT
+	ani->Add(34);
+	animations->Add(23, ani);
+
+	ani = new CAnimation(100);	//FISH WALKING LEFT
+	ani->Add(35);
+	ani->Add(36);
+	animations->Add(24, ani);
 
 	map = new CTileMap(L"textures\\map1_tiled.PNG",64,64,14,8);
 	map->InitMap("map2.txt", MAP_LENGTH);
