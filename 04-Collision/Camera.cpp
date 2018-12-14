@@ -2,6 +2,8 @@
 #include "Cell.h"
 #include "Door.h"
 #include "Mario.h"
+#include "SubStage.h"
+#include "Stage2.h"
 CCamera*CCamera::instance = NULL;
 
 CCamera::CCamera()
@@ -134,10 +136,23 @@ void CCamera::CameraRunStage2(DWORD dt,vector<LPGAMEOBJECT> grid)
 		x = 0;
 		return;
 	}
-	if (x > 512 * 8)
+
+	SubStage *subStage = SubStage::GetInstance();
+	if (subStage->isRunning == true)
 	{
-		x = 512 * 8;
-		return;
+		if (x + width > SUB_MAP_LENGTH)
+		{
+			x = SUB_MAP_LENGTH - width;
+			return;
+		}
+	}
+	else
+	{
+		if (x + width > MAP_LENGTH + 64)
+		{
+			x = MAP_LENGTH - width + 64;
+			return;
+		}
 	}
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;

@@ -4,8 +4,8 @@
 #define CROSS_STATE_DESTROYED	200
 
 #define GRAVITY					0.0001f
-#define HEART_BBOX_WIDTH		60
-#define HEART_BBOX_HEIGHT		60
+#define HEART_BBOX_WIDTH		40
+#define HEART_BBOX_HEIGHT		40
 class CCross :
 	public CGameObject
 {

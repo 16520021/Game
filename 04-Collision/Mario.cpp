@@ -9,6 +9,7 @@
 #include "Cross.h"
 #include "Stair.h"
 #include "Door.h"
+#include "Fish.h"
 
 CMario* CMario::instance = NULL;
 
@@ -111,7 +112,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				if (dynamic_cast<CGoomba *>(e->obj))
 				{
 					CGoomba *goomba = dynamic_cast<CGoomba *>(e->obj);
-					/*if (untouchable == 0)
+					if (untouchable == 0)
 					{
 						if (goomba->GetState() != GOOMBA_STATE_DIE)
 						{
@@ -122,7 +123,23 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 							autoMove = true;
 							curHealth -= 1;
 						}
-					}*/
+					}
+				}
+				if (dynamic_cast<CFish *>(e->obj))
+				{
+					CFish *fish = dynamic_cast<CFish *>(e->obj);
+					if (untouchable == 0)
+					{
+						if (fish->GetState() != FISH_STATE_DIE)
+						{
+							StartUntouchable();
+							SetState(MARIO_STATE_HURT);
+							isAttacking = false;
+							isHit = true;
+							autoMove = true;
+							curHealth -= 1;
+						}
+					}
 				}
 				if (dynamic_cast<CHeart *>(e->obj))
 				{

@@ -130,6 +130,7 @@
     <ClInclude Include="Cross.h" />
     <ClInclude Include="Dog.h" />
     <ClInclude Include="Door.h" />
+    <ClInclude Include="Drop.h" />
     <ClInclude Include="Fish.h" />
     <ClInclude Include="Ground.h" />
     <ClInclude Include="Camera.h" />
@@ -166,6 +167,7 @@
     <ClCompile Include="Cross.cpp" />
     <ClCompile Include="Dog.cpp" />
     <ClCompile Include="Door.cpp" />
+    <ClCompile Include="Drop.cpp" />
     <ClCompile Include="Fish.cpp" />
     <ClCompile Include="Ground.cpp" />
     <ClCompile Include="Camera.cpp" />

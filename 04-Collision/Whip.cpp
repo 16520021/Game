@@ -8,6 +8,7 @@
 #include "Axe.h"
 #include "Cross.h"
 #include "Bat.h"
+#include "Fish.h"
 Whip::Whip()
 {
 	tag = 1;
@@ -104,6 +105,18 @@ void Whip::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 						{
 							goomba->SetState(GOOMBA_STATE_BURN);
 							mario->point += goomba->point;
+						}
+					}
+				}
+				if (dynamic_cast<CFish *>(e->obj))
+				{
+					CFish *fish = dynamic_cast<CFish *>(e->obj);
+					if (e->nx == 0)
+					{
+						if (fish->state != FISH_STATE_DIE)
+						{
+							fish->SetState(FISH_STATE_DIE);
+							mario->point += fish->point;
 						}
 					}
 				}

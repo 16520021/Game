@@ -58,8 +58,8 @@ void CGame::Init(HWND hWnd)
 void CGame::Draw(float x, float y, LPDIRECT3DTEXTURE9 texture, int left, int top, int right, int bottom, int alpha)
 {
 	D3DXVECTOR3 p(x, y, 0);
-	p.x = cam->setPositionInCam(x, y).x;
-	p.y = cam->setPositionInCam(x, y).y;
+	p.x = int(cam->setPositionInCam(x, y).x);
+	p.y = int(cam->setPositionInCam(x, y).y);
 	RECT r; 
 	r.left = left;
 	r.top = top;

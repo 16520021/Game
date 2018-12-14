@@ -6,6 +6,7 @@
 #include "Status.h"
 #include "Cell.h"
 #include "Stair.h"
+#include "Fish.h"
 
 #define SCREEN_WIDTH		512
 #define SCREEN_HEIGHT		544
@@ -19,6 +20,7 @@ class SubStage
 	CCells *cellsSys;
 	CCastleGround *ground;
 	CStatus *stt;
+	CFish *fish;
 	CStair *stair;
 	vector<LPGAMEOBJECT> objects;
 	vector<LPGAMEOBJECT> coObjects;

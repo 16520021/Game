@@ -35,6 +35,7 @@ void CStage2::LoadStage2()
 	textures->Add(ID_FISH_BULLET, L"textures\\fire.png", D3DCOLOR_XRGB(255, 0, 255));
 	textures->Add(ID_FISH_LEFT, L"textures\\fish_left.png", D3DCOLOR_XRGB(255, 0, 255));
 	textures->Add(ID_FISH_RIGHT, L"textures\\fish_right.png", D3DCOLOR_XRGB(255, 0, 255));
+	textures->Add(ID_DROP, L"textures\\drop.png", D3DCOLOR_XRGB(255, 0, 255));
 
 	CSprites *sprites = CSprites::GetInstance();
 	CAnimations *animations = CAnimations::GetInstance();
@@ -95,6 +96,9 @@ void CStage2::LoadStage2()
 	sprites->Add(34, 0, 0, 32, 64, texFish);
 	sprites->Add(35, 32, 0, 64, 64, texFish);
 	sprites->Add(36, 64, 0, 96, 64, texFish);
+
+	LPDIRECT3DTEXTURE9 texDrop = textures->Get(ID_DROP);	//DROP		
+	sprites->Add(37, 0, 0, 14, 28, texDrop);
 
 	LPANIMATION ani;
 
@@ -168,7 +172,7 @@ void CStage2::LoadStage2()
 	ani->Add(30);
 	animations->Add(20, ani);
 
-	ani = new CAnimation(100); //FISH WALKING RIGHT
+	ani = new CAnimation(300); //FISH WALKING RIGHT
 	ani->Add(31);
 	ani->Add(32);
 	animations->Add(21, ani);
@@ -181,13 +185,18 @@ void CStage2::LoadStage2()
 	ani->Add(34);
 	animations->Add(23, ani);
 
-	ani = new CAnimation(100);	//FISH WALKING LEFT
+	ani = new CAnimation(300);	//FISH WALKING LEFT
 	ani->Add(35);
 	ani->Add(36);
 	animations->Add(24, ani);
 
+	ani = new CAnimation(100);	//DROP
+	ani->Add(37);
+	animations->Add(25, ani);
+
 	map = new CTileMap(L"textures\\map1_tiled.PNG",64,64,14,8);
 	map->InitMap("map2.txt", MAP_LENGTH);
+
 	//------------- DOOR SECTION --------------------//
 	door = new CDoor();
 	door->SetPosition(81 * 32 + 16, 126);
@@ -390,7 +399,9 @@ void CStage2::LoadStage2()
 	objects.push_back(stair->stop);
 	stair = new CStair();
 	stair->start->SetPosition(84 * 32, 416);
+	stair->start1->SetPosition(104 * 32, 416);
 	objects.push_back(stair->start);
+	objects.push_back(stair->start1);
 //------------MARIO SECTION --------------//
 	mario = CMario::GetInstance();
 	mario->autoMove = false;
@@ -430,12 +441,14 @@ void CStage2::Update(DWORD dt)
 	{
 		mario->SetPosition(GOING_DOWN_POINT_LEFT_X, GOING_DOWN_POINT_LEFT_Y);
 		game->GetInstance()->cam->SetPosition(GOING_DOWN_POINT_LEFT_X - 50, 0);
+		mario->isGoingStair = false;
 		mario->goingUp1 = false;
 	}
 	else if (mario->goingUp2 == true)
 	{
 		mario->SetPosition(GOING_DOWN_POINT_RIGHT_X, GOING_DOWN_POINT_RIGHT_Y);
 		game->GetInstance()->cam->SetPosition(GOING_DOWN_POINT_RIGHT_X - 50, 0);
+		mario->isGoingStair = false;
 		mario->goingUp2 = false;
 	}
 	game->GetInstance()->cam->CameraRunStage2(dt, coWithCam);
@@ -487,7 +500,7 @@ void CStage2::Update(DWORD dt)
 				objects[i]->SetState(GOOMBA_STATE_BURN);
 		}
 	}
-	if (mario->x >= GOING_DOWN_POINT_LEFT_X && mario->x < GOING_DOWN_POINT_LEFT_X-64)
+	if (mario->x >= GOING_DOWN_POINT_LEFT_X && mario->x < GOING_DOWN_POINT_RIGHT_X-64)
 	{
 		mario->goingDown1 = true;
 		mario->goingDown2 = false;

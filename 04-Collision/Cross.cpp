@@ -18,6 +18,7 @@ void CCross::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			vector<LPCOLLISIONEVENT> coEvents;
 			vector<LPCOLLISIONEVENT> coEventsResult;
 			coEvents.clear();
+			if (state != CROSS_STATE_DESTROYED)  collision = true;
 			CalcPotentialCollisions(coObjects, coEvents);
 			if (coEvents.size() == 0)
 			{
@@ -44,7 +45,7 @@ void CCross::Render()
 {
 	if (isActive == true)
 	{
-		if (isHit == true && collision == true)
+		if (isHit == true)
 		{
 			if (GetState() == CROSS_STATE_LIVE)
 				animations[0]->Render(x, y);

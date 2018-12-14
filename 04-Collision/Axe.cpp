@@ -1,6 +1,7 @@
 #include "Axe.h"
 #include "debug.h"
 #include "Mario.h"
+#include "Goomba.h"
 
 CAxe::CAxe()
 {
@@ -35,6 +36,23 @@ void CAxe::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 				FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny);
 				y += dy;
+
+				for (UINT i = 0; i < coEventsResult.size(); i++)
+				{
+					LPCOLLISIONEVENT e = coEventsResult[i];
+					if (dynamic_cast<CGoomba *>(e->obj))
+					{
+						CGoomba *goomba = dynamic_cast<CGoomba *>(e->obj);
+						if (e->nx == 0)
+						{
+							if (goomba->state != GOOMBA_STATE_BURN)
+							{
+								goomba->SetState(GOOMBA_STATE_BURN);
+								mario->point += goomba->point;
+							}
+						}
+					}
+				}
 				// clean up collision events
 				for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 			}

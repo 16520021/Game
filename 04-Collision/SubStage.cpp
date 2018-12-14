@@ -5,7 +5,7 @@ SubStage* SubStage::instance = NULL;
 
 SubStage::SubStage()
 {
-	isRunning = true;
+	isRunning = false;
 	initialized = false;
 }
 
@@ -26,10 +26,42 @@ void SubStage::LoadSub()
 	map->InitMap("SubMap.txt", SUB_MAP_LENGTH);
 	// -------------- STAIR SECTION---------------//
 	stair = new CStair();
-	stair->start->SetPosition(7 * 32, 192);
-	stair->start1->SetPosition(29 * 32, 256);
+	stair->start->SetPosition(6 * 32, 192);
+	stair->start1->SetPosition(28 * 32, 256);
 	objects.push_back(stair->start1);
 	objects.push_back(stair->start);
+
+	//--------------- FISH SECTION ---------------//
+	fish = new CFish();
+	fish->AddAnimation(21);
+	fish->AddAnimation(24);
+	fish->AddAnimation(22);
+	fish->AddAnimation(23);
+	fish->AddAnimation(703);
+	fish->SetPosition(3 * 32, 64 * 3 + 32);
+	fish->SetState(FISH_STATE_WAITING_RIGHT);
+	objects.push_back(fish);
+
+	fish = new CFish();
+	fish->AddAnimation(21);
+	fish->AddAnimation(24);
+	fish->AddAnimation(22);
+	fish->AddAnimation(23);
+	fish->AddAnimation(703);
+	fish->SetPosition(11 * 32, 64 * 3 + 32);
+	fish->SetState(FISH_STATE_WAITING_LEFT);
+	objects.push_back(fish);
+
+
+	fish = new CFish();
+	fish->AddAnimation(21);
+	fish->AddAnimation(24);
+	fish->AddAnimation(22);
+	fish->AddAnimation(23);
+	fish->AddAnimation(703);
+	fish->SetPosition(18 * 32 + 5, 64 * 3 + 32);
+	fish->SetState(FISH_STATE_WAITING_LEFT);
+	objects.push_back(fish);
 	// --------------GROUND SECTION---------------//	
 	for (int i = 0; i < 14; i++)
 	{
@@ -37,13 +69,41 @@ void SubStage::LoadSub()
 		ground->SetPosition(i * 32, 256);
 		objects.push_back(ground);
 	}
+	ground = new CCastleGround();
+	ground->SetPosition(16 * 32, 256);
+	objects.push_back(ground);
+	ground = new CCastleGround();
+	ground->SetPosition(17 * 32, 256);
+	objects.push_back(ground);
+	for (int i = 0; i < 10; i++)
+	{
+		ground = new CCastleGround();
+		ground->SetPosition(20*32 + i * 32, 256);
+		objects.push_back(ground);
+	}
+	ground = new CCastleGround();
+	ground->SetPosition(30 * 32, 320);
+	objects.push_back(ground);
+	ground = new CCastleGround();
+	ground->SetPosition(31 * 32, 320);
+	objects.push_back(ground);
 	//----------- MARIO SECTION--------------//
 	mario = CMario::GetInstance();
 	mario->autoMove = false;
 	mario->SetState(MARIO_STATE_IDLE);
+	if (mario->goingDown1 == true)
+	{
+		mario->SetPosition(64 * 3, 150);
+		mario->goingDown1 = false;
+	}
+	else if (mario->goingDown2 == true)
+	{
+		mario->SetPosition(14 * 64, 256);
+		mario->goingDown2 = false;
+	}
 	//----------- CELL SYSTEM ---------------//
 	cellsSys = new CCells();
-	int numOfCell = MAP_LENGTH / SCREEN_WIDTH;	// vì chiều cao của map = chiều cao view nên không cần mảng 2 chiều 
+	int numOfCell = SUB_MAP_LENGTH / SCREEN_WIDTH;	// vì chiều cao của map = chiều cao view nên không cần mảng 2 chiều 
 	float posX, posY, cellX, cellY;
 	for (int i = 0; i < numOfCell; i++)		// Nap cac object vao cell tuong ung
 	{
@@ -71,16 +131,6 @@ void SubStage::LoadSub()
 void SubStage::Update(DWORD dt)
 {
 	coObjects.clear();
-	if (mario->goingDown1 == true)
-	{
-		mario->SetPosition(64*3,150);
-		mario->goingDown1 = false;
-	}
-	else if (mario->goingDown2 == true)
-	{
-		mario->SetPosition(14 * 64, 185);
-		mario->goingDown2 = false;
-	}
 	game->GetInstance()->cam->CameraRunStage2(dt,coWithCam);
 	int lastCellId = game->GetInstance()->cam->lastCellCollided;
 	if (lastCellId >= 0 && lastCellId < cellsSys->LastCellId())
@@ -125,7 +175,7 @@ void SubStage::Update(DWORD dt)
 		mario->goingUp1 = true;
 		mario->goingUp2 = false;
 	}
-	else
+	else if(mario->x >= 23*32)
 	{
 		mario->goingUp2 = true;
 		mario->goingUp1 = false;

@@ -10,6 +10,7 @@ CFish::CFish()
 	goingUp = true;
 	bullet = NULL;
 	attackStart = 0;
+	hitWater = 2;
 }
 
 void CFish::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
@@ -17,15 +18,77 @@ void CFish::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	if (isActive)
 	{
 		CGameObject::Update(dt, coObjects);
-		vy += FISH_GRAVITY*dt;
+		if(state != FISH_STATE_WAITING_LEFT && state != FISH_STATE_WAITING_RIGHT)
+			vy += FISH_GRAVITY*dt;
 		
 		vector<LPCOLLISIONEVENT> coEvents;
 		vector<LPCOLLISIONEVENT> coEventsResult;
-		//to-do: DK de fish nhay ( khoang cach voi mario)
-		if (goingUp == false)
+		CMario *mario = CMario::GetInstance();
+		float posX, posY;
+		this->GetPosition(posX, posY);
+		if (state == FISH_STATE_WAITING_LEFT || state == FISH_STATE_WAITING_RIGHT)
+		{
+			if (sqrt(pow(mario->y - this->y, 2) + pow(mario->x - this->x, 2)) <= FISH_DETECT_RANGE)
+			{
+				if (nx > 0) SetState(FISH_STATE_JUMP_RIGHT);
+				else SetState(FISH_STATE_JUMP_LEFT);
+				if (drop.size() == 0) SetNumofDrop(3);
+				for (int i = 0; i < drop.size(); i++)
+				{
+					drop[i]->SetPosition(posX + 32, posY + 64);
+					switch (i)
+					{
+					case 0:
+						drop[i]->SetSpeed(-DROP_SPEED_X, DROP_SPEED_Y);
+						break;
+					case 1:
+						drop[i]->SetSpeed(0, DROP_SPEED_Y);
+						break;
+					case 2:
+						drop[i]->SetSpeed(DROP_SPEED_X, DROP_SPEED_Y);
+						break;
+
+					}
+				}
+			}
+		}
+		if (goingUp == false && hitWater == 0)
+		{
+			SetNumofDrop(3);
+			for (int i = 0; i < drop.size(); i++)
+			{
+				drop[i]->SetPosition(posX + 32, posY + 64);
+				switch (i)
+				{
+				case 0:
+					drop[i]->SetSpeed(-DROP_SPEED_X, DROP_SPEED_Y);
+					break;
+				case 1:
+					drop[i]->SetSpeed(0, DROP_SPEED_Y);
+					break;
+				case 2:
+					drop[i]->SetSpeed(DROP_SPEED_X, DROP_SPEED_Y);
+					break;
+				//default:
+				//	drop[i]->SetSpeed(DROP_SPEED_X, DROP_SPEED_Y);
+				//	break;
+				}
+			}
+			hitWater = 1;
+		}
+		if (this->y + FISH_BBOX_HEIGHT >= WATER_HEIGHT && hitWater == 2)
+			SetState(FISH_STATE_HIDE);
+		if (drop.size() != 0 )
+		{
+			for (int i = 0; i < drop.size(); i++)
+			{
+				drop[i]->Update(dt, coObjects);
+			}
+		}
+		if (goingUp == false && attackTime == 0)
 		{
 			attackStart = rand() % 100 + 1;
-			if (attackStart <= 25) isAttacking = true;
+			if (attackStart <= 5) isAttacking = true;
 			else isAttacking = false;
 		}
 		coEvents.clear();
@@ -46,31 +109,33 @@ void CFish::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			float min_tx, min_ty, nx = 0, ny;
 
 			FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny);
-			
-			x += min_tx*dx + nx*0.4f;		// nx*0.4f : need to push out a bit to avoid overlapping next frame
-			y += min_ty*dy + ny*0.4f;
-
-			if (nx != 0) vx = 0;
-			if (ny != 0) vy = 0;
 
 			if (goingUp == true)
 			{
 				x += dx;
 				y += dy;
 			}
-			for (UINT i = 0; i < coEventsResult.size(); i++)
-			{
-				LPCOLLISIONEVENT e = coEventsResult[i];
+			else {
+				x += min_tx*dx + nx*0.4f;		// nx*0.4f : need to push out a bit to avoid overlapping next frame
+				y += min_ty*dy + ny*0.4f;
+
+				if (nx != 0) vx = 0;
+				if (ny != 0) vy = 0;
 			}
 		}
 		if (isAttacking == true)
 		{
-			if (bullet != NULL)
+			if (bullet == NULL)
 			{
 				bullet = new FishBullet();
-				bullet->Update(dt, coObjects);
+				bullet->SetPosition(posX, posY);
+				if (this->nx > 0) bullet->vx = FISH_BULLET_SPEED_X;
+				else bullet->vx = -FISH_BULLET_SPEED_X;
 			}
 		}
+		if (bullet != NULL) bullet->Update(dt, coObjects);
+		if(bullet != NULL)
+			if (abs(bullet->x - this->x) > FISH_ATTACK_RANGE) bullet = NULL;
 	}
 }
 
@@ -80,7 +145,7 @@ void CFish::Render()
 	{
 		if (isHit == false)
 		{
-			if (state != FISH_STATE_WAITING_LEFT && state != FISH_STATE_WAITING_RIGHT)
+			if (state != FISH_STATE_WAITING_LEFT && state != FISH_STATE_WAITING_RIGHT && state != FISH_STATE_HIDE)
 			{
 				int ani;
 				if (state == FISH_STATE_DIE)
@@ -114,7 +179,6 @@ void CFish::Render()
 						if (vx > 0)
 							ani = FISH_ANI_WALKING_RIGHT;
 						else ani = FISH_ANI_WALKING_LEFT;
-						bullet = NULL;
 					}
 				}
 				animations[ani]->Render(x, y);
@@ -127,11 +191,26 @@ void CFish::Render()
 				}
 				if (bullet != NULL)
 				{
-					if(isAttacking == true)
 						bullet->Render();
 				}
 			}
+			if (drop.size() != 0)
+			{
+				for (int i = 0; i < drop.size(); i++)
+				{
+					drop[i]->Render();
+				}
+			}
 		}
+	}
+}
+
+void CFish::SetNumofDrop(int num)
+{
+	for (int i = 0; i < num; i++)
+	{
+		CDrop *water = new CDrop();
+		drop.push_back(water);
 	}
 }
 
@@ -172,6 +251,11 @@ void CFish::SetState(int state)
 		nx = -1;
 		vy = 0;
 		break;
+	case FISH_STATE_HIDE:
+		vx = 0;
+		vy = 0;
+		hitWater = 0;
+		break;
 	case FISH_STATE_WAITING_RIGHT:
 		vx = vy = 0;
 		nx = 1;
@@ -202,6 +286,7 @@ FishBullet::FishBullet()
 void FishBullet::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	CGameObject::Update(dt, coObjects);
+	x += dx;
 }
 
 void FishBullet::Render()
