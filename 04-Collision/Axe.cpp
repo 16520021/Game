@@ -2,6 +2,7 @@
 #include "debug.h"
 #include "Mario.h"
 #include "Goomba.h"
+#include "Boss.h"
 
 CAxe::CAxe()
 {
@@ -49,6 +50,18 @@ void CAxe::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 							{
 								goomba->SetState(GOOMBA_STATE_BURN);
 								mario->point += goomba->point;
+							}
+						}
+					}	
+					if (dynamic_cast<CBoss *>(e->obj))
+					{
+						CBoss *boss = dynamic_cast<CBoss *>(e->obj);
+						if (e->nx == 0)
+						{
+							if (boss->state == BOSS_STATE_ACT)
+							{
+								boss->isHit = true;
+								boss->curHealth -= 1;
 							}
 						}
 					}

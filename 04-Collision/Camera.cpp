@@ -148,9 +148,9 @@ void CCamera::CameraRunStage2(DWORD dt,vector<LPGAMEOBJECT> grid)
 	}
 	else
 	{
-		if (x + width > MAP_LENGTH + 64)
+		if (x + width > MAP_LENGTH )
 		{
-			x = MAP_LENGTH - width + 64;
+			x = MAP_LENGTH - width;
 			return;
 		}
 	}

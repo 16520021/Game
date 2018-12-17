@@ -36,6 +36,8 @@ void CStage2::LoadStage2()
 	textures->Add(ID_FISH_LEFT, L"textures\\fish_left.png", D3DCOLOR_XRGB(255, 0, 255));
 	textures->Add(ID_FISH_RIGHT, L"textures\\fish_right.png", D3DCOLOR_XRGB(255, 0, 255));
 	textures->Add(ID_DROP, L"textures\\drop.png", D3DCOLOR_XRGB(255, 0, 255));
+	textures->Add(ID_BOSS, L"textures\\boss.png", D3DCOLOR_XRGB(255, 0, 255));
+	textures->Add(ID_BOSS_BURN, L"textures\\burning_boss.bmp", D3DCOLOR_XRGB(255, 0, 255));
 
 	CSprites *sprites = CSprites::GetInstance();
 	CAnimations *animations = CAnimations::GetInstance();
@@ -99,6 +101,16 @@ void CStage2::LoadStage2()
 
 	LPDIRECT3DTEXTURE9 texDrop = textures->Get(ID_DROP);	//DROP		
 	sprites->Add(37, 0, 0, 14, 28, texDrop);
+
+	LPDIRECT3DTEXTURE9 texBoss = textures->Get(ID_BOSS);		//BOSS
+	sprites->Add(38, 0, 0, 96, 46, texBoss);
+	sprites->Add(39, 96, 0, 192, 46, texBoss);
+	sprites->Add(40, 192, 0, 288, 46, texBoss);
+
+	LPDIRECT3DTEXTURE9 texBoDie = textures->Get(ID_BOSS_BURN);	//BURNING BOSS
+	sprites->Add(41, 0, 0, 110, 85, texBoDie);
+	sprites->Add(42, 110, 0, 220, 85, texBoDie);
+	sprites->Add(43, 0, 85, 110, 177, texBoDie);
 
 	LPANIMATION ani;
 
@@ -193,6 +205,21 @@ void CStage2::LoadStage2()
 	ani = new CAnimation(100);	//DROP
 	ani->Add(37);
 	animations->Add(25, ani);
+
+	ani = new CAnimation(100);	//BOSS WAITING
+	ani->Add(38);
+	animations->Add(26, ani);
+
+	ani = new CAnimation(100);	//BOSS ACT
+	ani->Add(39);
+	ani->Add(40);
+	animations->Add(27, ani);
+
+	ani = new CAnimation(100);	//BOSS DIE
+	ani->Add(41);
+	ani->Add(42);
+	ani->Add(43);
+	animations->Add(28, ani);
 
 	map = new CTileMap(L"textures\\map1_tiled.PNG",64,64,14,8);
 	map->InitMap("map2.txt", MAP_LENGTH);
@@ -355,6 +382,15 @@ void CStage2::LoadStage2()
 		goomba->SetPosition(50 * 32 + i * 80, 352);
 		goomba->SetBoundingCell(50 * 32 + i * 80, 320);
 		goomba->SetState(GOOMBA_STATE_WALKING_LEFT);
+		int ran = rand() % 1 + 2;
+		if (ran == 1)
+		{
+			CHeart *heart = new CHeart();
+			heart->AddAnimation(903);
+			heart->SetState(HEART_STATE_LIVE);
+			goomba->AddItem(heart);
+			objects.push_back(heart);
+		}
 		objects.push_back(goomba);
 	}
 // ------------BAT SECTION--------------------//
@@ -363,6 +399,14 @@ void CStage2::LoadStage2()
 	bat->AddAnimation(703);
 	bat->SetPosition(99*32, 222);
 	bat->SetStartPoint(222);
+	bat->SetState(BAT_STATE_LIVE);
+	objects.push_back(bat);
+
+	bat = new CBat();
+	bat->AddAnimation(18);
+	bat->AddAnimation(703);
+	bat->SetPosition(100 * 32, 300);
+	bat->SetStartPoint(300);
 	bat->SetState(BAT_STATE_LIVE);
 	objects.push_back(bat);
 // ------------STAIR SECTION------------------//
@@ -408,6 +452,14 @@ void CStage2::LoadStage2()
 	mario->SetWhip(whip);
 	mario->SetPosition(50.0f, 200.0f);
 	mario->SetState(MARIO_STATE_IDLE);
+//-----------BOSS SECTION ---------------//
+	boss = CBoss::GetInstance();
+	boss->AddAnimation(26);
+	boss->AddAnimation(27);
+	boss->AddAnimation(28);
+	boss->SetPosition(4352, 96);
+	boss->SetState(BOSS_STATE_WAITING);
+	objects.push_back(boss);
 //----------- CELL SYSTEM ---------------//
 	cellsSys = new CCells();
 	int numOfCell = MAP_LENGTH / SCREEN_WIDTH;	// vì chiều cao của map = chiều cao view nên không cần mảng 2 chiều 

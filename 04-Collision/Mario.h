@@ -5,7 +5,7 @@
 #include "Axe.h"
 
 
-#define MARIO_WALKING_SPEED		0.1f
+#define MARIO_WALKING_SPEED		0.5f
 //0.1f
 #define MARIO_JUMP_SPEED_Y		0.65f
 #define MARIO_JUMP_DEFLECT_SPEED 0.2f
@@ -43,6 +43,10 @@
 #define MARIO_ANI_HURT_RIGHT				11
 #define MARIO_ANI_HURT_LEFT					12
 #define MARIO_ANI_DIE						13
+#define MARIO_ANI_STAIR_RIGHT				14
+#define MARIO_ANI_STAIR_LEFT				15
+#define MARIO_ANI_STAIR_IDLE_RIGHT			16
+#define MARIO_ANI_STAIR_IDLE_LEFT			17
 
 #define	MARIO_LEVEL_BIG		2
 

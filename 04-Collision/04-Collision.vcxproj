@@ -124,6 +124,7 @@
   <ItemGroup>
     <ClInclude Include="Axe.h" />
     <ClInclude Include="Bat.h" />
+    <ClInclude Include="Boss.h" />
     <ClInclude Include="Candle.h" />
     <ClInclude Include="CastleGround.h" />
     <ClInclude Include="Cell.h" />
@@ -140,6 +141,7 @@
     <ClInclude Include="Goomba.h" />
     <ClInclude Include="HealthBar.h" />
     <ClInclude Include="Heart.h" />
+    <ClInclude Include="HitEffect.h" />
     <ClInclude Include="IntroBat.h" />
     <ClInclude Include="IntroButton.h" />
     <ClInclude Include="IntroMenu.h" />
@@ -161,6 +163,7 @@
   <ItemGroup>
     <ClCompile Include="Axe.cpp" />
     <ClCompile Include="Bat.cpp" />
+    <ClCompile Include="Boss.cpp" />
     <ClCompile Include="Candle.cpp" />
     <ClCompile Include="CastleGround.cpp" />
     <ClCompile Include="Cell.cpp" />
@@ -177,6 +180,7 @@
     <ClCompile Include="Goomba.cpp" />
     <ClCompile Include="HealthBar.cpp" />
     <ClCompile Include="Heart.cpp" />
+    <ClCompile Include="HitEffect.cpp" />
     <ClCompile Include="IntroBat.cpp" />
     <ClCompile Include="IntroButton.cpp" />
     <ClCompile Include="IntroMenu.cpp" />

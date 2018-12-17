@@ -76,6 +76,11 @@ void CStage1::InitStage1()
 
 	sprites->Add(10099, 215, 120, 231, 135, texMario);		// die 
 
+	sprites->Add(10051, 180, 66, 240, 132, texMario);		//upstair right
+	sprites->Add(10052, 252, 66, 300, 132, texMario);
+
+	sprites->Add(10053, 180, 132+2*66, 240, 132+66*3, texMario);		//upstair left
+	sprites->Add(10054, 240, 132+2*66, 300, 132+66*3, texMario);
 
 	sprites->Add(1, 0, 0, 32, 18, textures->Get(2)); //knife right
 	sprites->Add(2, 0, 0, 32, 18, textures->Get(1));//knife left
@@ -109,7 +114,6 @@ void CStage1::InitStage1()
 
 	LPDIRECT3DTEXTURE9 texDisapear = textures->Get(ID_TEX_DIE);//light destroyed
 	sprites->Add(50003, 0, 0, 25, 25, texDisapear);
-	sprites->Add(50004, 25, 25, 32, 64, texDisapear);
 
 	LPDIRECT3DTEXTURE9 texHeart = textures->Get(ID_TEX_HEART);
 	sprites->Add(50005, 0, 0, 32, 49, texHeart);
@@ -196,6 +200,24 @@ void CStage1::InitStage1()
 	ani->Add(10099);
 	animations->Add(599, ani);
 
+	ani = new CAnimation(100);		//walking stair right
+	ani->Add(10051);
+	ani->Add(10052);
+	animations->Add(810, ani);
+
+	ani = new CAnimation(100);		//walking stair left
+	ani->Add(10054);
+	ani->Add(10053);
+	animations->Add(811, ani);
+
+	ani = new CAnimation(100);		//idle stair right
+	ani->Add(10051);
+	animations->Add(812, ani);
+
+	ani = new CAnimation(100);		//idle stair left
+	ani->Add(10054);
+	animations->Add(813, ani);
+
 	ani = new CAnimation(100);		//whip icon
 	ani->Add(40000);
 	animations->Add(900, ani);
@@ -207,7 +229,7 @@ void CStage1::InitStage1()
 
 	ani = new CAnimation(500);		//light destroyed
 	ani->Add(50003);
-	ani->Add(50004);
+	ani->Add(50003);
 	animations->Add(902, ani);
 
 	ani = new CAnimation(100);		//heart
@@ -299,6 +321,11 @@ void CStage1::InitStage1()
 	mario->AddAnimation(803);		//sit atk left
 	mario->AddAnimation(808);		//hurt right
 	mario->AddAnimation(809);		//hurt left
+	mario->AddAnimation(599);		// die
+	mario->AddAnimation(810);		//walking stair right
+	mario->AddAnimation(811);		//walking stair left
+	mario->AddAnimation(812);		//idle stair right
+	mario->AddAnimation(813);		//idle stair left
 
 	mario->SetWhip(whip);
 	mario->SetPosition(50.0f, 0);

@@ -1,6 +1,7 @@
 #include "Status.h"
 #include "Mario.h"
 #include "debug.h"
+#include "Boss.h"
 
 
 CStatus::CStatus(LPDIRECT3DDEVICE9 device)
@@ -63,7 +64,7 @@ void CStatus::DrawStatusBar(float camX,float camY)
 {
 	status = "  SCORE - " + convertScoreFormat(CMario::GetInstance()->point) +"        TIME "+ "time here" +"      STAGE 01"  +"\n" +
 		"\n  PLAYER                                                   - " + convertTwoDigitFormat(CMario::GetInstance()->curHeart) +
-		"\n  ENEMY " + "Boheal";	
+		"\n  ENEMY ";	
 	if (font)
 	{
 		font->DrawTextA(NULL, status.c_str(), -1, &zone, DT_LEFT, D3DCOLOR_XRGB(255, 255, 255));

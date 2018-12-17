@@ -10,6 +10,7 @@
 #include "Stair.h"
 #include "Door.h"
 #include "Fish.h"
+#include "Boss.h"
 
 CMario* CMario::instance = NULL;
 
@@ -112,9 +113,25 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				if (dynamic_cast<CGoomba *>(e->obj))
 				{
 					CGoomba *goomba = dynamic_cast<CGoomba *>(e->obj);
-					if (untouchable == 0)
+					/*if (untouchable == 0)
 					{
 						if (goomba->GetState() != GOOMBA_STATE_DIE)
+						{
+							StartUntouchable();
+							SetState(MARIO_STATE_HURT);
+							isAttacking = false;
+							isHit = true;
+							autoMove = true;
+							curHealth -= 1;
+						}
+					}*/
+				}
+				if (dynamic_cast<CBoss *>(e->obj))
+				{
+					CBoss *boss = dynamic_cast<CBoss *>(e->obj);
+					if (untouchable == 0)
+					{
+						if (boss->GetState() == BOSS_STATE_ACT)
 						{
 							StartUntouchable();
 							SetState(MARIO_STATE_HURT);
@@ -257,6 +274,8 @@ void CMario::Render()
 							ani = MARIO_ANI_SIT_RIGHT;
 						else ani = MARIO_ANI_BIG_IDLE_RIGHT;
 
+						if (isGoingStair == true) ani = MARIO_ANI_STAIR_IDLE_RIGHT;
+
 						if (state == MARIO_STATE_ATK_RIGHT)
 						{
 							attackTime += dt;
@@ -274,6 +293,8 @@ void CMario::Render()
 						if (isSitting == true)
 							ani = MARIO_ANI_SIT_LEFT;
 						else ani = MARIO_ANI_BIG_IDLE_LEFT;
+
+						if (isGoingStair == true) ani = MARIO_ANI_STAIR_IDLE_LEFT;
 
 						if (state == MARIO_STATE_ATK_LEFT)
 						{
@@ -297,6 +318,7 @@ void CMario::Render()
 						ani = MARIO_ANI_ATK_RIGHT;
 						attackTime += dt;
 					}
+					if (isGoingStair == true) ani = MARIO_ANI_STAIR_RIGHT;
 				}
 				else
 				{
@@ -306,6 +328,8 @@ void CMario::Render()
 						ani = MARIO_ANI_ATK_LEFT;
 						attackTime += dt;
 					}
+					if (isGoingStair == true) ani = MARIO_ANI_STAIR_LEFT;
+
 				}
 				if (attackTime >= 200)
 				{
@@ -401,6 +425,7 @@ void CMario::SetState(int state)
 		nx = -1;
 		break;
 	case MARIO_STATE_JUMP: 
+		isGoingStair = false;
 		vy = -MARIO_JUMP_SPEED_Y;
 	case MARIO_STATE_IDLE: 
 		if (isGoingStair == true) vy = 0; //idle on stair

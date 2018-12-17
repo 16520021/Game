@@ -148,11 +148,21 @@ void CFish::Render()
 			if (state != FISH_STATE_WAITING_LEFT && state != FISH_STATE_WAITING_RIGHT && state != FISH_STATE_HIDE)
 			{
 				int ani;
+				if (GetState() == FISH_STATE_BURN)
+				{
+					ani = FISH_ANI_BURN;
+					effect = new CHitEffect();
+					collision = false;
+					if (animations[FISH_ANI_BURN]->GetCurrentFrame() == 3)
+					{
+						animations[FISH_ANI_BURN]->SetCurrentFrame(-1);
+						SetState(FISH_STATE_DIE);
+					}
+				}
 				if (state == FISH_STATE_DIE)
 				{
 					ani = FISH_ANI_DIE; 
 					isHit = true;
-					isActive = false;
 				}
 				else
 				{
@@ -201,6 +211,13 @@ void CFish::Render()
 					drop[i]->Render();
 				}
 			}
+		}
+		else
+		{
+			effect->SetPosition(this->x, this->y);
+			effect->Render();
+			if(effect->animations[0]->GetCurrentFrame == 1)
+				isActive = false;
 		}
 	}
 }
@@ -285,13 +302,17 @@ FishBullet::FishBullet()
 
 void FishBullet::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	CGameObject::Update(dt, coObjects);
-	x += dx;
+	if (isHit == false)
+	{
+		CGameObject::Update(dt, coObjects);
+		x += dx;
+	}
 }
 
 void FishBullet::Render()
 {
-	animations[0]->Render(x, y);
+	if(isHit == false)
+		animations[0]->Render(x, y);
 }
 
 

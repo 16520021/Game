@@ -9,6 +9,7 @@
 #include "Cross.h"
 #include "Bat.h"
 #include "Fish.h"
+#include "Boss.h"
 Whip::Whip()
 {
 	tag = 1;
@@ -76,6 +77,18 @@ void Whip::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 							knife->isHit = true;
 					}
 				}
+				if (dynamic_cast<CBoss *>(e->obj))
+				{
+					CBoss *boss = dynamic_cast<CBoss *>(e->obj);
+					if (e->nx == 0)
+					{
+						if (boss->state == BOSS_STATE_ACT)
+						{
+							boss->isHit = true;
+							boss->curHealth -= 1;
+						}
+					}
+				}
 				if (dynamic_cast<WhipIcon *>(e->obj))
 				{
 					WhipIcon *wicon = dynamic_cast<WhipIcon *>(e->obj);
@@ -113,11 +126,19 @@ void Whip::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 					CFish *fish = dynamic_cast<CFish *>(e->obj);
 					if (e->nx == 0)
 					{
-						if (fish->state != FISH_STATE_DIE)
+						if (fish->state != FISH_STATE_BURN)
 						{
-							fish->SetState(FISH_STATE_DIE);
+							fish->SetState(FISH_STATE_BURN);
 							mario->point += fish->point;
 						}
+					}
+				}
+				if (dynamic_cast<FishBullet *>(e->obj))
+				{
+					FishBullet *fish = dynamic_cast<FishBullet *>(e->obj);
+					if (e->nx == 0)
+					{
+						fish->isHit = true;
 					}
 				}
 				if (dynamic_cast<CBat *>(e->obj))

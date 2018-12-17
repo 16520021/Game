@@ -1,6 +1,6 @@
 #include "HealthBar.h"
 #include "Mario.h"
-
+#include "Boss.h"
 
 
 HealthBar::HealthBar()
@@ -30,6 +30,30 @@ void HealthBar::Render(float camX,float camY)
 		if (curHealth == 0)
 		{
 			health->SetPosition(x + 90 + i * 8, y + 40);
+		}
+		else health->SetPosition(x + i * 10, y);
+		health->Render();
+	}
+	CBoss* boss = CBoss::GetInstance();
+	curHealth = boss->curHealth;
+	x = camX, y = camY;
+	for (int i = 0; i < curHealth; i++)
+	{
+		Health* health = new Health();
+		health->SetState(HEALTH_STATE_LIVE);
+		health->SetPosition(x + 90 + i * 8, y + 43+25);
+		if (i == curHealth - 1)
+			health->GetPosition(x, y);
+		health->Render();
+	}
+
+	for (int i = 0; i < MAX_HEALTH - curHealth; i++)
+	{
+		Health* health = new Health();
+		health->SetState(HEALTH_STATE_DIE);
+		if (curHealth == 0)
+		{
+			health->SetPosition(x + 90 + i * 8, y + 43+25);
 		}
 		else health->SetPosition(x + i * 10, y);
 		health->Render();

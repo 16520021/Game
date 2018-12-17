@@ -1,6 +1,8 @@
 #pragma once
 #include "GameObject.h"
 #include "Drop.h"
+#include "HitEffect.h"
+
 #define FISH_STATE_JUMP_RIGHT		100
 #define FISH_STATE_WALKING_RIGHT	200
 #define FISH_STATE_WALKING_LEFT		300
@@ -11,12 +13,14 @@
 #define FISH_STATE_WAITING_LEFT		800
 #define FISH_STATE_WAITING_RIGHT	900
 #define FISH_STATE_HIDE				1000
+#define	FISH_STATE_BURN				1100
 	
 #define FISH_ANI_WALKING_RIGHT		0
 #define FISH_ANI_WALKING_LEFT		1
 #define FISH_ANI_ATK_RIGHT			2
 #define FISH_ANI_ATK_LEFT			3
 #define FISH_ANI_DIE				4
+#define FISH_ANI_BURN				5
 
 #define FISH_JUMP_SPEED				0.5f
 #define FISH_GRAVITY				0.002f
@@ -48,6 +52,7 @@ class CFish :
 	LPGAMEOBJECT heart;
 	DWORD attackTime;
 	int attackStart;
+	CHitEffect *effect;
 	int hitWater;
 	vector<CDrop *> drop;
 public:

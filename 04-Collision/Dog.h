@@ -13,8 +13,8 @@
 #define DOG_ANI_SLEEP				4
 
 #define DOG_GRAVITY					0.002f
-#define DOG_JUMP_SPEED				1.0f
-#define DOG_WALKING_SPEED			1.0f
+#define DOG_JUMP_SPEED				0.5f
+#define DOG_WALKING_SPEED			0.5f
 #define DOG_BBOX_WIDTH				64
 #define DOG_BBOX_HEIGHT				32
 class Dog :

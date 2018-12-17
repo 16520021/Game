@@ -18,6 +18,7 @@
 #include "Status.h"
 #include "Door.h"
 #include "Cross.h"
+#include "Boss.h"
 #include "Bat.h"
 #include "SubStage.h"
 
@@ -41,6 +42,8 @@
 #define ID_FISH_LEFT		26
 #define ID_FISH_RIGHT		27
 #define ID_DROP				28
+#define ID_BOSS				29
+#define ID_BOSS_BURN		31
 #define BACKGROUND_COLOR	D3DCOLOR_XRGB(0,0,0)
 #define FLASH_TIMES			10
 #define GOING_DOWN_POINT_RIGHT_X    104 * 32
@@ -66,6 +69,7 @@ class CStage2
 	CHeart *heart;
 	CCross *cross;
 	CBat *bat;
+	CBoss *boss;
 	SubStage *subStage;
 	vector<LPGAMEOBJECT> objects;
 	vector<LPGAMEOBJECT> coObjects;
