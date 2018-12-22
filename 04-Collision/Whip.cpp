@@ -86,7 +86,9 @@ void Whip::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 						{
 							boss->isHit = true;
 							boss->curHealth -= 1;
+							if (boss->curHealth - 1 <= 0) boss->SetState(BOSS_STATE_DIE);
 						}
+
 					}
 				}
 				if (dynamic_cast<WhipIcon *>(e->obj))

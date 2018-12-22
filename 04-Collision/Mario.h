@@ -5,7 +5,7 @@
 #include "Axe.h"
 
 
-#define MARIO_WALKING_SPEED		0.5f
+#define MARIO_WALKING_SPEED		0.1f
 //0.1f
 #define MARIO_JUMP_SPEED_Y		0.65f
 #define MARIO_JUMP_DEFLECT_SPEED 0.2f
@@ -28,6 +28,7 @@
 #define MARIO_STATE_WALKING_DWNSTAIR_LEFT	902
 #define MARIO_STATE_WALKING_DWNSTAIR_RIGHT	903
 #define MARIO_STATE_HURT					1000
+#define MARIO_STATE_INVI					1100
 
 #define MARIO_ANI_BIG_IDLE_RIGHT			0
 #define MARIO_ANI_BIG_IDLE_LEFT				1
@@ -47,8 +48,12 @@
 #define MARIO_ANI_STAIR_LEFT				15
 #define MARIO_ANI_STAIR_IDLE_RIGHT			16
 #define MARIO_ANI_STAIR_IDLE_LEFT			17
-
-#define	MARIO_LEVEL_BIG		2
+#define MARIO_ANI_INVI_IDLE_RIGHT			18
+#define MARIO_ANI_INVI_IDLE_LEFT			19
+#define MARIO_ANI_INVI_WALKING_RIGHT		20
+#define MARIO_ANI_INVI_WALKING_LEFT			21
+#define MARIO_ANI_INVI_ATK_RIGHT			22
+#define MARIO_ANI_INVI_ATK_LEFT				23
 
 #define MARIO_BIG_BBOX_WIDTH  40
 #define MARIO_BIG_BBOX_HEIGHT 63
@@ -60,20 +65,24 @@
 
 class CMario : public CGameObject
 {
-	int level;
 	int untouchable;
 	DWORD untouchable_start;
 	DWORD attackTime;
+	DWORD invisibleTime;
+	DWORD outInvisibleTime;
 	Whip *mainWeap;
 	CAxe *axe;
 	CKnife *knife;			//cach lam khi chi co 1 sub weapon
 	static CMario* instance;
 public:
 	bool isAttacking;
+	float time;
 	bool reachCheckPoint;
+	POINT *checkPoint;
 	int curHeart;
-	int curHealth;
 	int subWeapInUse;
+	bool isInvisible;
+	bool outInvisible;
 	bool isSitting;
 	bool SubWeapUsed;
 	bool autoMove;			//disable keyboard
@@ -82,16 +91,23 @@ public:
 	bool goingUp1;
 	bool goingDown2;
 	bool goingUp2;
+	bool scoredTime;
 	CMario() : CGameObject()
 	{
-		level = MARIO_LEVEL_BIG;
+		scoredTime = false;
 		untouchable = 0;
 		attackTime = 0;
+		checkPoint = NULL;
+		invisibleTime = 0;
+		outInvisibleTime = 0;
 		isAttacking = false;
 		isSitting = false;
+		time = 600;
 		SubWeapUsed = false;
 		reachCheckPoint = false;
 		autoMove = false;
+		isInvisible = false;
+		outInvisible = false;
 		goingDown1 = false;
 		goingDown2 = false;
 		goingUp1 = false;
@@ -115,7 +131,6 @@ public:
 	void SetWhip(Whip *whip) { mainWeap = whip; };
 	LPGAMEOBJECT GetSubWeapon(int tag) { if (knife != NULL && tag == knife->tag) return knife; else if ( axe != NULL && tag == axe->tag) return axe; else return NULL; };
 	Whip *GetWhip() { return mainWeap; };
-	void SetLevel(int l) { level = l; }
 	void StartUntouchable() { untouchable = 1; untouchable_start = GetTickCount(); };
 
 	virtual void GetBoundingBox(float &left, float &top, float &right, float &bottom);

@@ -38,6 +38,8 @@ void CStage2::LoadStage2()
 	textures->Add(ID_DROP, L"textures\\drop.png", D3DCOLOR_XRGB(255, 0, 255));
 	textures->Add(ID_BOSS, L"textures\\boss.png", D3DCOLOR_XRGB(255, 0, 255));
 	textures->Add(ID_BOSS_BURN, L"textures\\burning_boss.bmp", D3DCOLOR_XRGB(255, 0, 255));
+	textures->Add(ID_VASE, L"textures\\vase.bmp", D3DCOLOR_XRGB(255, 0, 255));
+	textures->Add(ID_SPHERE, L"textures\\sphere.png", D3DCOLOR_XRGB(255, 0, 255));
 
 	CSprites *sprites = CSprites::GetInstance();
 	CAnimations *animations = CAnimations::GetInstance();
@@ -112,6 +114,13 @@ void CStage2::LoadStage2()
 	sprites->Add(42, 110, 0, 220, 85, texBoDie);
 	sprites->Add(43, 0, 85, 110, 177, texBoDie);
 
+	LPDIRECT3DTEXTURE9 texVase = textures->Get(ID_VASE);	//VASE
+	sprites->Add(44, 0, 0, 64, 64, texVase);
+
+	LPDIRECT3DTEXTURE9 texSphere = textures->Get(ID_SPHERE);		//SPHERE
+	sprites->Add(45, 0, 0, 28, 32, texSphere);
+	sprites->Add(46, 28, 0, 56, 32, texSphere);
+
 	LPANIMATION ani;
 
 
@@ -184,7 +193,7 @@ void CStage2::LoadStage2()
 	ani->Add(30);
 	animations->Add(20, ani);
 
-	ani = new CAnimation(300); //FISH WALKING RIGHT
+	ani = new CAnimation(100); //FISH WALKING RIGHT
 	ani->Add(31);
 	ani->Add(32);
 	animations->Add(21, ani);
@@ -215,11 +224,20 @@ void CStage2::LoadStage2()
 	ani->Add(40);
 	animations->Add(27, ani);
 
-	ani = new CAnimation(100);	//BOSS DIE
+	ani = new CAnimation(300);	//BOSS DIE
 	ani->Add(41);
 	ani->Add(42);
 	ani->Add(43);
 	animations->Add(28, ani);
+
+	ani = new CAnimation(100);		//VASE
+	ani->Add(44);
+	animations->Add(29, ani);
+
+	ani = new CAnimation(100);
+	ani->Add(45);
+	ani->Add(46);
+	animations->Add(30, ani);
 
 	map = new CTileMap(L"textures\\map1_tiled.PNG",64,64,14,8);
 	map->InitMap("map2.txt", MAP_LENGTH);
@@ -227,6 +245,15 @@ void CStage2::LoadStage2()
 	//------------- DOOR SECTION --------------------//
 	door = new CDoor();
 	door->SetPosition(81 * 32 + 16, 126);
+	door->SetState(DOOR_STATE_CLOSE);
+	door->AddAnimation(14);
+	door->AddAnimation(15);
+	door->AddAnimation(16);
+	objects.push_back(door);
+	coWithCam.push_back(door);
+
+	door = new CDoor();
+	door->SetPosition(113 * 32 + 16, 126);
 	door->SetState(DOOR_STATE_CLOSE);
 	door->AddAnimation(14);
 	door->AddAnimation(15);
@@ -255,6 +282,7 @@ void CStage2::LoadStage2()
 		objects.push_back(heart);
 		objects.push_back(candle);
 	}
+
 	candle = new CCandle();
 	candle->SetState(CANDLE_STATE_LIVE);
 	candle->SetPosition(78 * 32,158);
@@ -264,6 +292,17 @@ void CStage2::LoadStage2()
 	cross->SetPosition(78 * 32, 158);
 	candle->AddItem(cross);
 	objects.push_back(cross);
+	objects.push_back(candle);
+
+	candle = new CCandle();
+	candle->SetState(CANDLE_STATE_LIVE);
+	candle->SetPosition(123 * 32, 160);
+	vase = new CVase();
+	vase->AddAnimation(29);
+	vase->SetState(VASE_STATE_LIVE);
+	vase->SetPosition(123*32, 192);
+	candle->AddItem(vase);
+	objects.push_back(vase);
 	objects.push_back(candle);
 // --------------GROUND SECTION---------------//	
 	for (int i = 0; i < 84; i++)
@@ -302,7 +341,7 @@ void CStage2::LoadStage2()
 		ground->SetPosition(73 * 32 + i * 32, 222);
 		objects.push_back(ground);
 	}
-	for (int i = 0; i < 13; i++)
+	for (int i = 0; i < 9; i++)
 	{
 		ground = new CCastleGround();
 		ground->SetPosition(108 * 32 + i * 32, 222);
@@ -317,13 +356,13 @@ void CStage2::LoadStage2()
 	for (int i = 0; i < 3; i++)
 	{
 		ground = new CCastleGround();
-		ground->SetPosition(90 * 32 + i * 32, 286);
+		ground->SetPosition(104 * 32 + i * 32, 286);
 		objects.push_back(ground);
 	}
-	for (int i = 0; i < 6; i++)
+	for (int i = 0; i < 5; i++)
 	{
 		ground = new CCastleGround();
-		ground->SetPosition(122 * 32 + i * 32, 286);
+		ground->SetPosition(116 * 32 + i * 32, 286);
 		objects.push_back(ground);
 	}
 	for (int i = 0; i < 5; i++)
@@ -335,13 +374,19 @@ void CStage2::LoadStage2()
 	for (int i = 0; i < 5; i++)
 	{
 		ground = new CCastleGround();
-		ground->SetPosition(98 * 32, 384 + 32 * i);
+		ground->SetPosition(98 * 32, 384 - 32 * i);
 		objects.push_back(ground);
 	}
 	for (int i = 0; i < 6; i++)
 	{
 		ground = new CCastleGround();
 		ground->SetPosition(98 * 32 + i*32,  254);
+		objects.push_back(ground);
+	}
+	for (int i = 0; i < 5; i++)
+	{
+		ground = new CCastleGround();
+		ground->SetPosition(113*32, 384 - 32 * i);
 		objects.push_back(ground);
 	}
 // ------------DOG SECTION--------------------//
@@ -382,15 +427,30 @@ void CStage2::LoadStage2()
 		goomba->SetPosition(50 * 32 + i * 80, 352);
 		goomba->SetBoundingCell(50 * 32 + i * 80, 320);
 		goomba->SetState(GOOMBA_STATE_WALKING_LEFT);
-		int ran = rand() % 1 + 2;
-		if (ran == 1)
-		{
-			CHeart *heart = new CHeart();
-			heart->AddAnimation(903);
-			heart->SetState(HEART_STATE_LIVE);
-			goomba->AddItem(heart);
-			objects.push_back(heart);
-		}
+		CHeart *heart = new CHeart();
+		heart->AddAnimation(903);
+		heart->SetState(HEART_STATE_LIVE);
+		heart->SetPosition(goomba->x, goomba->y);
+		goomba->AddItem(heart);
+		objects.push_back(heart);
+		objects.push_back(goomba);
+	}
+	for (int i = 0; i < 3; i++)
+	{
+		goomba = new CGoomba();
+		goomba->AddAnimation(702);
+		goomba->AddAnimation(701);
+		goomba->AddAnimation(703);
+		goomba->AddAnimation(19);
+		goomba->SetPosition(4096 + i*32, 352);
+		goomba->SetBoundingCell(4096 + i*32, 320);
+		goomba->SetState(GOOMBA_STATE_WALKING_LEFT);
+		CHeart *heart = new CHeart();
+		heart->AddAnimation(903);
+		heart->SetState(HEART_STATE_LIVE);
+		heart->SetPosition(goomba->x, goomba->y);
+		goomba->AddItem(heart);
+		objects.push_back(heart);
 		objects.push_back(goomba);
 	}
 // ------------BAT SECTION--------------------//
@@ -441,11 +501,38 @@ void CStage2::LoadStage2()
 	objects.push_back(stair->start1);
 	objects.push_back(stair->start);
 	objects.push_back(stair->stop);
+
+	stair = new CStair();
+	stair->start->SetPosition(93 * 32, 286);
+	stair->start1->SetPosition(97 * 32, 416);
+	stair->stop->SetPosition(93 * 32, 219);
+	objects.push_back(stair->start1);
+	objects.push_back(stair->start);
+	objects.push_back(stair->stop);
+
+	stair = new CStair();
+	stair->start->SetPosition(107 * 32, 286);
+	stair->start1->SetPosition(111 * 32, 416);
+	objects.push_back(stair->start1);
+	objects.push_back(stair->start);
+
 	stair = new CStair();
 	stair->start->SetPosition(84 * 32, 416);
 	stair->start1->SetPosition(104 * 32, 416);
 	objects.push_back(stair->start);
 	objects.push_back(stair->start1);
+
+	stair = new CStair();
+	stair->start->SetPosition(117 * 32, 222);
+	stair->start1->SetPosition(120 * 32, 286);
+	objects.push_back(stair->start1);
+	objects.push_back(stair->start);
+
+	stair = new CStair();
+	stair->start->SetPosition(125 * 32, 286);
+	stair->start1->SetPosition(130 * 32, 416);
+	objects.push_back(stair->start1);
+	objects.push_back(stair->start);
 //------------MARIO SECTION --------------//
 	mario = CMario::GetInstance();
 	mario->autoMove = false;
@@ -459,7 +546,13 @@ void CStage2::LoadStage2()
 	boss->AddAnimation(28);
 	boss->SetPosition(4352, 96);
 	boss->SetState(BOSS_STATE_WAITING);
+	sphere = new CSphere();
+	sphere->AddAnimation(30);
+	sphere->SetState(SPHERE_STATE_LIVE);
+	boss->SetItem(sphere);
+	sphere->SetPosition(boss->x, boss->y);
 	objects.push_back(boss);
+	objects.push_back(sphere);
 //----------- CELL SYSTEM ---------------//
 	cellsSys = new CCells();
 	int numOfCell = MAP_LENGTH / SCREEN_WIDTH;	// vì chiều cao của map = chiều cao view nên không cần mảng 2 chiều 
@@ -499,11 +592,12 @@ void CStage2::Update(DWORD dt)
 	else if (mario->goingUp2 == true)
 	{
 		mario->SetPosition(GOING_DOWN_POINT_RIGHT_X, GOING_DOWN_POINT_RIGHT_Y);
-		game->GetInstance()->cam->SetPosition(GOING_DOWN_POINT_RIGHT_X - 50, 0);
+		game->GetInstance()->cam->SetPosition(GOING_DOWN_POINT_RIGHT_X - 125, 0);
 		mario->isGoingStair = false;
 		mario->goingUp2 = false;
 	}
-	game->GetInstance()->cam->CameraRunStage2(dt, coWithCam);
+	if(boss->GetState() != BOSS_STATE_ACT)
+		game->GetInstance()->cam->CameraRunStage2(dt, coWithCam);
 	int lastCellId = game->GetInstance()->cam->lastCellCollided;
 	if (lastCellId >= 0 && lastCellId <= cellsSys->LastCellId())
 	{
@@ -548,7 +642,7 @@ void CStage2::Update(DWORD dt)
 	{
 		for (int i = 0; i < objects.size(); i++)
 		{
-			if (objects[i]->tag == 7)
+			if (objects[i]->tag == 7 && objects[i]->x <= mario->checkPoint->x)
 				objects[i]->SetState(GOOMBA_STATE_BURN);
 		}
 	}
@@ -568,8 +662,10 @@ void CStage2::Update(DWORD dt)
 		SubStage *sub = SubStage::GetInstance();
 		sub->isRunning = true;
 	}
+	if (mario->time == 0 && mario->curHeart == 0) isRunning = false;
 	mario->Update(dt, &coObjects);
-	game->GetInstance()->cam->UpdatePosition();
+	if(boss->GetState() != BOSS_STATE_ACT)
+		game->GetInstance()->cam->UpdatePosition();
 }
 
 void CStage2::Render()

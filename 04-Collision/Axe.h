@@ -3,8 +3,8 @@
 #define AXE_BBOX_WIDTH		30
 #define AXE_BBOX_HEIGHT		28
 #define AXE_GRAVITY			0.001f
-#define AXE_MS_X			0.3f
-#define AXE_MS_Y			0.5f
+#define AXE_MS_X			0.2f
+#define AXE_MS_Y			0.55f
 #define AXE_STATE_RIGHT		100
 #define AXE_STATE_LEFT		200
 class CAxe :

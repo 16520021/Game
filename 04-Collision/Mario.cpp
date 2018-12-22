@@ -11,6 +11,9 @@
 #include "Door.h"
 #include "Fish.h"
 #include "Boss.h"
+#include "Vase.h"
+#include "Bat.h"
+#include "Sphere.h"
 
 CMario* CMario::instance = NULL;
 
@@ -27,7 +30,26 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
 	// Calculate dx, dy 
 	CGameObject::Update(dt, coObjects);
-
+	if(scoredTime == false)
+		time = time - 0.02;
+	else
+	{
+		autoMove = true;
+		if (time > 0)
+		{
+			time = time - 10;
+			point += 10;
+		}
+		else
+		{
+			time = 0;
+			if (curHeart > 0)
+			{
+				curHeart -= 1;
+				point += 50;
+			}
+		}
+	}
 	if (coObjects->size() != 0)
 	{
 		// Simple fall down
@@ -40,7 +62,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		for (int i = 0; i < coObjects->size(); i++)
 		{
 			if (coObjects->at(i)->tag != 2 && coObjects->at(i)->tag != 101 && coObjects->at(i)->tag != 5
-				&& coObjects->at(i)->tag != 4 && coObjects->at(i)->tag != 9 && coObjects->at(i)->tag != 6)
+				&& coObjects->at(i)->tag != 4 && coObjects->at(i)->tag != 9 && coObjects->at(i)->tag != 6 && coObjects->at(i)->tag != 20)
 			{
 				filterCoObjs.push_back(coObjects->at(i));
 			}
@@ -64,6 +86,11 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				if (coObjects->at(i)->isHit == true)
 					filterCoObjs.push_back(coObjects->at(i));
 			}
+			else if (coObjects->at(i)->tag == 20)
+			{
+				if (coObjects->at(i)->isHit == true)
+					filterCoObjs.push_back(coObjects->at(i));
+			}
 		}
 
 		coEvents.clear();
@@ -82,6 +109,21 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			if (isHit == true) { isHit = false; autoMove = false; };
 		}
 
+		if (isInvisible == true)
+		{
+			if (GetTickCount() - invisibleTime > 8000)
+			{
+				isInvisible = false;
+				outInvisible = true;
+				invisibleTime = 0;
+				outInvisibleTime = GetTickCount();
+			}
+		}
+		if (outInvisible == true)
+		{
+			if (GetTickCount() - outInvisibleTime > 3000)
+				outInvisible = false;
+		}
 		// No collision occured, proceed normally
 		if (coEvents.size() == 0)
 		{
@@ -126,6 +168,22 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 						}
 					}*/
 				}
+				if (dynamic_cast<CBat *>(e->obj))
+				{
+					CBat *bat = dynamic_cast<CBat *>(e->obj);
+					if (untouchable == 0)
+					{
+						if (bat->GetState() != GOOMBA_STATE_DIE)
+						{
+							StartUntouchable();
+							SetState(MARIO_STATE_HURT);
+							isAttacking = false;
+							isHit = true;
+							autoMove = true;
+							curHealth -= 1;
+						}
+					}
+				}
 				if (dynamic_cast<CBoss *>(e->obj))
 				{
 					CBoss *boss = dynamic_cast<CBoss *>(e->obj);
@@ -165,12 +223,30 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 						heart->SetState(HEART_STATE_DESTROYED);
 					this->curHeart += 15;
 				}
+				if (dynamic_cast<CSphere *>(e->obj))
+				{
+					CSphere *sphere = dynamic_cast<CSphere *>(e->obj);
+					if (sphere->GetState() != SPHERE_STATE_DESTROYED)
+						sphere->SetState(SPHERE_STATE_DESTROYED);
+					this->scoredTime = true;
+				}
+				if (dynamic_cast<CVase *>(e->obj))
+				{
+					CVase *vase = dynamic_cast<CVase *>(e->obj);
+					if (vase->GetState() != VASE_STATE_DESTROYED)
+						vase->SetState(VASE_STATE_DESTROYED);
+					this->SetState(MARIO_STATE_INVI);
+					invisibleTime = GetTickCount();
+				}
 				if (dynamic_cast<CCross *>(e->obj))
 				{
 					CCross *cross = dynamic_cast<CCross *>(e->obj);
-					if (cross->GetState() != HEART_STATE_DESTROYED)
-						cross->SetState(HEART_STATE_DESTROYED);
+					if (cross->GetState() != CROSS_STATE_DESTROYED)
+						cross->SetState(CROSS_STATE_DESTROYED);
 					this->reachCheckPoint = true;
+					checkPoint = new POINT();
+					checkPoint->x = cross->x;
+					checkPoint->y = cross->y;
 				}
 				if (dynamic_cast<CKnifeIcon *>(e->obj))
 				{
@@ -244,8 +320,17 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		mainWeap->Update(dt, coObjects);
 	if (knife != NULL && subWeapInUse == knife->tag)
 		knife->Update(dt, coObjects);
-	if (axe != NULL && subWeapInUse == axe->tag)
+	if (axe != NULL && subWeapInUse == axe->tag && SubWeapUsed == true)
+	{
+		if (axe->isFlying == false)
+		{
+			if (nx > 0)
+				axe->SetState(AXE_STATE_RIGHT);
+			else if (nx < 0)
+				axe->SetState(AXE_STATE_LEFT);
+		}
 		axe->Update(dt, coObjects);
+	}
 }
 
 void CMario::Render()
@@ -264,7 +349,7 @@ void CMario::Render()
 		}
 		else
 		{
-			if (level == MARIO_LEVEL_BIG)
+			if (isInvisible == false)
 			{
 				if (vx == 0)										// not moving
 				{
@@ -272,6 +357,8 @@ void CMario::Render()
 					{
 						if (isSitting == true)
 							ani = MARIO_ANI_SIT_RIGHT;
+						else if (outInvisible == true)
+							ani = MARIO_ANI_INVI_IDLE_RIGHT;
 						else ani = MARIO_ANI_BIG_IDLE_RIGHT;
 
 						if (isGoingStair == true) ani = MARIO_ANI_STAIR_IDLE_RIGHT;
@@ -281,7 +368,9 @@ void CMario::Render()
 							attackTime += dt;
 							if (isSitting == false)
 							{
-								ani = MARIO_ANI_ATK_RIGHT;
+								if (outInvisible == false)
+									ani = MARIO_ANI_ATK_RIGHT;
+								else ani = MARIO_ANI_INVI_ATK_RIGHT;
 							}
 							else ani = MARIO_ANI_SIT_ATK_RIGHT;
 						}
@@ -292,6 +381,8 @@ void CMario::Render()
 					{
 						if (isSitting == true)
 							ani = MARIO_ANI_SIT_LEFT;
+						else if (outInvisible == true)
+							ani = MARIO_ANI_INVI_IDLE_LEFT;
 						else ani = MARIO_ANI_BIG_IDLE_LEFT;
 
 						if (isGoingStair == true) ani = MARIO_ANI_STAIR_IDLE_LEFT;
@@ -301,7 +392,9 @@ void CMario::Render()
 							attackTime += dt;
 							if (isSitting == false)
 							{
-								ani = MARIO_ANI_ATK_LEFT;
+								if (outInvisible == false)
+									ani = MARIO_ANI_ATK_LEFT;
+								else ani = MARIO_ANI_INVI_ATK_LEFT;
 							}
 							else ani = MARIO_ANI_SIT_ATK_LEFT;
 						}
@@ -311,21 +404,30 @@ void CMario::Render()
 				}
 				else if (vx > 0)								// moving
 				{
-					ani = MARIO_ANI_BIG_WALKING_RIGHT;
-	
+					if (outInvisible == false)
+						ani = MARIO_ANI_BIG_WALKING_RIGHT;
+					else ani = MARIO_ANI_INVI_WALKING_RIGHT;
+
+
 					if (state == MARIO_STATE_ATK_RIGHT)
 					{
-						ani = MARIO_ANI_ATK_RIGHT;
+						if (outInvisible == false)
+							ani = MARIO_ANI_ATK_RIGHT;
+						else ani = MARIO_ANI_INVI_ATK_RIGHT;
 						attackTime += dt;
 					}
 					if (isGoingStair == true) ani = MARIO_ANI_STAIR_RIGHT;
 				}
 				else
 				{
-					ani = MARIO_ANI_BIG_WALKING_LEFT;
+					if (outInvisible == false)
+						ani = MARIO_ANI_BIG_WALKING_LEFT;
+					else ani = MARIO_ANI_INVI_WALKING_LEFT;
 					if (state == MARIO_STATE_ATK_LEFT)
 					{
-						ani = MARIO_ANI_ATK_LEFT;
+						if (outInvisible == false)
+							ani = MARIO_ANI_ATK_LEFT;
+						else ani = MARIO_ANI_INVI_ATK_LEFT;
 						attackTime += dt;
 					}
 					if (isGoingStair == true) ani = MARIO_ANI_STAIR_LEFT;
@@ -337,19 +439,29 @@ void CMario::Render()
 					if (nx > 0)
 					{
 						if (isSitting == false)
-							ani = MARIO_ANI_BIG_IDLE_RIGHT;
+						{
+							if (outInvisible == false)
+								ani = MARIO_ANI_BIG_IDLE_RIGHT;
+							else ani = MARIO_ANI_INVI_IDLE_RIGHT;
+						}
 						else ani = MARIO_ANI_SIT_RIGHT;
 					}
 					else
 					{
 						if (isSitting == false)
-							ani = MARIO_ANI_BIG_IDLE_LEFT;
+						{
+							if (outInvisible == false)
+								ani = MARIO_ANI_BIG_IDLE_LEFT;
+							else ani = MARIO_ANI_INVI_IDLE_LEFT;
+						}
 						else ani = MARIO_ANI_SIT_LEFT;
 					}
 					animations[MARIO_ANI_ATK_RIGHT]->SetCurrentFrame(-1);
 					animations[MARIO_ANI_ATK_LEFT]->SetCurrentFrame(-1);
 					animations[MARIO_ANI_SIT_ATK_LEFT]->SetCurrentFrame(-1);
 					animations[MARIO_ANI_SIT_ATK_RIGHT]->SetCurrentFrame(-1);
+					animations[MARIO_ANI_INVI_ATK_LEFT]->SetCurrentFrame(-1);
+					animations[MARIO_ANI_INVI_ATK_RIGHT]->SetCurrentFrame(-1);
 					mainWeap->animations[WHIP_ANI_ATK_LEFT]->SetCurrentFrame(-1);
 					mainWeap->animations[WHIP_ANI_ATK_RIGHT]->SetCurrentFrame(-1);
 					mainWeap->animations[WHIP_ANI_ATK_LEFT_1]->SetCurrentFrame(-1);
@@ -362,50 +474,49 @@ void CMario::Render()
 	}
 	int alpha = 255;
 	if (untouchable) alpha = 128;
-	animations[ani]->Render(x, y,alpha);
-	RenderBoundingBox();
-	if (mainWeap != NULL && isAttacking == true && SubWeapUsed == false)
+	if (isInvisible == false)
 	{
-		float posX, posY;
-		GetPosition(posX, posY);
-		if (nx > 0)
+		animations[ani]->Render(x, y, alpha);
+		RenderBoundingBox();
+		if (mainWeap != NULL && isAttacking == true && SubWeapUsed == false)
 		{
-			mainWeap->SetState(WHIP_STATE_RIGHT);
-			if (isSitting == false)
-				mainWeap->SetPosition(posX - 28, posY + 15);
-			else
-				mainWeap->SetPosition(posX - 28, posY + 26);
-		}
-		else
-		{
-			mainWeap->SetState(WHIP_STATE_LEFT);
-			if (isSitting == false)
-				mainWeap->SetPosition(posX-70, posY+12);
-			else
-				mainWeap->SetPosition(posX-70 , posY + 20);
-		}
-		mainWeap->Render();
-	}
-	if (this->knife != NULL)												//Knife used
-	{
-		if (SubWeapUsed == true && subWeapInUse == knife->tag)
-		{
+			float posX, posY;
+			GetPosition(posX, posY);
 			if (nx > 0)
-				knife->SetState(KNIFE_STATE_RIGHT);
+			{
+				mainWeap->SetState(WHIP_STATE_RIGHT);
+				if (isSitting == false)
+					mainWeap->SetPosition(posX - 28, posY + 15);
+				else
+					mainWeap->SetPosition(posX - 28, posY + 26);
+			}
 			else
-				knife->SetState(KNIFE_STATE_LEFT);
-			knife->Render();
+			{
+				mainWeap->SetState(WHIP_STATE_LEFT);
+				if (isSitting == false)
+					mainWeap->SetPosition(posX - 70, posY + 12);
+				else
+					mainWeap->SetPosition(posX - 70, posY + 20);
+			}
+			mainWeap->Render();
 		}
-	}
-	if (this->axe != NULL)												//Knife used
-	{
-		if (SubWeapUsed == true && subWeapInUse == axe->tag)
+		if (this->knife != NULL)												//Knife used
 		{
-			if (nx > 0 && axe->isFlying == false)
-				axe->SetState(AXE_STATE_RIGHT);
-			else if(nx <0 && axe->isFlying == false)
-				axe->SetState(AXE_STATE_LEFT);
-			axe->Render();
+			if (SubWeapUsed == true && subWeapInUse == knife->tag)
+			{
+				if (nx > 0)
+					knife->SetState(KNIFE_STATE_RIGHT);
+				else
+					knife->SetState(KNIFE_STATE_LEFT);
+				knife->Render();
+			}
+		}
+		if (this->axe != NULL)												//Knife used
+		{
+			if (SubWeapUsed == true && subWeapInUse == axe->tag)
+			{
+				axe->Render();
+			}
 		}
 	}
 }
@@ -416,6 +527,10 @@ void CMario::SetState(int state)
 
 	switch (state)
 	{
+	case MARIO_STATE_INVI:
+		isInvisible = true;
+		outInvisible = false;
+		break;
 	case MARIO_STATE_WALKING_RIGHT:
 		vx = MARIO_WALKING_SPEED;
 		nx = 1;
@@ -483,12 +598,8 @@ void CMario::SetState(int state)
 void CMario::GetBoundingBox(float &left, float &top, float &right, float &bottom)
 {
 	left = x;
-	top = y; 
-
-	if (level==MARIO_LEVEL_BIG)
-	{
-		right = x + MARIO_BIG_BBOX_WIDTH;
-		bottom = y + MARIO_BIG_BBOX_HEIGHT;
-	}
+	top = y;
+	right = x + MARIO_BIG_BBOX_WIDTH;
+	bottom = y + MARIO_BIG_BBOX_HEIGHT;
 }
 

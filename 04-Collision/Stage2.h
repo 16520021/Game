@@ -19,8 +19,10 @@
 #include "Door.h"
 #include "Cross.h"
 #include "Boss.h"
+#include "Sphere.h"
 #include "Bat.h"
 #include "SubStage.h"
+#include "Vase.h"
 
 #define SCREEN_WIDTH		512
 #define SCREEN_HEIGHT		544
@@ -43,7 +45,9 @@
 #define ID_FISH_RIGHT		27
 #define ID_DROP				28
 #define ID_BOSS				29
-#define ID_BOSS_BURN		31
+#define ID_BOSS_BURN		33
+#define ID_VASE				34
+#define ID_SPHERE			35
 #define BACKGROUND_COLOR	D3DCOLOR_XRGB(0,0,0)
 #define FLASH_TIMES			10
 #define GOING_DOWN_POINT_RIGHT_X    104 * 32
@@ -61,6 +65,7 @@ class CStage2
 	Dog *dog;
 	CStair *stair;
 	CCells *cellsSys;
+	CVase* vase;
 	CCastleGround *ground;
 	CCandle *candle;
 	CAxeIcon *axe;
@@ -69,6 +74,7 @@ class CStage2
 	CHeart *heart;
 	CCross *cross;
 	CBat *bat;
+	CSphere *sphere;
 	CBoss *boss;
 	SubStage *subStage;
 	vector<LPGAMEOBJECT> objects;

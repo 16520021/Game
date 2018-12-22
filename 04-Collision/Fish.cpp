@@ -1,5 +1,6 @@
 #include "Fish.h"
 #include "Mario.h"
+#include "Whip.h"
 
 
 CFish::CFish()
@@ -158,8 +159,11 @@ void CFish::Render()
 						animations[FISH_ANI_BURN]->SetCurrentFrame(-1);
 						SetState(FISH_STATE_DIE);
 					}
+					effect->SetPosition(this->x, this->y);
+					effect->Render();
+					if (effect->animations[0]->GetCurrentFrame() == 1) effect->animations[0]->SetCurrentFrame(-1);
 				}
-				if (state == FISH_STATE_DIE)
+				else if (state == FISH_STATE_DIE)
 				{
 					ani = FISH_ANI_DIE; 
 					isHit = true;
@@ -211,13 +215,6 @@ void CFish::Render()
 					drop[i]->Render();
 				}
 			}
-		}
-		else
-		{
-			effect->SetPosition(this->x, this->y);
-			effect->Render();
-			if(effect->animations[0]->GetCurrentFrame == 1)
-				isActive = false;
 		}
 	}
 }
@@ -306,6 +303,25 @@ void FishBullet::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	{
 		CGameObject::Update(dt, coObjects);
 		x += dx;
+
+		vector<LPCOLLISIONEVENT> coEvents;
+		vector<LPCOLLISIONEVENT> coEventsResult;
+		coEvents.clear();
+		CalcPotentialCollisions(coObjects, coEvents);
+		if (coEvents.size() != 0)
+		{
+			float min_tx, min_ty, nx = 0, ny;
+			FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny);
+			for (UINT i = 0; i < coEventsResult.size(); i++)
+			{
+				LPCOLLISIONEVENT e = coEventsResult[i];
+				if (dynamic_cast<Whip *>(e->obj))
+				{
+					this->isHit = true;
+				}
+			}
+		}
+
 	}
 }
 

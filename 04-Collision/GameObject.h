@@ -49,6 +49,7 @@ public:
 	DWORD dt; 
 	bool collision;
 	bool isHit;
+	int curHealth;
 	bool isActive;
 	int point;
 	vector<LPANIMATION> animations;

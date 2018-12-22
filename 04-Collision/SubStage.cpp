@@ -38,6 +38,7 @@ void SubStage::LoadSub()
 	fish->AddAnimation(22);
 	fish->AddAnimation(23);
 	fish->AddAnimation(703);
+	fish->AddAnimation(19);
 	fish->SetPosition(3 * 32, 64 * 3 + 32);
 	fish->SetState(FISH_STATE_WAITING_RIGHT);
 	objects.push_back(fish);
@@ -48,6 +49,7 @@ void SubStage::LoadSub()
 	fish->AddAnimation(22);
 	fish->AddAnimation(23);
 	fish->AddAnimation(703);
+	fish->AddAnimation(19);
 	fish->SetPosition(11 * 32, 64 * 3 + 32);
 	fish->SetState(FISH_STATE_WAITING_LEFT);
 	objects.push_back(fish);

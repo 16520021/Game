@@ -6,13 +6,13 @@ CBoss::CBoss()
 {
 	point = 3000;
 	tag = 17;
+	isDead = false;
 	reachRandPoint = true;
 	reachTarget = false;
 	attackTime = 0;
 	isAttacking = false;
 	burnTime = 0;
 	curHealth = 16;
-	isDying = false;
 }
 
 CBoss * CBoss::GetInstance()
@@ -28,7 +28,6 @@ void CBoss::Update(DWORD dt, vector<LPGAMEOBJECT>* player)
 {
 	if (isActive)
 	{
-		isHit = false;
 		CGameObject::Update(dt, player);
 		CMario *mario = CMario::GetInstance();
 		if (state == BOSS_STATE_WAITING)
@@ -44,12 +43,12 @@ void CBoss::Update(DWORD dt, vector<LPGAMEOBJECT>* player)
 				{
 					destination = new D3DVECTOR();
 				
-					destination->x = rand() % 458 + ACT_ZONE_LEFT_LIM  ;
-					destination->y = rand() % 100 + ACT_ZONE_UPPER_LIM ;
+					destination->x = rand() % 400 + ACT_ZONE_LEFT_LIM  ;
+					destination->y = rand() % 150 + ACT_ZONE_UPPER_LIM ;
 					destination->z = 0;
 					target = NULL;
 				}
-				if (int(this->x) + BOSS_BBOX_WIDTH > int(destination->x) && int(this->y) + BOSS_BBOX_HEIGHT >= int(destination->y) && this->x <= destination->x && this->y <= destination->y)
+				if (this->x + BOSS_BBOX_WIDTH > destination->x && this->y + BOSS_BBOX_HEIGHT >= destination->y && this->x <= destination->x && this->y <= destination->y)
 				{
 					reachRandPoint = true;
 					attackTime += dt;
@@ -57,6 +56,9 @@ void CBoss::Update(DWORD dt, vector<LPGAMEOBJECT>* player)
 				else
 				{
 					reachRandPoint = false;
+					isHit = false;
+					if(effect != NULL)
+						effect->animations[0]->SetCurrentFrame(-1);
 					if (this->x > destination->x) vx = -BOSS_SPEED_X;
 					else vx = BOSS_SPEED_X;
 					if (this->y > destination->y) vy = -BOSS_SPEED_Y;
@@ -64,11 +66,7 @@ void CBoss::Update(DWORD dt, vector<LPGAMEOBJECT>* player)
 				}
 				if (reachRandPoint == true && isAttacking == false)
 				{
-					if (GetTickCount() - attackTime >= 2000)
-					{
-						attackTime = 0;
-						isAttacking = true;
-					}
+					isAttacking = true;
 				}
 				if (isAttacking == true && target == NULL)
 				{
@@ -85,10 +83,13 @@ void CBoss::Update(DWORD dt, vector<LPGAMEOBJECT>* player)
 					else
 					{
 						reachTarget = false;
-						if (this->x > target->x) vx = -BOSS_SPEED_X;
-						else vx = BOSS_SPEED_X;
-						if (this->y > target->y) vy = -BOSS_SPEED_Y;
-						else vy = BOSS_SPEED_Y;
+						isHit = false;
+						if (effect != NULL)
+							effect->animations[0]->SetCurrentFrame(-1);
+						if (this->x > target->x) vx = -BOSS_ATK_SPEED_X;
+						else vx = BOSS_ATK_SPEED_X;
+						if (this->y > target->y) vy = -BOSS_ATK_SPEED_Y;
+						else vy = BOSS_ATK_SPEED_Y;
 					}
 				}
 				if (isAttacking == true && reachTarget == true)
@@ -102,11 +103,26 @@ void CBoss::Update(DWORD dt, vector<LPGAMEOBJECT>* player)
 			}
 			else
 			{
-				state = BOSS_STATE_DIE;
-				burnTime += dt;
-				if (GetTickCount() - burnTime > 3000)
-					isDying = true;
+				if (isDead == false)
+				{
+					state = BOSS_STATE_DIE;
+					item->isActive = true;
+					item->isHit = true;
+					if (burnTime == 0)
+						burnTime = GetTickCount();
+					if (GetTickCount() - burnTime > 1000)
+					{
+						mario->point += this->point;
+						isDead = true;
+					}
+				}
 			}
+		}
+		if (item != NULL)
+		{
+			if(state != BOSS_STATE_DIE)
+				item->SetPosition(this->x, this->y);
+			item->Update(dt, player);
 		}
 	}
 }
@@ -130,7 +146,7 @@ void CBoss::Render()
 {
 	if (isActive == true)
 	{
-		if (isDying == false)
+		if (isDead == false)
 		{
 			int ani;
 			if (state == BOSS_STATE_DIE)
@@ -138,18 +154,22 @@ void CBoss::Render()
 			else
 			{
 				if (state == BOSS_STATE_ACT)
+				{
 					ani = BOSS_ANI_ACT;
+					effect = new CHitEffect();
+				}
 				else ani = BOSS_ANI_WAITING;
 			}
 			animations[ani]->Render(x, y);
 			if (isHit == true)
 			{
-				effect = new CHitEffect();
 				effect->SetPosition(this->x, this->y);
 				effect->Render();
 			}
 		}
 	}
+	if (item != NULL)
+		item->Render();
 }
 
 void CBoss::GetBoundingBox(float & l, float & t, float & r, float & b)
@@ -160,7 +180,7 @@ void CBoss::GetBoundingBox(float & l, float & t, float & r, float & b)
 	b = y + BOSS_BBOX_HEIGHT;
 }
 
-void CBoss::SetItem(LPGAMEOBJECT *sphere)
+void CBoss::SetItem(LPGAMEOBJECT sphere)
 {
 	item = sphere;
 }

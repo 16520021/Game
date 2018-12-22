@@ -8,16 +8,15 @@ HealthBar::HealthBar()
 
 }
 
-void HealthBar::Render(float camX,float camY)
+void HealthBar::Render(LPGAMEOBJECT object, float camX, float camY)
 {
-	CMario *mario = CMario::GetInstance();
-	int curHealth = mario->curHealth;
+	int curHealth = object->curHealth;
 	float x=camX, y=camY;
 	for (int i = 0; i < curHealth; i++)
 	{
 		Health* health = new Health();
 		health->SetState(HEALTH_STATE_LIVE);
-		health->SetPosition(x + 90 + i*8, y + 43);
+		health->SetPosition(x + 90 + i*8, y + 40);
 		if (i == curHealth - 1)
 			health->GetPosition(x, y);
 		health->Render();
@@ -30,30 +29,6 @@ void HealthBar::Render(float camX,float camY)
 		if (curHealth == 0)
 		{
 			health->SetPosition(x + 90 + i * 8, y + 40);
-		}
-		else health->SetPosition(x + i * 10, y);
-		health->Render();
-	}
-	CBoss* boss = CBoss::GetInstance();
-	curHealth = boss->curHealth;
-	x = camX, y = camY;
-	for (int i = 0; i < curHealth; i++)
-	{
-		Health* health = new Health();
-		health->SetState(HEALTH_STATE_LIVE);
-		health->SetPosition(x + 90 + i * 8, y + 43+25);
-		if (i == curHealth - 1)
-			health->GetPosition(x, y);
-		health->Render();
-	}
-
-	for (int i = 0; i < MAX_HEALTH - curHealth; i++)
-	{
-		Health* health = new Health();
-		health->SetState(HEALTH_STATE_DIE);
-		if (curHealth == 0)
-		{
-			health->SetPosition(x + 90 + i * 8, y + 43+25);
 		}
 		else health->SetPosition(x + i * 10, y);
 		health->Render();

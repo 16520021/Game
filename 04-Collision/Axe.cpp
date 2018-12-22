@@ -23,6 +23,7 @@ void CAxe::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			{
 				isActive = false;
 				isFlying = false;
+				mario->SubWeapUsed = false;
 			}
 			vy += AXE_GRAVITY*dt;
 			vector<LPCOLLISIONEVENT> coEvents;
@@ -63,6 +64,7 @@ void CAxe::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 								boss->isHit = true;
 								boss->curHealth -= 1;
 							}
+							if (boss->curHealth - 1 <= 0) boss->SetState(BOSS_STATE_DIE);
 						}
 					}
 				}

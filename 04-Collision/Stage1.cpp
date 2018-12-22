@@ -1,5 +1,6 @@
 #include "Stage1.h"
-
+#include <Windows.h>
+#include <mmsystem.h>
 
 
 CStage1::CStage1()
@@ -13,6 +14,8 @@ void CStage1::InitStage1()
 	game->GetInstance()->cam->Init(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	CTextures * textures = CTextures::GetInstance();
 	textures->Add(ID_TEX_MARIO, L"textures\\SIMON.png", D3DCOLOR_XRGB(255, 0, 255));
+	textures->Add(ID_TEX_MARIO_POT_RIGHT, L"textures\\simon_potion_right.bmp", D3DCOLOR_XRGB(255, 0, 255));
+	textures->Add(ID_TEX_MARIO_POT_LEFT, L"textures\\simon_potion_left.bmp", D3DCOLOR_XRGB(255, 0, 255));
 	textures->Add(ID_TEX_MISC, L"textures\\ground1.png", D3DCOLOR_XRGB(0, 0, 0));
 	textures->Add(ID_TEX_BBOX, L"textures\\bbox.png", D3DCOLOR_XRGB(255, 255, 255));
 	textures->Add(ID_TEX_WHIP_RIGHT, L"textures\\whip_right.bmp", D3DCOLOR_XRGB(255, 0, 255));
@@ -79,11 +82,35 @@ void CStage1::InitStage1()
 	sprites->Add(10051, 180, 66, 240, 132, texMario);		//upstair right
 	sprites->Add(10052, 252, 66, 300, 132, texMario);
 
-	sprites->Add(10053, 180, 132+2*66, 240, 132+66*3, texMario);		//upstair left
+	sprites->Add(10053, 180, 132+2*66, 225, 132+66*3, texMario);		//upstair left
 	sprites->Add(10054, 240, 132+2*66, 300, 132+66*3, texMario);
 
-	sprites->Add(1, 0, 0, 32, 18, textures->Get(2)); //knife right
-	sprites->Add(2, 0, 0, 32, 18, textures->Get(1));//knife left
+	texMario = textures->Get(ID_TEX_MARIO_POT_RIGHT);
+
+	sprites->Add(10055, 128 ,0, 192, 66, texMario);		// invi idle right
+
+	sprites->Add(10057, 128, 0, 192, 66, texMario);		//invi walking right
+	sprites->Add(10058, 64, 0, 128, 66, texMario);
+	sprites->Add(10059, 0, 0, 64, 66, texMario);
+
+	sprites->Add(10063, 320, 66, 384, 66 * 2, texMario);		//invi atk right
+	sprites->Add(10064, 0, 66*2, 64, 66 * 3, texMario);
+	sprites->Add(10065, 64,2 * 66, 128, 66 * 3, texMario);
+
+	texMario = textures->Get(ID_TEX_MARIO_POT_LEFT);
+
+	sprites->Add(10056, 128, 0, 192, 66, texMario);		// invi idle left
+
+	sprites->Add(10060, 128, 0, 192, 66, texMario);		//invi walking left
+	sprites->Add(10061, 64, 0, 128, 66, texMario);
+	sprites->Add(10062, 0, 0, 64, 66, texMario);
+
+	sprites->Add(10066, 320, 66, 384, 66 * 2, texMario);		//invi atk left
+	sprites->Add(10067, 0, 66 * 2, 64, 66 * 3, texMario);
+	sprites->Add(10068, 64, 2 * 66, 128, 66 * 3, texMario);
+
+	sprites->Add(1, 0, 0, 32, 18, textures->Get(ID_TEX_KNIFE_RIGHT)); //knife right
+	sprites->Add(2, 0, 0, 32, 18, textures->Get(ID_TEX_KNIFE_LEFT));//knife left
 
 	LPDIRECT3DTEXTURE9 texMisc = textures->Get(ID_TEX_MISC);
 	sprites->Add(20001, 0, 0, 32, 32, texMisc);
@@ -105,7 +132,8 @@ void CStage1::InitStage1()
 	sprites->Add(40010, 540, 75, 700, 130, texWhipLeft); //Whip lvl 1 atk left
 	sprites->Add(40011, 290, 70, 435, 125, texWhipLeft);
 	sprites->Add(40012, 20, 330, 105, 355, texWhipLeft);
-	LPDIRECT3DTEXTURE9 texWicon = textures->Get(32);
+
+	LPDIRECT3DTEXTURE9 texWicon = textures->Get(ID_TEX_WHIP_ICO);
 	sprites->Add(40000, 0, 0, 32, 32, texWicon);		//Whip icon
 
 	LPDIRECT3DTEXTURE9  texLight = textures->Get(ID_TEX_LIGHT); //light
@@ -114,11 +142,12 @@ void CStage1::InitStage1()
 
 	LPDIRECT3DTEXTURE9 texDisapear = textures->Get(ID_TEX_DIE);//light destroyed
 	sprites->Add(50003, 0, 0, 25, 25, texDisapear);
+	sprites->Add(50004, 0, 25, 25,40 , texDisapear);
 
 	LPDIRECT3DTEXTURE9 texHeart = textures->Get(ID_TEX_HEART);
 	sprites->Add(50005, 0, 0, 32, 49, texHeart);
 
-	LPDIRECT3DTEXTURE9 texGate = textures->Get(3);
+	LPDIRECT3DTEXTURE9 texGate = textures->Get(ID_TEX_MAIN_BLOCK);
 	sprites->Add(3, 0, 0, 128, 64, texGate);		//gate
 
 	LPDIRECT3DTEXTURE9 texHealth = textures->Get(ID_TEX_HEALTH); // HEALTH
@@ -218,6 +247,38 @@ void CStage1::InitStage1()
 	ani->Add(10054);
 	animations->Add(813, ani);
 
+	ani = new CAnimation(100);		//invi idle right
+	ani->Add(10055);
+	animations->Add(814, ani);
+
+	ani = new CAnimation(100);		//invi idle left
+	ani->Add(10056);
+	animations->Add(815, ani);
+
+	ani = new CAnimation(100);		//invi walking right
+	ani->Add(10057);
+	ani->Add(10058);
+	ani->Add(10059);
+	animations->Add(816, ani);
+
+	ani = new CAnimation(100);		//invi walking left
+	ani->Add(10058);
+	ani->Add(10059);
+	ani->Add(10060);
+	animations->Add(817, ani);
+
+	ani = new CAnimation(100);		//invi atk right
+	ani->Add(10061);
+	ani->Add(10062);
+	ani->Add(10063);
+	animations->Add(818, ani);
+
+	ani = new CAnimation(100);		//invi atk left
+	ani->Add(10064);
+	ani->Add(10065);
+	ani->Add(10066);
+	animations->Add(819, ani);
+
 	ani = new CAnimation(100);		//whip icon
 	ani->Add(40000);
 	animations->Add(900, ani);
@@ -227,7 +288,7 @@ void CStage1::InitStage1()
 	ani->Add(50002);
 	animations->Add(901, ani);
 
-	ani = new CAnimation(500);		//light destroyed
+	ani = new CAnimation(100);		//light destroyed
 	ani->Add(50003);
 	ani->Add(50003);
 	animations->Add(902, ani);
@@ -326,6 +387,12 @@ void CStage1::InitStage1()
 	mario->AddAnimation(811);		//walking stair left
 	mario->AddAnimation(812);		//idle stair right
 	mario->AddAnimation(813);		//idle stair left
+	mario->AddAnimation(814);		//invi idle right
+	mario->AddAnimation(815);		//invi idle left
+	mario->AddAnimation(816);		//invi walking right
+	mario->AddAnimation(817);		//invi walking left
+	mario->AddAnimation(818);		//invi atk right
+	mario->AddAnimation(819);		//invi atk left
 
 	mario->SetWhip(whip);
 	mario->SetPosition(50.0f, 0);
@@ -370,6 +437,8 @@ void CStage1::InitStage1()
 	}
 
 	game->cam->InitPlayer(mario);
+	LPDIRECT3DDEVICE9 d3ddv = game->GetDirect3DDevice();
+	stt = new CStatus(d3ddv);
 }
 
 
@@ -403,7 +472,6 @@ void CStage1::UpdateStage1(DWORD dt)
 void CStage1::RenderStage1()
 {
 	LPDIRECT3DDEVICE9 d3ddv = game->GetDirect3DDevice();
-	stt = new CStatus(d3ddv);
 	LPDIRECT3DSURFACE9 bb = game->GetBackBuffer();
 	LPD3DXSPRITE spriteHandler = game->GetSpriteHandler();
 	float camx = 0, camy = 0;

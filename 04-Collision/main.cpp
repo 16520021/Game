@@ -74,7 +74,7 @@ void CSampleKeyHander::OnKeyDown(int KeyCode)
 		}
 		break;
 	case DIK_X:
-		if (mario != NULL &&  mario->GetSubWeapon(mario->subWeapInUse) != NULL)
+		if (mario != NULL &&  mario->GetSubWeapon(mario->subWeapInUse) != NULL && mario->SubWeapUsed == false)
 		{
 			if (mario->nx > 0)
 				mario->SetState(MARIO_STATE_ATK_RIGHT);
@@ -83,7 +83,7 @@ void CSampleKeyHander::OnKeyDown(int KeyCode)
 			{
 				float posX, posY;
 				mario->GetPosition(posX, posY);
-				mario->GetSubWeapon(mario->subWeapInUse)->SetPosition(posX, posY + 10);
+				mario->GetSubWeapon(mario->subWeapInUse)->SetPosition(posX + 10, posY + 10);
 				mario->GetSubWeapon(mario->subWeapInUse)->isActive = true;
 				mario->SubWeapUsed = true;
 			}

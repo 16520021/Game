@@ -49,7 +49,7 @@ string convertTimeFormat(int timeUI)
 	else if (timeUI < 1000)
 		return "0" + std::to_string(timeUI);
 	else
-		return std::to_string(0); //return std::to_string(score);
+		return std::to_string(0);
 };
 
 string convertTwoDigitFormat(int digit)
@@ -62,14 +62,17 @@ string convertTwoDigitFormat(int digit)
 
 void CStatus::DrawStatusBar(float camX,float camY)
 {
-	status = "  SCORE - " + convertScoreFormat(CMario::GetInstance()->point) +"        TIME "+ "time here" +"      STAGE 01"  +"\n" +
-		"\n  PLAYER                                                   - " + convertTwoDigitFormat(CMario::GetInstance()->curHeart) +
+	CMario *mario = CMario::GetInstance();
+	status = "  SCORE - " + convertScoreFormat(mario->point) +"        TIME "+ convertTimeFormat(mario->time) +"      STAGE 01"  +"\n" +
+		"\n  PLAYER                                                   - " + convertTwoDigitFormat(mario->curHeart) +
 		"\n  ENEMY ";	
 	if (font)
 	{
 		font->DrawTextA(NULL, status.c_str(), -1, &zone, DT_LEFT, D3DCOLOR_XRGB(255, 255, 255));
 	}
-	hthBar->Render(camX,camY);
+	CBoss *boss = CBoss::GetInstance();
+	hthBar->Render(mario,camX,camY);
+	hthBar->Render(boss, camX, camY + 25);
 	subBar->Render(camX, camY);
 	heart->SetPosition(camX + 360, camY + 10);
 	heart->SetState(HEART_STATE_LIVE);

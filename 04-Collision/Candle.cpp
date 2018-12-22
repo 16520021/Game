@@ -21,11 +21,15 @@ void CCandle::Render()
 				ani = CANDLE_ANI_LIVE;
 			else {
 				ani = CANDLE_ANI_DESTROYED;
-				collision = false;
-				isHit = true;
 				if (heart != NULL) heart->Render();
 			}
 			animations[ani]->Render(x, y);
+			if (animations[CANDLE_ANI_DESTROYED]->GetCurrentFrame() == 1)
+			{
+				collision = false;
+				isHit = true;
+				animations[CANDLE_ANI_DESTROYED]->SetCurrentFrame(-1);
+			}
 			RenderBoundingBox();
 		}
 	}

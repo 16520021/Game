@@ -1,8 +1,8 @@
 #pragma once
 #include "GameObject.h"
 
-#define STAIR_BBOX_WIDTH 32
-#define STAIR_BBOX_HEIGHT 32
+#define STAIR_BBOX_WIDTH 1
+#define STAIR_BBOX_HEIGHT 1
 
 class StopPoint :public CGameObject
 {

@@ -91,7 +91,10 @@ void CKnife::Update(DWORD dt, vector<LPGAMEOBJECT>* coObject)
 				y += dy;
 				CMario *mario = CMario::GetInstance();
 				if (abs(abs(mario->x) - abs(this->x)) > KNIFE_ATK_RANGE)
+				{
 					isActive = false;
+					mario->SubWeapUsed = false;
+				}
 			}
 		}
 	}

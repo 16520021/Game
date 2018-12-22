@@ -15,6 +15,12 @@
 #include "MainGate.h"
 #include "Status.h"
 #define ID_TEX_MARIO		0
+#define ID_TEX_MARIO_POT_RIGHT	4
+#define ID_TEX_MARIO_POT_LEFT	5
+#define ID_TEX_KNIFE_RIGHT	2
+#define ID_TEX_KNIFE_LEFT	1
+#define ID_TEX_MAIN_BLOCK	3
+#define ID_TEX_WHIP_ICO		32
 #define ID_TEX_MISC			20
 #define ID_TEX_WHIP_RIGHT	30
 #define ID_TEX_WHIP_LEFT	31

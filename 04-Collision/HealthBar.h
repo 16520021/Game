@@ -10,7 +10,7 @@ class HealthBar
 {
 public:
 	HealthBar();
-	void Render(float camX,float camY);
+	void Render(LPGAMEOBJECT object,float camX,float camY);
 	~HealthBar();
 };
 

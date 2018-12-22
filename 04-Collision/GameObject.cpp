@@ -15,6 +15,7 @@ CGameObject::CGameObject()
 	nx = 1;	
 	collision = true;
 	isHit = false;
+	curHealth = 1;
 	isActive = false;
 	point = 0;
 }
