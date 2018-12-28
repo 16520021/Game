@@ -111,7 +111,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 		if (isInvisible == true)
 		{
-			if (GetTickCount() - invisibleTime > 8000)
+			if (GetTickCount() - invisibleTime > 5000)
 			{
 				isInvisible = false;
 				outInvisible = true;
@@ -286,6 +286,8 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 					if (this->isGoingStair == false)
 					{
 						this->isGoingStair = true;
+						stairPosition->x = dwn->x;
+						stairPosition->y = dwn->y;
 					}
 
 				}
@@ -331,6 +333,28 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		}
 		axe->Update(dt, coObjects);
 	}
+	if (bumerang != NULL && subWeapInUse == bumerang->tag && SubWeapUsed == true)
+	{
+		if (bumerang->isFlying == false)
+		{
+			if (nx > 0)
+				bumerang->SetState(BUMERANG_STATE_RIGHT);
+			else if (nx < 0)
+				bumerang->SetState(BUMERANG_STATE_LEFT);
+		}
+		bumerang->Update(dt, coObjects);
+	}
+	if (holyWater != NULL && subWeapInUse == holyWater->tag && SubWeapUsed == true)
+	{
+		if (holyWater->isFlying == false)
+		{
+			if (nx > 0)
+				holyWater->SetState(HWATER_STATE_RIGHT);
+			else if (nx < 0)
+				holyWater->SetState(HWATER_STATE_LEFT);
+		}
+		holyWater->Update(dt, coObjects);
+	}
 }
 
 void CMario::Render()
@@ -349,133 +373,135 @@ void CMario::Render()
 		}
 		else
 		{
-			if (isInvisible == false)
+			//if (isInvisible == false)
+			//{
+			if (vx == 0)										// not moving
 			{
-				if (vx == 0)										// not moving
+				if (nx > 0)
 				{
-					if (nx > 0)
-					{
-						if (isSitting == true)
-							ani = MARIO_ANI_SIT_RIGHT;
-						else if (outInvisible == true)
-							ani = MARIO_ANI_INVI_IDLE_RIGHT;
-						else ani = MARIO_ANI_BIG_IDLE_RIGHT;
+					if (isSitting == true)
+						ani = MARIO_ANI_SIT_RIGHT;
+					else if (outInvisible == true)
+						ani = MARIO_ANI_INVI_IDLE_RIGHT;
+					else ani = MARIO_ANI_BIG_IDLE_RIGHT;
 
-						if (isGoingStair == true) ani = MARIO_ANI_STAIR_IDLE_RIGHT;
-
-						if (state == MARIO_STATE_ATK_RIGHT)
-						{
-							attackTime += dt;
-							if (isSitting == false)
-							{
-								if (outInvisible == false)
-									ani = MARIO_ANI_ATK_RIGHT;
-								else ani = MARIO_ANI_INVI_ATK_RIGHT;
-							}
-							else ani = MARIO_ANI_SIT_ATK_RIGHT;
-						}
-						else if (state == MARIO_STATE_WALKING_DWNSTAIR_RIGHT || state == MARIO_STATE_WALKING_UPSTAIR_RIGHT)
-							ani = MARIO_ANI_BIG_WALKING_RIGHT;
-					}
-					else
-					{
-						if (isSitting == true)
-							ani = MARIO_ANI_SIT_LEFT;
-						else if (outInvisible == true)
-							ani = MARIO_ANI_INVI_IDLE_LEFT;
-						else ani = MARIO_ANI_BIG_IDLE_LEFT;
-
-						if (isGoingStair == true) ani = MARIO_ANI_STAIR_IDLE_LEFT;
-
-						if (state == MARIO_STATE_ATK_LEFT)
-						{
-							attackTime += dt;
-							if (isSitting == false)
-							{
-								if (outInvisible == false)
-									ani = MARIO_ANI_ATK_LEFT;
-								else ani = MARIO_ANI_INVI_ATK_LEFT;
-							}
-							else ani = MARIO_ANI_SIT_ATK_LEFT;
-						}
-						else if (state == MARIO_STATE_WALKING_DWNSTAIR_LEFT || state == MARIO_STATE_WALKING_UPSTAIR_LEFT)
-							ani = MARIO_ANI_BIG_WALKING_LEFT;
-					}
-				}
-				else if (vx > 0)								// moving
-				{
-					if (outInvisible == false)
-						ani = MARIO_ANI_BIG_WALKING_RIGHT;
-					else ani = MARIO_ANI_INVI_WALKING_RIGHT;
-
+					if (isGoingStair == true) ani = MARIO_ANI_STAIR_IDLE_RIGHT;
 
 					if (state == MARIO_STATE_ATK_RIGHT)
 					{
-						if (outInvisible == false)
-							ani = MARIO_ANI_ATK_RIGHT;
-						else ani = MARIO_ANI_INVI_ATK_RIGHT;
 						attackTime += dt;
+						if (isSitting == false)
+						{
+							if (outInvisible == false)
+								ani = MARIO_ANI_ATK_RIGHT;
+							else ani = MARIO_ANI_INVI_ATK_RIGHT;
+						}
+						else ani = MARIO_ANI_SIT_ATK_RIGHT;
 					}
-					if (isGoingStair == true) ani = MARIO_ANI_STAIR_RIGHT;
+					else if (state == MARIO_STATE_WALKING_DWNSTAIR_RIGHT || state == MARIO_STATE_WALKING_UPSTAIR_RIGHT)
+						ani = MARIO_ANI_BIG_WALKING_RIGHT;
 				}
 				else
 				{
-					if (outInvisible == false)
-						ani = MARIO_ANI_BIG_WALKING_LEFT;
-					else ani = MARIO_ANI_INVI_WALKING_LEFT;
+					if (isSitting == true)
+						ani = MARIO_ANI_SIT_LEFT;
+					else if (outInvisible == true)
+						ani = MARIO_ANI_INVI_IDLE_LEFT;
+					else ani = MARIO_ANI_BIG_IDLE_LEFT;
+
+					if (isGoingStair == true) ani = MARIO_ANI_STAIR_IDLE_LEFT;
+
 					if (state == MARIO_STATE_ATK_LEFT)
 					{
-						if (outInvisible == false)
-							ani = MARIO_ANI_ATK_LEFT;
-						else ani = MARIO_ANI_INVI_ATK_LEFT;
 						attackTime += dt;
-					}
-					if (isGoingStair == true) ani = MARIO_ANI_STAIR_LEFT;
-
-				}
-				if (attackTime >= 200)
-				{
-					SetState(MARIO_STATE_IDLE);
-					if (nx > 0)
-					{
 						if (isSitting == false)
 						{
 							if (outInvisible == false)
-								ani = MARIO_ANI_BIG_IDLE_RIGHT;
-							else ani = MARIO_ANI_INVI_IDLE_RIGHT;
+								ani = MARIO_ANI_ATK_LEFT;
+							else ani = MARIO_ANI_INVI_ATK_LEFT;
 						}
-						else ani = MARIO_ANI_SIT_RIGHT;
+						else ani = MARIO_ANI_SIT_ATK_LEFT;
 					}
-					else
-					{
-						if (isSitting == false)
-						{
-							if (outInvisible == false)
-								ani = MARIO_ANI_BIG_IDLE_LEFT;
-							else ani = MARIO_ANI_INVI_IDLE_LEFT;
-						}
-						else ani = MARIO_ANI_SIT_LEFT;
-					}
-					animations[MARIO_ANI_ATK_RIGHT]->SetCurrentFrame(-1);
-					animations[MARIO_ANI_ATK_LEFT]->SetCurrentFrame(-1);
-					animations[MARIO_ANI_SIT_ATK_LEFT]->SetCurrentFrame(-1);
-					animations[MARIO_ANI_SIT_ATK_RIGHT]->SetCurrentFrame(-1);
-					animations[MARIO_ANI_INVI_ATK_LEFT]->SetCurrentFrame(-1);
-					animations[MARIO_ANI_INVI_ATK_RIGHT]->SetCurrentFrame(-1);
-					mainWeap->animations[WHIP_ANI_ATK_LEFT]->SetCurrentFrame(-1);
-					mainWeap->animations[WHIP_ANI_ATK_RIGHT]->SetCurrentFrame(-1);
-					mainWeap->animations[WHIP_ANI_ATK_LEFT_1]->SetCurrentFrame(-1);
-					mainWeap->animations[WHIP_ANI_ATK_RIGHT_1]->SetCurrentFrame(-1);
-					attackTime = 0;
-					isAttacking = false;
+					else if (state == MARIO_STATE_WALKING_DWNSTAIR_LEFT || state == MARIO_STATE_WALKING_UPSTAIR_LEFT)
+						ani = MARIO_ANI_BIG_WALKING_LEFT;
 				}
 			}
+			else if (vx > 0)								// moving
+			{
+				if (outInvisible == false)
+					ani = MARIO_ANI_BIG_WALKING_RIGHT;
+				else ani = MARIO_ANI_INVI_WALKING_RIGHT;
+
+
+				if (state == MARIO_STATE_ATK_RIGHT)
+				{
+					if (outInvisible == false)
+						ani = MARIO_ANI_ATK_RIGHT;
+					else ani = MARIO_ANI_INVI_ATK_RIGHT;
+					attackTime += dt;
+				}
+				if (isGoingStair == true) ani = MARIO_ANI_STAIR_RIGHT;
+			}
+			else
+			{
+				if (outInvisible == false)
+					ani = MARIO_ANI_BIG_WALKING_LEFT;
+				else ani = MARIO_ANI_INVI_WALKING_LEFT;
+				if (state == MARIO_STATE_ATK_LEFT)
+				{
+					if (outInvisible == false)
+						ani = MARIO_ANI_ATK_LEFT;
+					else ani = MARIO_ANI_INVI_ATK_LEFT;
+					attackTime += dt;
+				}
+				if (isGoingStair == true) ani = MARIO_ANI_STAIR_LEFT;
+
+			}
+			if (attackTime >= 200)
+			{
+				SetState(MARIO_STATE_IDLE);
+				if (nx > 0)
+				{
+					if (isSitting == false)
+					{
+						if (outInvisible == false)
+							ani = MARIO_ANI_BIG_IDLE_RIGHT;
+						else ani = MARIO_ANI_INVI_IDLE_RIGHT;
+					}
+					else ani = MARIO_ANI_SIT_RIGHT;
+				}
+				else
+				{
+					if (isSitting == false)
+					{
+						if (outInvisible == false)
+							ani = MARIO_ANI_BIG_IDLE_LEFT;
+						else ani = MARIO_ANI_INVI_IDLE_LEFT;
+					}
+					else ani = MARIO_ANI_SIT_LEFT;
+				}
+				animations[MARIO_ANI_ATK_RIGHT]->SetCurrentFrame(-1);
+				animations[MARIO_ANI_ATK_LEFT]->SetCurrentFrame(-1);
+				animations[MARIO_ANI_SIT_ATK_LEFT]->SetCurrentFrame(-1);
+				animations[MARIO_ANI_SIT_ATK_RIGHT]->SetCurrentFrame(-1);
+				animations[MARIO_ANI_INVI_ATK_LEFT]->SetCurrentFrame(-1);
+				animations[MARIO_ANI_INVI_ATK_RIGHT]->SetCurrentFrame(-1);
+				mainWeap->animations[WHIP_ANI_ATK_LEFT]->SetCurrentFrame(-1);
+				mainWeap->animations[WHIP_ANI_ATK_RIGHT]->SetCurrentFrame(-1);
+				mainWeap->animations[WHIP_ANI_ATK_LEFT_1]->SetCurrentFrame(-1);
+				mainWeap->animations[WHIP_ANI_ATK_RIGHT_1]->SetCurrentFrame(-1);
+				attackTime = 0;
+				isAttacking = false;
+			}
+			/*}*/
 		}
 	}
 	int alpha = 255;
 	if (untouchable) alpha = 128;
-	if (isInvisible == false)
-	{
+	if (isInvisible == true) alpha = 100;
+	if (outInvisible == true) alpha = 200;
+	//if (isInvisible == false)
+	//{
 		animations[ani]->Render(x, y, alpha);
 		RenderBoundingBox();
 		if (mainWeap != NULL && isAttacking == true && SubWeapUsed == false)
@@ -518,7 +544,21 @@ void CMario::Render()
 				axe->Render();
 			}
 		}
-	}
+		if (this->bumerang != NULL)												//Knife used
+		{
+			if (SubWeapUsed == true && subWeapInUse == bumerang->tag)
+			{
+				bumerang->Render();
+			}
+		}
+		if (this->holyWater != NULL)												//Knife used
+		{
+			if (SubWeapUsed == true && subWeapInUse == holyWater->tag)
+			{
+				holyWater->Render();
+			}
+		}
+	//}
 }
 
 void CMario::SetState(int state)
@@ -577,18 +617,22 @@ void CMario::SetState(int state)
 	case MARIO_STATE_WALKING_DWNSTAIR_LEFT:
 		vx = -MARIO_WALKING_SPEED;
 		vy = MARIO_WALKING_SPEED;
+		nx = -1;
 		isGoingStair = true;
 		break;
 	case MARIO_STATE_WALKING_DWNSTAIR_RIGHT:
 		vy = vx = MARIO_WALKING_SPEED;
 		isGoingStair = true;
+		nx = 1;
 		break;
 	case MARIO_STATE_WALKING_UPSTAIR_LEFT:
 		vy = vx = -MARIO_WALKING_SPEED;
 		isGoingStair = true;
+		nx = -1;
 		break;
 	case MARIO_STATE_WALKING_UPSTAIR_RIGHT:
 		vx = MARIO_WALKING_SPEED;
+		nx = 1;
 		vy = -MARIO_WALKING_SPEED;
 		isGoingStair = true;
 		break;

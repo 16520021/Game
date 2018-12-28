@@ -76,6 +76,7 @@ void CSampleKeyHander::OnKeyDown(int KeyCode)
 	case DIK_X:
 		if (mario != NULL &&  mario->GetSubWeapon(mario->subWeapInUse) != NULL && mario->SubWeapUsed == false)
 		{
+			DebugOut(L"sub weapon: %d\n", mario->subWeapInUse);
 			if (mario->nx > 0)
 				mario->SetState(MARIO_STATE_ATK_RIGHT);
 			else mario->SetState(MARIO_STATE_ATK_LEFT);
@@ -148,25 +149,55 @@ void CSampleKeyHander::KeyState(BYTE *states)
 		if (game->IsKeyDown(DIK_RIGHT) && mario->GetState() != MARIO_STATE_ATK_RIGHT && mario->isAttacking == false)
 		{
 			if (game->IsKeyDown(DIK_DOWN) && mario->isGoingStair == true)
+			{
+				if (mario->dy == 0 && mario->stairOnGoing == false)
+				{
+					mario->x = mario->stairPosition->x;
+					mario->stairOnGoing = true;
+				}				
 				mario->SetState(MARIO_STATE_WALKING_DWNSTAIR_RIGHT);
+			}
 			else if (game->IsKeyDown(DIK_UP) && mario->isGoingStair == true)
+			{
+				if (mario->dy == 0 && mario->stairOnGoing == false)
+				{
+					mario->x = mario->stairPosition->x;
+					mario->stairOnGoing = true;
+				}				
 				mario->SetState(MARIO_STATE_WALKING_UPSTAIR_RIGHT);
+			}
 			else
 			{
 				mario->SetState(MARIO_STATE_WALKING_RIGHT);
 				mario->isGoingStair = false;
+				mario->stairOnGoing = false;
 			}
 		}
 		else if (game->IsKeyDown(DIK_LEFT) && mario->GetState() != MARIO_STATE_ATK_LEFT && mario->isAttacking == false)
 		{
 			if (game->IsKeyDown(DIK_DOWN) && mario->isGoingStair == true)
+			{
+				if (mario->dy == 0 && mario->stairOnGoing == false)
+				{
+					mario->x = mario->stairPosition->x;
+					mario->stairOnGoing = true;
+				}
 				mario->SetState(MARIO_STATE_WALKING_DWNSTAIR_LEFT);
+			}
 			else if (game->IsKeyDown(DIK_UP) && mario->isGoingStair == true)
+			{
+				if (mario->dy == 0 && mario->stairOnGoing == false)
+				{
+					mario->x = mario->stairPosition->x;
+					mario->stairOnGoing = true;
+				}				
 				mario->SetState(MARIO_STATE_WALKING_UPSTAIR_LEFT);
+			}
 			else
 			{
 				mario->SetState(MARIO_STATE_WALKING_LEFT);
 				mario->isGoingStair = false;
+				mario->stairOnGoing = false;
 			}
 		}
 		else

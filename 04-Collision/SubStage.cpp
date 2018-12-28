@@ -165,6 +165,12 @@ void SubStage::Update(DWORD dt)
 			for (int k = 0; k < cell->objects.size(); k++)
 			{
 				coObjects.push_back(cell->objects.at(k));
+				if (objects.at(k)->tag == 16)
+				{
+					CFish *fish =(CFish*)objects.at(k);
+					if (fish->bullet != NULL)
+						coObjects.push_back(fish->bullet);
+				}
 			}
 		}
 	}

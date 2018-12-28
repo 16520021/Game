@@ -1,6 +1,4 @@
 #include "Stage1.h"
-#include <Windows.h>
-#include <mmsystem.h>
 
 
 CStage1::CStage1()
@@ -30,6 +28,9 @@ void CStage1::InitStage1()
 	textures->Add(ID_TEX_HEALTH, L"textures\\bar_health.bmp", D3DCOLOR_XRGB(255, 0, 255));
 	textures->Add(ID_TEX_AXE, L"textures\\axe.png", D3DCOLOR_XRGB(255, 0, 255));
 	textures->Add(ID_TEX_SUBWEAPON_BAR, L"textures\\redEdge.bmp", D3DCOLOR_XRGB(255, 0, 255));
+	textures->Add(ID_BUMERANG, L"textures\\Bumerang.png", D3DCOLOR_XRGB(255, 255, 255));
+	textures->Add(ID_HWATER, L"textures\\HolyWater.png", D3DCOLOR_XRGB(255, 0, 255));
+	textures->Add(ID_HWATER_ICON, L"textures\\HolyWaterIcon.bmp", D3DCOLOR_XRGB(255, 0, 255));
 
 	map1 = new CTileMap(L"textures\\map1_tiled.PNG", 64, 64, 14, 8);
 	map1->InitMap("map1.txt", MAP_LENGTH);
@@ -83,7 +84,7 @@ void CStage1::InitStage1()
 	sprites->Add(10052, 252, 66, 300, 132, texMario);
 
 	sprites->Add(10053, 180, 132+2*66, 225, 132+66*3, texMario);		//upstair left
-	sprites->Add(10054, 240, 132+2*66, 300, 132+66*3, texMario);
+	sprites->Add(10054, 250, 132+2*66, 295, 132+66*3, texMario);
 
 	texMario = textures->Get(ID_TEX_MARIO_POT_RIGHT);
 
@@ -162,6 +163,20 @@ void CStage1::InitStage1()
 
 	LPDIRECT3DTEXTURE9 texSubBar = textures->Get(ID_TEX_SUBWEAPON_BAR);
 	sprites->Add(18, 0, 0, 80, 59, texSubBar);
+
+
+	LPDIRECT3DTEXTURE9 texBum = textures->Get(ID_BUMERANG);		//BUMERANG
+	sprites->Add(47, 0, 0, 28, 28, texBum);
+	sprites->Add(48, 28, 0, 56, 28, texBum);
+	sprites->Add(49, 56, 0, 84, 28, texBum);
+
+	LPDIRECT3DTEXTURE9 texHwater = textures->Get(ID_HWATER);		//WATER
+	sprites->Add(50, 0, 0, 32, 26, texHwater);
+	sprites->Add(51, 32, 0, 64, 26, texHwater);
+	sprites->Add(52, 64, 0, 96, 26, texHwater);
+
+	texHwater = textures->Get(ID_HWATER_ICON);			//WATER ICON
+	sprites->Add(53, 0, 0, 64, 64, texHwater);
 
 	LPANIMATION ani;
 	ani = new CAnimation(100);	// idle right
@@ -355,6 +370,29 @@ void CStage1::InitStage1()
 	ani->Add(17);
 	animations->Add(12, ani);
 
+	ani = new CAnimation(100);		//BUMERANG
+	ani->Add(47);
+	ani->Add(48);
+	ani->Add(49);
+	animations->Add(31, ani);
+
+	ani = new CAnimation(100);		//BUMERANG ICON
+	ani->Add(47);
+	animations->Add(32, ani);
+
+	ani = new CAnimation(100);		//WATER
+	ani->Add(50);
+	animations->Add(33, ani);
+
+	ani = new CAnimation(100);
+	ani->Add(51);
+	ani->Add(52);
+	animations->Add(35, ani);
+
+	ani = new CAnimation(100);		//WATER ICON
+	ani->Add(53);
+	animations->Add(36, ani);
+
 	ani = new CAnimation(100);		//SUB WEAPON BAR
 	ani->Add(18);
 	animations->Add(13, ani);
@@ -435,7 +473,9 @@ void CStage1::InitStage1()
 		lights.push_back(light);
 		objects.push_back(light);
 	}
-
+	mario->bumerang = new CBumerang();
+	mario->subWeapInUse = 13;
+	mario->holyWater = new CHolyWater();
 	game->cam->InitPlayer(mario);
 	LPDIRECT3DDEVICE9 d3ddv = game->GetDirect3DDevice();
 	stt = new CStatus(d3ddv);

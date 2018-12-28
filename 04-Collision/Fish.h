@@ -32,11 +32,12 @@
 #define BULLET_BBOX_HEIGHT			12
 #define FISH_ATTACK_RANGE			400
 #define FISH_DETECT_RANGE			134
-#define FISH_BULLET_SPEED_X			0.2f
+#define FISH_BULLET_SPEED_X			0.05f
 #define WATER_HEIGHT				64*5+32
 class FishBullet : public CGameObject
 {
 public:
+	CHitEffect *effect;
 	FishBullet();
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects);
 	virtual void Render();
@@ -46,6 +47,7 @@ public:
 class CFish :
 	public CGameObject
 {
+public:
 	bool goingUp;
 	bool isAttacking;
 	FishBullet *bullet;

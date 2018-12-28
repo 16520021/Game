@@ -21,8 +21,6 @@ public:
 	static CKnife *GetInstance();
 	void SetPosition(float x, float y) { this->x = x; this->y = y; };
 	void SetState(int state);
-	void SetAttackRange(int range) { attackRange = range; };
-	float GetAttackRange() { return attackRange; };
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT> *coObject = NULL);
 	virtual void GetBoundingBox(float &l, float &t, float &r, float &b);
 	virtual void Render();

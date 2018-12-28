@@ -6,12 +6,16 @@
 #include "Axe.h"
 #include "Knife.h"
 #include "Heart.h"
+#include "Bumerang.h"
+#include "HolyWater.h"
 
 
 class SubWeaponBar : public CGameObject
 {
 	CAxeIcon *axe;
 	CKnifeIcon *knife;
+	CBumerangIcon *bumerang;
+	CHolyWaterIcon *holyWater;
 public:
 	SubWeaponBar();
 	void Render(float camX, float camY);

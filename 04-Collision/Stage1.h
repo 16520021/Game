@@ -30,6 +30,9 @@
 #define ID_TEX_HEALTH		13
 #define ID_TEX_AXE			18
 #define ID_TEX_SUBWEAPON_BAR	19
+#define ID_BUMERANG			36
+#define ID_HWATER			37
+#define ID_HWATER_ICON		38
 #define SCREEN_WIDTH		512
 #define SCREEN_HEIGHT		448
 #define MAP_LENGTH			1472

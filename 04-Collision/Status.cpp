@@ -91,6 +91,12 @@ SubWeaponBar::SubWeaponBar()
 	axe->isActive = true;
 	knife = new CKnifeIcon();
 	knife->isHit = true;
+	bumerang = new CBumerangIcon();
+	bumerang->isActive = true;
+	bumerang->isHit = true;
+	holyWater = new CHolyWaterIcon();
+	holyWater->isActive = true;
+	holyWater->isHit = true;
 	AddAnimation(13);
 }
 
@@ -107,6 +113,14 @@ void SubWeaponBar::Render(float camX,float camY)
 	case 8:
 		axe->SetPosition(camX + 240, camY + 43);
 		axe->Render();
+		break;
+	case 13:
+		bumerang->SetPosition(camX + 240, camY + 43);
+		bumerang->Render();
+		break;
+	case 18:
+		holyWater->SetPosition(camX + 240, camY + 43);
+		holyWater->Render();
 		break;
 	}
 	animations[0]->Render(camX + 233, camY + 35);

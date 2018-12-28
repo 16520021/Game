@@ -132,6 +132,12 @@
     <ClInclude Include="Sphere.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Bumerang.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HolyWater.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="debug.cpp">
@@ -254,6 +260,12 @@
     <ClCompile Include="Sphere.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Bumerang.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HolyWater.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="map2.txt">
@@ -263,6 +275,15 @@
       <Filter>Resource Files</Filter>
     </Text>
     <Text Include="SubMap.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="Goomba.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="Candle.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="Stair.txt">
       <Filter>Resource Files</Filter>
     </Text>
   </ItemGroup>

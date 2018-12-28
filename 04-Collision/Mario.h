@@ -3,6 +3,8 @@
 #include "Whip.h"
 #include "Knife.h"
 #include "Axe.h"
+#include "Bumerang.h"
+#include "HolyWater.h"
 
 
 #define MARIO_WALKING_SPEED		0.1f
@@ -60,7 +62,7 @@
 
 #define MARIO_UNTOUCHABLE_TIME 800
 
-#define MAX_SUB_WEAP_TAG					8
+#define MAX_SUB_WEAP_TAG					18
 #define MIN_SUB_WEAP_TAG					3
 
 class CMario : public CGameObject
@@ -71,12 +73,15 @@ class CMario : public CGameObject
 	DWORD invisibleTime;
 	DWORD outInvisibleTime;
 	Whip *mainWeap;
-	CAxe *axe;
-	CKnife *knife;			//cach lam khi chi co 1 sub weapon
 	static CMario* instance;
 public:
+	CAxe *axe;
+	CHolyWater *holyWater;
+	CKnife *knife;
+	CBumerang *bumerang;
 	bool isAttacking;
 	float time;
+	POINT *stairPosition;
 	bool reachCheckPoint;
 	POINT *checkPoint;
 	int curHeart;
@@ -87,6 +92,7 @@ public:
 	bool SubWeapUsed;
 	bool autoMove;			//disable keyboard
 	bool isGoingStair;
+	bool stairOnGoing;
 	bool goingDown1;
 	bool goingUp1;
 	bool goingDown2;
@@ -98,6 +104,8 @@ public:
 		untouchable = 0;
 		attackTime = 0;
 		checkPoint = NULL;
+		stairOnGoing = false;
+		stairPosition = new POINT();
 		invisibleTime = 0;
 		outInvisibleTime = 0;
 		isAttacking = false;
@@ -112,10 +120,12 @@ public:
 		goingDown2 = false;
 		goingUp1 = false;
 		goingUp2 = false;
-		subWeapInUse = 0;
 		mainWeap = new Whip();
 		knife = NULL;
 		axe = NULL;
+		bumerang = NULL;
+		holyWater = NULL;
+		subWeapInUse = 0;
 		tag = 0;
 		curHeart = 0;
 		curHealth = 16;
@@ -129,7 +139,14 @@ public:
 	void SetAttackTime(float time) { attackTime = time;};
 	void SetState(int state);
 	void SetWhip(Whip *whip) { mainWeap = whip; };
-	LPGAMEOBJECT GetSubWeapon(int tag) { if (knife != NULL && tag == knife->tag) return knife; else if ( axe != NULL && tag == axe->tag) return axe; else return NULL; };
+	LPGAMEOBJECT GetSubWeapon(int tag) 
+	{ 
+		if (knife != NULL && tag == knife->tag) return knife; 
+		else if (axe != NULL && tag == axe->tag) return axe; 
+		else if (bumerang != NULL && tag == bumerang->tag) return bumerang;
+		else if (holyWater != NULL && tag == holyWater->tag) return holyWater;
+		else return NULL; 
+	};
 	Whip *GetWhip() { return mainWeap; };
 	void StartUntouchable() { untouchable = 1; untouchable_start = GetTickCount(); };
 

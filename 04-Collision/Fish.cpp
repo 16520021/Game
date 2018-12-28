@@ -19,9 +19,9 @@ void CFish::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	if (isActive)
 	{
 		CGameObject::Update(dt, coObjects);
-		if(state != FISH_STATE_WAITING_LEFT && state != FISH_STATE_WAITING_RIGHT)
+		if (state != FISH_STATE_WAITING_LEFT && state != FISH_STATE_WAITING_RIGHT)
 			vy += FISH_GRAVITY*dt;
-		
+
 		vector<LPCOLLISIONEVENT> coEvents;
 		vector<LPCOLLISIONEVENT> coEventsResult;
 		CMario *mario = CMario::GetInstance();
@@ -70,16 +70,16 @@ void CFish::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				case 2:
 					drop[i]->SetSpeed(DROP_SPEED_X, DROP_SPEED_Y);
 					break;
-				//default:
-				//	drop[i]->SetSpeed(DROP_SPEED_X, DROP_SPEED_Y);
-				//	break;
+					//default:
+					//	drop[i]->SetSpeed(DROP_SPEED_X, DROP_SPEED_Y);
+					//	break;
 				}
 			}
 			hitWater = 1;
 		}
 		if (this->y + FISH_BBOX_HEIGHT >= WATER_HEIGHT && hitWater == 2)
 			SetState(FISH_STATE_HIDE);
-		if (drop.size() != 0 )
+		if (drop.size() != 0)
 		{
 			for (int i = 0; i < drop.size(); i++)
 			{
@@ -89,7 +89,7 @@ void CFish::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		if (goingUp == false && attackTime == 0)
 		{
 			attackStart = rand() % 100 + 1;
-			if (attackStart <= 5) isAttacking = true;
+			if (attackStart <= 3) isAttacking = true;
 			else isAttacking = false;
 		}
 		coEvents.clear();
@@ -135,8 +135,15 @@ void CFish::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			}
 		}
 		if (bullet != NULL) bullet->Update(dt, coObjects);
-		if(bullet != NULL)
-			if (abs(bullet->x - this->x) > FISH_ATTACK_RANGE) bullet = NULL;
+		if (bullet != NULL)
+		{
+			if (abs(bullet->x - this->x) > FISH_ATTACK_RANGE)
+			{
+				bullet = NULL;
+			}
+			else if (bullet->isHit == true)
+				bullet = NULL;
+		}
 	}
 }
 
@@ -196,7 +203,7 @@ void CFish::Render()
 					}
 				}
 				animations[ani]->Render(x, y);
-				if (attackTime > 1000)
+				if (attackTime > 500)
 				{
 					attackTime = 0;
 					isAttacking = false;
@@ -303,25 +310,6 @@ void FishBullet::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	{
 		CGameObject::Update(dt, coObjects);
 		x += dx;
-
-		vector<LPCOLLISIONEVENT> coEvents;
-		vector<LPCOLLISIONEVENT> coEventsResult;
-		coEvents.clear();
-		CalcPotentialCollisions(coObjects, coEvents);
-		if (coEvents.size() != 0)
-		{
-			float min_tx, min_ty, nx = 0, ny;
-			FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny);
-			for (UINT i = 0; i < coEventsResult.size(); i++)
-			{
-				LPCOLLISIONEVENT e = coEventsResult[i];
-				if (dynamic_cast<Whip *>(e->obj))
-				{
-					this->isHit = true;
-				}
-			}
-		}
-
 	}
 }
 
@@ -329,6 +317,17 @@ void FishBullet::Render()
 {
 	if(isHit == false)
 		animations[0]->Render(x, y);
+	else
+	{
+		if(effect == NULL)
+			effect = new CHitEffect();
+		effect->SetPosition(this->x, this->y);
+		if (collision == true)
+		{
+			effect->Render();
+			collision = false;
+		}
+	}
 }
 
 

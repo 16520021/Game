@@ -1,5 +1,8 @@
 ﻿#include "Stage2.h"
 #include "debug.h"
+#include <string.h>
+#include <sstream>
+#include <fstream>
 #include "SubStage.h"
 CStage2 *CStage2::instance = NULL;
 
@@ -16,6 +19,29 @@ CStage2 * CStage2::GetInstance()
 		instance = new CStage2();
 	}
 	return instance;
+}
+
+void splitStr(const std::string& str, vector<int> &cont, char delim = ' ')
+{
+	std::stringstream ss(str);
+	std::string token;
+	while (std::getline(ss, token, delim)) {
+		cont.push_back(stoi(token));
+	}
+};
+void ReadArrayFromFile(string FileName, vector<int> &map, char delim = ' ')
+{
+	ifstream inputFile;
+	string strs;
+	inputFile.open(FileName);
+	if (!inputFile)
+		DebugOut(L"file open fail");
+	while (!inputFile.eof())
+	{
+		inputFile >> strs;
+		splitStr(strs, map, delim);
+	}
+	inputFile.close();
 }
 
 void CStage2::LoadStage2()
@@ -234,7 +260,7 @@ void CStage2::LoadStage2()
 	ani->Add(44);
 	animations->Add(29, ani);
 
-	ani = new CAnimation(100);
+	ani = new CAnimation(100);		//SPHERE
 	ani->Add(45);
 	ani->Add(46);
 	animations->Add(30, ani);
@@ -269,41 +295,44 @@ void CStage2::LoadStage2()
 	objects.push_back(axe);
 
 // -------------- CANDLE SECTION---------------//
-
-	for (int i = 1; i < 6; i++)
+	vector<int> posCandle;
+	ReadArrayFromFile("Candle.txt", posCandle, ',');
+	for (int i = 0; i < posCandle.size(); i+=2)
 	{
 		candle = new CCandle();
 		candle->SetState(CANDLE_STATE_LIVE);
-		candle->SetPosition(i * 200, 350);
-		CHeart *heart = new CHeart();
-		heart->AddAnimation(903);
-		heart->SetState(HEART_STATE_LIVE);
-		candle->AddItem(heart);
-		objects.push_back(heart);
-		objects.push_back(candle);
+		candle->SetPosition(posCandle.at(i), posCandle.at(i+1));
+		if (i == 10)
+		{
+			CCross *cross = new CCross();
+			cross->AddAnimation(17);
+			cross->SetState(CROSS_STATE_LIVE);
+			cross->SetPosition(candle->x, candle->y);
+			candle->AddItem(cross);
+			objects.push_back(cross);
+			objects.push_back(candle);
+		}
+		else if (i == 12)
+		{
+			vase = new CVase();
+			vase->AddAnimation(29);
+			vase->SetState(VASE_STATE_LIVE);
+			vase->SetPosition(candle->x, candle->y);
+			candle->AddItem(vase);
+			objects.push_back(vase);
+			objects.push_back(candle);
+		}
+		else
+		{
+			CHeart *heart = new CHeart();
+			heart->AddAnimation(903);
+			heart->SetState(HEART_STATE_LIVE);
+			heart->SetPosition(candle->x, candle->y);
+			candle->AddItem(heart);
+			objects.push_back(heart);
+			objects.push_back(candle);
+		}
 	}
-
-	candle = new CCandle();
-	candle->SetState(CANDLE_STATE_LIVE);
-	candle->SetPosition(78 * 32,158);
-	CCross *cross = new CCross();
-	cross->AddAnimation(17);
-	cross->SetState(CROSS_STATE_LIVE);
-	cross->SetPosition(78 * 32, 158);
-	candle->AddItem(cross);
-	objects.push_back(cross);
-	objects.push_back(candle);
-
-	candle = new CCandle();
-	candle->SetState(CANDLE_STATE_LIVE);
-	candle->SetPosition(123 * 32, 160);
-	vase = new CVase();
-	vase->AddAnimation(29);
-	vase->SetState(VASE_STATE_LIVE);
-	vase->SetPosition(123*32, 192);
-	candle->AddItem(vase);
-	objects.push_back(vase);
-	objects.push_back(candle);
 // --------------GROUND SECTION---------------//	
 	for (int i = 0; i < 84; i++)
 	{
@@ -400,50 +429,17 @@ void CStage2::LoadStage2()
 	dog->SetState(DOG_STATE_SLEEP);
 	objects.push_back(dog);
 // ------------GOOMBA SECTION-----------------//
-	for (int i = 1; i < 3; i++)
+	vector<int> goombaPos;
+	ReadArrayFromFile("Goomba.txt", goombaPos, ',');
+	for (int i = 0; i < goombaPos.size(); i += 2)
 	{
 		goomba = new CGoomba();
 		goomba->AddAnimation(702);
 		goomba->AddAnimation(701);
 		goomba->AddAnimation(703);
 		goomba->AddAnimation(19);
-		goomba->SetPosition(i * 200, 352);
-		goomba->SetBoundingCell(i * 200,320);
-		goomba->SetState(GOOMBA_STATE_WALKING_LEFT);
-		CHeart *heart = new CHeart();
-		heart->AddAnimation(903);
-		heart->SetState(HEART_STATE_LIVE);
-		goomba->AddItem(heart);
-		objects.push_back(heart);
-		objects.push_back(goomba);
-	}
-	for (int i = 0; i < 6; i++)
-	{
-		goomba = new CGoomba();
-		goomba->AddAnimation(702);
-		goomba->AddAnimation(701);
-		goomba->AddAnimation(703);
-		goomba->AddAnimation(19);
-		goomba->SetPosition(50 * 32 + i * 80, 352);
-		goomba->SetBoundingCell(50 * 32 + i * 80, 320);
-		goomba->SetState(GOOMBA_STATE_WALKING_LEFT);
-		CHeart *heart = new CHeart();
-		heart->AddAnimation(903);
-		heart->SetState(HEART_STATE_LIVE);
-		heart->SetPosition(goomba->x, goomba->y);
-		goomba->AddItem(heart);
-		objects.push_back(heart);
-		objects.push_back(goomba);
-	}
-	for (int i = 0; i < 3; i++)
-	{
-		goomba = new CGoomba();
-		goomba->AddAnimation(702);
-		goomba->AddAnimation(701);
-		goomba->AddAnimation(703);
-		goomba->AddAnimation(19);
-		goomba->SetPosition(4096 + i*32, 352);
-		goomba->SetBoundingCell(4096 + i*32, 320);
+		goomba->SetPosition(goombaPos.at(i),goombaPos.at(i+1));
+		goomba->SetBoundingCell(goombaPos.at(i), goombaPos.at(i + 1));
 		goomba->SetState(GOOMBA_STATE_WALKING_LEFT);
 		CHeart *heart = new CHeart();
 		heart->AddAnimation(903);
@@ -470,69 +466,19 @@ void CStage2::LoadStage2()
 	bat->SetState(BAT_STATE_LIVE);
 	objects.push_back(bat);
 // ------------STAIR SECTION------------------//
-	stair = new CStair();
-	stair->start->SetPosition(30 * 32, 416);
-	stair->start1->SetPosition(35 * 32, 286);
-	stair->stop->SetPosition(35 * 32, 181);
-	objects.push_back(stair->start1);
-	objects.push_back(stair->start);
-	objects.push_back(stair->stop);
-
-	stair = new CStair();
-	stair->start->SetPosition(37 * 32, 286);
-	stair->start1->SetPosition(39 * 32, 222);
-	stair->stop->SetPosition(39 * 32, 123);
-	objects.push_back(stair->start1);
-	objects.push_back(stair->start);
-	objects.push_back(stair->stop);
-
-	stair = new CStair();
-	stair->start->SetPosition(51 * 32, 286);
-	stair->start1->SetPosition(48 * 32, 222);
-	stair->stop->SetPosition(48 * 32, 123);
-	objects.push_back(stair->start1);
-	objects.push_back(stair->start);
-	objects.push_back(stair->stop);
-
-	stair = new CStair();
-	stair->start->SetPosition(66 * 32, 416);
-	stair->start1->SetPosition(73 * 32, 222);
-	stair->stop->SetPosition(48 * 32, 123);
-	objects.push_back(stair->start1);
-	objects.push_back(stair->start);
-	objects.push_back(stair->stop);
-
-	stair = new CStair();
-	stair->start->SetPosition(93 * 32, 286);
-	stair->start1->SetPosition(97 * 32, 416);
-	stair->stop->SetPosition(93 * 32, 219);
-	objects.push_back(stair->start1);
-	objects.push_back(stair->start);
-	objects.push_back(stair->stop);
-
-	stair = new CStair();
-	stair->start->SetPosition(107 * 32, 286);
-	stair->start1->SetPosition(111 * 32, 416);
-	objects.push_back(stair->start1);
-	objects.push_back(stair->start);
-
-	stair = new CStair();
-	stair->start->SetPosition(84 * 32, 416);
-	stair->start1->SetPosition(104 * 32, 416);
-	objects.push_back(stair->start);
-	objects.push_back(stair->start1);
-
-	stair = new CStair();
-	stair->start->SetPosition(117 * 32, 222);
-	stair->start1->SetPosition(120 * 32, 286);
-	objects.push_back(stair->start1);
-	objects.push_back(stair->start);
-
-	stair = new CStair();
-	stair->start->SetPosition(125 * 32, 286);
-	stair->start1->SetPosition(130 * 32, 416);
-	objects.push_back(stair->start1);
-	objects.push_back(stair->start);
+	vector<int> posStair;
+	ReadArrayFromFile("Stair.txt", posStair, ',');
+	DebugOut(L"stair size: %d\n", posStair.size());
+	for (int i = 0; i < posStair.size() ; i += 6)
+	{
+		stair = new CStair();
+		stair->start->SetPosition(posStair.at(i),posStair.at(i+1));
+		stair->start1->SetPosition(posStair.at(i+2), posStair.at(i + 3));
+		stair->stop->SetPosition(posStair.at(i+4), posStair.at(i + 5));
+		objects.push_back(stair->start1);
+		objects.push_back(stair->start);
+		objects.push_back(stair->stop);
+	}
 //------------MARIO SECTION --------------//
 	mario = CMario::GetInstance();
 	mario->autoMove = false;

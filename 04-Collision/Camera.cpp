@@ -175,8 +175,16 @@ void CCamera::CameraRunStage2(DWORD dt,vector<LPGAMEOBJECT> grid)
 				{
 					cell->objects.at(i)->isActive = true;
 				}
+				LPCOLLISIONEVENT ev = coEventsResult[0];
 				if (i == 0 && this->nx > 0 && coEventsResult.size() != 1)
+				{
 					lastCellCollided = cell->GetCellId() - 1;
+				}
+				else if (i == 1 && this->nx > 0 && coEventsResult.size() != 1)
+				{
+					if (dynamic_cast<CDoor*>(ev->obj))
+						lastCellCollided = cell->GetCellId() - 1;
+				}
 				else
 				{
 					if (i == coEvents.size() - 1 && this->nx < 0 && coEventsResult.size() != 1)

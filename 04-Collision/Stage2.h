@@ -48,6 +48,7 @@
 #define ID_BOSS_BURN		33
 #define ID_VASE				34
 #define ID_SPHERE			35
+//#define ID_BUMERANG			36
 #define BACKGROUND_COLOR	D3DCOLOR_XRGB(0,0,0)
 #define FLASH_TIMES			10
 #define GOING_DOWN_POINT_RIGHT_X    104 * 32

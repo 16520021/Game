@@ -82,7 +82,7 @@ void CGameObject::CalcPotentialCollisions(
 			coObjects->at(i)->GetBoundingBox(l1, t1, r1, b1);
 			if (e->t > 0 && e->t <= 1.0f)
 				coEvents.push_back(e);
-			else if (abs(l - l1) < abs(l - r) && abs(t-b1) < (abs(t1-b1) + abs(t-b)) && (this->tag == 1 || this->tag == -1 ))
+			else if (abs(l - l1) < abs(l - r) && abs(t-b1) < (abs(t1-b1) + abs(t-b)) && (this->tag == 1 || this->tag == -1 || this->tag == 17 ))
 			{
 				e->t = 0.1;
 				coEvents.push_back(e);

@@ -125,6 +125,7 @@
     <ClInclude Include="Axe.h" />
     <ClInclude Include="Bat.h" />
     <ClInclude Include="Boss.h" />
+    <ClInclude Include="Bumerang.h" />
     <ClInclude Include="Candle.h" />
     <ClInclude Include="CastleGround.h" />
     <ClInclude Include="Cell.h" />
@@ -142,6 +143,7 @@
     <ClInclude Include="HealthBar.h" />
     <ClInclude Include="Heart.h" />
     <ClInclude Include="HitEffect.h" />
+    <ClInclude Include="HolyWater.h" />
     <ClInclude Include="IntroBat.h" />
     <ClInclude Include="IntroButton.h" />
     <ClInclude Include="IntroMenu.h" />
@@ -166,6 +168,7 @@
     <ClCompile Include="Axe.cpp" />
     <ClCompile Include="Bat.cpp" />
     <ClCompile Include="Boss.cpp" />
+    <ClCompile Include="Bumerang.cpp" />
     <ClCompile Include="Candle.cpp" />
     <ClCompile Include="CastleGround.cpp" />
     <ClCompile Include="Cell.cpp" />
@@ -183,6 +186,7 @@
     <ClCompile Include="HealthBar.cpp" />
     <ClCompile Include="Heart.cpp" />
     <ClCompile Include="HitEffect.cpp" />
+    <ClCompile Include="HolyWater.cpp" />
     <ClCompile Include="IntroBat.cpp" />
     <ClCompile Include="IntroButton.cpp" />
     <ClCompile Include="IntroMenu.cpp" />
@@ -207,7 +211,10 @@
   <ItemGroup>
     <Text Include="map1.txt" />
     <Text Include="map2.txt" />
+    <Text Include="Stair.txt" />
     <Text Include="SubMap.txt" />
+    <Text Include="Goomba.txt" />
+    <Text Include="Candle.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
