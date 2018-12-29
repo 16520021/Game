@@ -7,12 +7,13 @@
 #include "Cell.h"
 #include "Stair.h"
 #include "Fish.h"
+#include "Stage.h"
 
 #define SCREEN_WIDTH		512
 #define SCREEN_HEIGHT		544
 #define SUB_MAP_LENGTH			1024
 #define BACKGROUND_COLOR	D3DCOLOR_XRGB(0,0,0)
-class SubStage
+class SubStage:public CStage
 {
 	CGame *game;
 	CMario *mario;
@@ -27,7 +28,6 @@ class SubStage
 	vector<LPGAMEOBJECT> coWithCam;
 	static SubStage *instance;
 public:
-	bool isRunning;
 	bool initialized;
 	SubStage();
 	static SubStage* GetInstance();

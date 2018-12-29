@@ -7,6 +7,7 @@
 class StopPoint :public CGameObject
 {
 public:
+	int ny;
 	StopPoint();
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT> coObjects);
 	virtual void Render();
@@ -17,6 +18,7 @@ public:
 class StartPoint : public CGameObject
 {
 public:
+	int ny;
 	StartPoint();
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT> coObjects);
 	virtual void Render();

@@ -56,6 +56,10 @@
 #define MARIO_ANI_INVI_WALKING_LEFT			21
 #define MARIO_ANI_INVI_ATK_RIGHT			22
 #define MARIO_ANI_INVI_ATK_LEFT				23
+#define MARIO_ANI_STAIR_RIGHT_DOWN			24
+#define MARIO_ANI_STAIR_LEFT_DOWN			25
+#define MARIO_ANI_STAIR_IDLE_RIGHT_DOWN		26
+#define MARIO_ANI_STAIR_IDLE_LEFT_DOWN		27
 
 #define MARIO_BIG_BBOX_WIDTH  40
 #define MARIO_BIG_BBOX_HEIGHT 63
@@ -82,9 +86,11 @@ public:
 	bool isAttacking;
 	float time;
 	POINT *stairPosition;
+	POINT *stairDirection;
 	bool reachCheckPoint;
 	POINT *checkPoint;
 	int curHeart;
+	bool jumped;
 	int subWeapInUse;
 	bool isInvisible;
 	bool outInvisible;
@@ -108,9 +114,13 @@ public:
 		stairPosition = new POINT();
 		invisibleTime = 0;
 		outInvisibleTime = 0;
+		jumped = false;
 		isAttacking = false;
 		isSitting = false;
 		time = 600;
+		stairDirection = new POINT();
+		stairDirection->x = 0;
+		stairDirection->y = 0;
 		SubWeapUsed = false;
 		reachCheckPoint = false;
 		autoMove = false;

@@ -18,6 +18,7 @@ class CHolyWater :
 public:
 	bool isFlying;
 	bool isBurning;
+	bool isGround;
 	DWORD burnTime;
 	CHolyWater();
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects = NULL);

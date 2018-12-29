@@ -17,6 +17,7 @@ CStair::~CStair()
 
 StopPoint::StopPoint()
 {
+	ny = 0;
 	tag = 11;
 }
 
@@ -46,6 +47,7 @@ StopPoint::~StopPoint()
 StartPoint::StartPoint()
 {
 	tag = 12;
+	ny = 0;
 }
 
 void StartPoint::Update(DWORD dt, vector<LPGAMEOBJECT> coObjects)

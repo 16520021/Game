@@ -10,6 +10,7 @@
 #include "Bat.h"
 #include "Fish.h"
 #include "Boss.h"
+#include "Dog.h"
 Whip::Whip()
 {
 	tag = 1;
@@ -75,6 +76,15 @@ void Whip::Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects)
 					{
 						if (knife->collision == true)
 							knife->isHit = true;
+					}
+				}
+				if (dynamic_cast<Dog *>(e->obj))
+				{
+					Dog *dog = dynamic_cast<Dog *>(e->obj);
+					if (dog->GetState() != DOG_STATE_DIE)
+					{
+						dog->SetState(DOG_STATE_DIE);
+						mario->point += dog->point;
 					}
 				}
 				if (dynamic_cast<CBoss *>(e->obj))

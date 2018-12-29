@@ -22,6 +22,7 @@
 #include "Sphere.h"
 #include "Bat.h"
 #include "SubStage.h"
+#include "Stage.h"
 #include "Vase.h"
 
 #define SCREEN_WIDTH		512
@@ -56,7 +57,7 @@
 #define GOING_DOWN_POINT_LEFT_X	  84*32
 #define GOING_DOWN_POINT_LEFT_Y	  300
 #define LIMIT_POINT_Y			448
-class CStage2
+class CStage2:public CStage
 {
 	CGame *game;
 	CMario *mario;
@@ -84,7 +85,6 @@ class CStage2
 	static CStage2 *instance;
 	int flashTimes;
 public:
-	bool isRunning;
 	CStage2();
 	static CStage2 *GetInstance();
 	void LoadStage2();

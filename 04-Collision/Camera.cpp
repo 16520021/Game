@@ -4,6 +4,7 @@
 #include "Mario.h"
 #include "SubStage.h"
 #include "Stage2.h"
+#include "Stage1.h"
 CCamera*CCamera::instance = NULL;
 
 CCamera::CCamera()
@@ -77,7 +78,7 @@ void CCamera::CameraRun()
 		x = 0;
 		return;
 	}
-	if (x > 950)
+	if (x > MAP1_LENGTH-SCREEN_WIDTH)
 	{
 		x = 950;
 		return;

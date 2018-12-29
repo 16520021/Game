@@ -24,6 +24,10 @@ void SubStage::LoadSub()
 
 	map = new CTileMap(L"textures\\map1_tiled.PNG", 64, 64, 14, 8);
 	map->InitMap("SubMap.txt", SUB_MAP_LENGTH);
+
+	mario = CMario::GetInstance();
+	mario->autoMove = false;
+	mario->SetState(MARIO_STATE_IDLE);
 	// -------------- STAIR SECTION---------------//
 	stair = new CStair();
 	stair->start->SetPosition(6 * 32, 192);
@@ -32,38 +36,23 @@ void SubStage::LoadSub()
 	objects.push_back(stair->start);
 
 	//--------------- FISH SECTION ---------------//
-	fish = new CFish();
-	fish->AddAnimation(21);
-	fish->AddAnimation(24);
-	fish->AddAnimation(22);
-	fish->AddAnimation(23);
-	fish->AddAnimation(703);
-	fish->AddAnimation(19);
-	fish->SetPosition(3 * 32, 64 * 3 + 32);
-	fish->SetState(FISH_STATE_WAITING_RIGHT);
-	objects.push_back(fish);
-
-	fish = new CFish();
-	fish->AddAnimation(21);
-	fish->AddAnimation(24);
-	fish->AddAnimation(22);
-	fish->AddAnimation(23);
-	fish->AddAnimation(703);
-	fish->AddAnimation(19);
-	fish->SetPosition(11 * 32, 64 * 3 + 32);
-	fish->SetState(FISH_STATE_WAITING_LEFT);
-	objects.push_back(fish);
-
-
-	fish = new CFish();
-	fish->AddAnimation(21);
-	fish->AddAnimation(24);
-	fish->AddAnimation(22);
-	fish->AddAnimation(23);
-	fish->AddAnimation(703);
-	fish->SetPosition(18 * 32 + 5, 64 * 3 + 32);
-	fish->SetState(FISH_STATE_WAITING_LEFT);
-	objects.push_back(fish);
+	vector<int> posFish;
+	ReadArrayFromFile("Fish.txt", posFish, ',');
+	for(int i = 0 ;i< posFish.size();i+=2)
+	{
+		fish = new CFish();
+		fish->AddAnimation(21);
+		fish->AddAnimation(24);
+		fish->AddAnimation(22);
+		fish->AddAnimation(23);
+		fish->AddAnimation(703);
+		fish->AddAnimation(19);
+		fish->SetPosition(3 * 32, 64 * 3 + 32);
+		if(fish->x < mario->x)
+			fish->SetState(FISH_STATE_WAITING_RIGHT);
+		else fish->SetState(FISH_STATE_WAITING_LEFT);
+		objects.push_back(fish);
+	}
 	// --------------GROUND SECTION---------------//	
 	for (int i = 0; i < 14; i++)
 	{
@@ -90,9 +79,6 @@ void SubStage::LoadSub()
 	ground->SetPosition(31 * 32, 320);
 	objects.push_back(ground);
 	//----------- MARIO SECTION--------------//
-	mario = CMario::GetInstance();
-	mario->autoMove = false;
-	mario->SetState(MARIO_STATE_IDLE);
 	if (mario->goingDown1 == true)
 	{
 		mario->SetPosition(64 * 3, 150);

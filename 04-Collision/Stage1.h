@@ -14,6 +14,7 @@
 #include "Knife.h"
 #include "MainGate.h"
 #include "Status.h"
+#include "Stage.h"
 #define ID_TEX_MARIO		0
 #define ID_TEX_MARIO_POT_RIGHT	4
 #define ID_TEX_MARIO_POT_LEFT	5
@@ -35,9 +36,9 @@
 #define ID_HWATER_ICON		38
 #define SCREEN_WIDTH		512
 #define SCREEN_HEIGHT		448
-#define MAP_LENGTH			1472
+#define MAP1_LENGTH			1472
 #define BACKGROUND_COLOR D3DCOLOR_XRGB(0,0,0)
-class CStage1
+class CStage1:public CStage
 {
 	CGame *game;
 	CMario *mario;
@@ -54,7 +55,6 @@ class CStage1
 	vector<LPGAMEOBJECT> grounds;
 	vector<LPGAMEOBJECT> objects;
 public:
-	bool isRunning;
 	CStage1();
 	void SetPlayer(CMario *player) { mario = CMario::GetInstance(); };
 	void SetGameController(CGame *g) { game = CGame::GetInstance(); game = g; };

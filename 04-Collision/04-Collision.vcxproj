@@ -154,6 +154,7 @@
     <ClInclude Include="Mario.h" />
     <ClInclude Include="Sphere.h" />
     <ClInclude Include="Sprites.h" />
+    <ClInclude Include="Stage.h" />
     <ClInclude Include="Stage1.h" />
     <ClInclude Include="Stage2.h" />
     <ClInclude Include="Stair.h" />
@@ -198,6 +199,7 @@
     <ClCompile Include="Mario.cpp" />
     <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="Sprites.cpp" />
+    <ClCompile Include="Stage.cpp" />
     <ClCompile Include="Stage1.cpp" />
     <ClCompile Include="Stage2.cpp" />
     <ClCompile Include="Stair.cpp" />
@@ -209,12 +211,16 @@
     <ClCompile Include="Whip.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="Bat.txt" />
+    <Text Include="Dog.txt" />
+    <Text Include="Fish.txt" />
     <Text Include="map1.txt" />
     <Text Include="map2.txt" />
     <Text Include="Stair.txt" />
     <Text Include="SubMap.txt" />
     <Text Include="Goomba.txt" />
     <Text Include="Candle.txt" />
+    <Text Include="Door.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

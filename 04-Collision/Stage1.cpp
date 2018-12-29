@@ -6,7 +6,7 @@ CStage1::CStage1()
 	isRunning = true;
 	walkingThroughTime = 0.0f;
 }
-
+	// MAP 1 CHUA DUOC CAI TIEN, MAP 2 DA CAI TIEN
 void CStage1::InitStage1()
 {
 	game->GetInstance()->cam->Init(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -33,7 +33,7 @@ void CStage1::InitStage1()
 	textures->Add(ID_HWATER_ICON, L"textures\\HolyWaterIcon.bmp", D3DCOLOR_XRGB(255, 0, 255));
 
 	map1 = new CTileMap(L"textures\\map1_tiled.PNG", 64, 64, 14, 8);
-	map1->InitMap("map1.txt", MAP_LENGTH);
+	map1->InitMap("map1.txt", MAP1_LENGTH);
 	CSprites * sprites = CSprites::GetInstance();
 	CAnimations * animations = CAnimations::GetInstance();
 
@@ -85,6 +85,12 @@ void CStage1::InitStage1()
 
 	sprites->Add(10053, 180, 132+2*66, 225, 132+66*3, texMario);		//upstair left
 	sprites->Add(10054, 250, 132+2*66, 295, 132+66*3, texMario);
+
+	sprites->Add(10069, 315, 66, 355, 132, texMario);		//dwnstair right
+	sprites->Add(10070, 252, 66, 300, 132, texMario);
+
+	sprites->Add(10071, 180, 132 + 2 * 66, 225, 132 + 66 * 3, texMario);		//dwnstair left
+	sprites->Add(10072, 125, 132 + 2 * 66, 165, 132 + 66 * 3, texMario);
 
 	texMario = textures->Get(ID_TEX_MARIO_POT_RIGHT);
 
@@ -294,6 +300,24 @@ void CStage1::InitStage1()
 	ani->Add(10066);
 	animations->Add(819, ani);
 
+	ani = new CAnimation(100);		//dwnstair right
+	ani->Add(10069);
+	ani->Add(10070);
+	animations->Add(820, ani);
+
+	ani = new CAnimation(100);		//dwnstair left
+	ani->Add(10071);
+	ani->Add(10072);
+	animations->Add(821, ani);
+
+	ani = new CAnimation(100);		 //dwnstair idle right
+	ani->Add(10069);
+	animations->Add(822, ani);
+
+	ani = new CAnimation(100);		//dwnstair idle left
+	ani->Add(10072);
+	animations->Add(823, ani);
+
 	ani = new CAnimation(100);		//whip icon
 	ani->Add(40000);
 	animations->Add(900, ani);
@@ -431,6 +455,11 @@ void CStage1::InitStage1()
 	mario->AddAnimation(817);		//invi walking left
 	mario->AddAnimation(818);		//invi atk right
 	mario->AddAnimation(819);		//invi atk left
+	mario->AddAnimation(820);		//invi atk left
+	mario->AddAnimation(821);		//invi atk left
+	mario->AddAnimation(822);		//invi atk left
+	mario->AddAnimation(823);		//invi atk left
+
 
 	mario->SetWhip(whip);
 	mario->SetPosition(50.0f, 0);

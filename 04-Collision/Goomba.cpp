@@ -94,6 +94,9 @@ void CGoomba::SetState(int state)
 	switch (state)
 	{
 		case GOOMBA_STATE_BURN:
+			collision = false;
+			vx = vy = 0;
+			break;
 		case GOOMBA_STATE_DIE:
 			collision = false;
 			vx = 0;

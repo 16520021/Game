@@ -21,34 +21,11 @@ CStage2 * CStage2::GetInstance()
 	return instance;
 }
 
-void splitStr(const std::string& str, vector<int> &cont, char delim = ' ')
-{
-	std::stringstream ss(str);
-	std::string token;
-	while (std::getline(ss, token, delim)) {
-		cont.push_back(stoi(token));
-	}
-};
-void ReadArrayFromFile(string FileName, vector<int> &map, char delim = ' ')
-{
-	ifstream inputFile;
-	string strs;
-	inputFile.open(FileName);
-	if (!inputFile)
-		DebugOut(L"file open fail");
-	while (!inputFile.eof())
-	{
-		inputFile >> strs;
-		splitStr(strs, map, delim);
-	}
-	inputFile.close();
-}
-
 void CStage2::LoadStage2()
 {
 	game->GetInstance()->cam->Init(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	CTextures *textures = CTextures::GetInstance();
-	textures->Add(ID_TEX_GHOST_LEFT, L"textures\\ghost_left.png", D3DCOLOR_XRGB(255,0,255));
+	textures->Add(ID_TEX_GHOST_LEFT, L"textures\\ghost_left.png", D3DCOLOR_XRGB(255, 0, 255));
 	textures->Add(ID_TEX_GHOST_RIGHT, L"textures\\ghost_right.png", D3DCOLOR_XRGB(255, 0, 255));
 	textures->Add(ID_TEX_GHOST_DIE, L"textures\\100pts.png", D3DCOLOR_XRGB(255, 255, 255));
 	textures->Add(ID_TEX_DOG_RIGHT, L"textures\\dog_right.png", D3DCOLOR_XRGB(255, 0, 255));
@@ -74,8 +51,8 @@ void CStage2::LoadStage2()
 	sprites->Add(30001, 0, 0, 34, 64, texGhost);
 	sprites->Add(30002, 34, 0, 68, 64, texGhost);
 	texGhost = textures->Get(ID_TEX_GHOST_RIGHT);
-	sprites->Add(30003,0,0,34,64,texGhost);
-	sprites->Add(30004,34,0,68,64,texGhost);
+	sprites->Add(30003, 0, 0, 34, 64, texGhost);
+	sprites->Add(30004, 34, 0, 68, 64, texGhost);
 	texGhost = textures->Get(ID_TEX_GHOST_DIE);
 	sprites->Add(30005, 0, 0, 16, 9, texGhost);
 
@@ -179,7 +156,7 @@ void CStage2::LoadStage2()
 	ani->Add(10);
 	ani->Add(11);
 	animations->Add(9, ani);
-	
+
 	ani = new CAnimation(100);		//CANDLE
 	ani->Add(12);
 	ani->Add(13);
@@ -265,27 +242,23 @@ void CStage2::LoadStage2()
 	ani->Add(46);
 	animations->Add(30, ani);
 
-	map = new CTileMap(L"textures\\map1_tiled.PNG",64,64,14,8);
+	map = new CTileMap(L"textures\\map1_tiled.PNG", 64, 64, 14, 8);
 	map->InitMap("map2.txt", MAP_LENGTH);
 
 	//------------- DOOR SECTION --------------------//
-	door = new CDoor();
-	door->SetPosition(81 * 32 + 16, 126);
-	door->SetState(DOOR_STATE_CLOSE);
-	door->AddAnimation(14);
-	door->AddAnimation(15);
-	door->AddAnimation(16);
-	objects.push_back(door);
-	coWithCam.push_back(door);
-
-	door = new CDoor();
-	door->SetPosition(113 * 32 + 16, 126);
-	door->SetState(DOOR_STATE_CLOSE);
-	door->AddAnimation(14);
-	door->AddAnimation(15);
-	door->AddAnimation(16);
-	objects.push_back(door);
-	coWithCam.push_back(door);
+	vector<int> posDoor;
+	ReadArrayFromFile("Door.txt", posDoor, ',');
+	for (int i = 0; i < posDoor.size(); i += 2)
+	{
+		door = new CDoor();
+		door->SetPosition(posDoor.at(i), posDoor.at(i+1));
+		door->SetState(DOOR_STATE_CLOSE);
+		door->AddAnimation(14);
+		door->AddAnimation(15);
+		door->AddAnimation(16);
+		objects.push_back(door);
+		coWithCam.push_back(door);
+	}
 
 //----------------WEAPON SECTION ----------------//
 	whip= Whip::GetInstance();
@@ -419,15 +392,20 @@ void CStage2::LoadStage2()
 		objects.push_back(ground);
 	}
 // ------------DOG SECTION--------------------//
-	dog = new Dog();
-	dog->AddAnimation(7);
-	dog->AddAnimation(9);
-	dog->AddAnimation(8);
-	dog->AddAnimation(703);
-	dog->AddAnimation(6);
-	dog->SetPosition(35 * 32, 253);
-	dog->SetState(DOG_STATE_SLEEP);
-	objects.push_back(dog);
+	vector<int> dogPos;
+	ReadArrayFromFile("Dog.txt", dogPos, ',');
+	for (int i = 0; i < dogPos.size(); i += 2)
+	{
+		dog = new Dog();
+		dog->AddAnimation(7);
+		dog->AddAnimation(9);
+		dog->AddAnimation(8);
+		dog->AddAnimation(703);
+		dog->AddAnimation(6);
+		dog->SetPosition(dogPos.at(i),dogPos.at(i+1));
+		dog->SetState(DOG_STATE_SLEEP);
+		objects.push_back(dog);
+	}
 // ------------GOOMBA SECTION-----------------//
 	vector<int> goombaPos;
 	ReadArrayFromFile("Goomba.txt", goombaPos, ',');
@@ -450,31 +428,34 @@ void CStage2::LoadStage2()
 		objects.push_back(goomba);
 	}
 // ------------BAT SECTION--------------------//
-	bat = new CBat();
-	bat->AddAnimation(18);
-	bat->AddAnimation(703);
-	bat->SetPosition(99*32, 222);
-	bat->SetStartPoint(222);
-	bat->SetState(BAT_STATE_LIVE);
-	objects.push_back(bat);
-
-	bat = new CBat();
-	bat->AddAnimation(18);
-	bat->AddAnimation(703);
-	bat->SetPosition(100 * 32, 300);
-	bat->SetStartPoint(300);
-	bat->SetState(BAT_STATE_LIVE);
-	objects.push_back(bat);
+	vector<int> posBat;
+	ReadArrayFromFile("Bat.txt", posBat, ',');
+	for (int i = 0; i < posBat.size(); i += 2)
+	{
+		bat = new CBat();
+		bat->AddAnimation(18);
+		bat->AddAnimation(703);
+		bat->SetPosition(posBat.at(i),posBat.at(i+1));
+		bat->SetStartPoint(posBat.at(i+1));
+		bat->SetState(BAT_STATE_LIVE);
+		objects.push_back(bat);
+	}
 // ------------STAIR SECTION------------------//
 	vector<int> posStair;
 	ReadArrayFromFile("Stair.txt", posStair, ',');
 	DebugOut(L"stair size: %d\n", posStair.size());
-	for (int i = 0; i < posStair.size() ; i += 6)
+	for (int i = 0; i < posStair.size() ; i += 12)
 	{
 		stair = new CStair();
 		stair->start->SetPosition(posStair.at(i),posStair.at(i+1));
-		stair->start1->SetPosition(posStair.at(i+2), posStair.at(i + 3));
-		stair->stop->SetPosition(posStair.at(i+4), posStair.at(i + 5));
+		stair->start->nx = posStair.at(i + 2);
+		stair->start->ny = posStair.at(i + 3);
+		stair->start1->SetPosition(posStair.at(i+4), posStair.at(i + 5));
+		stair->start1->nx = posStair.at(i + 6);
+		stair->start1->ny = posStair.at(i + 7);
+		stair->stop->SetPosition(posStair.at(i+8), posStair.at(i + 9));
+		stair->stop->nx = posStair.at(i + 10);
+		stair->stop->ny = posStair.at(i + 11);
 		objects.push_back(stair->start1);
 		objects.push_back(stair->start);
 		objects.push_back(stair->stop);

@@ -2,6 +2,10 @@
 #include "Mario.h"
 #include "Goomba.h"
 #include "CastleGround.h"
+#include "Bat.h"
+#include "Fish.h"
+#include "Boss.h"
+#include "Dog.h"
 
 CHolyWater::CHolyWater()
 {
@@ -10,6 +14,7 @@ CHolyWater::CHolyWater()
 	isBurning = false;
 	burnTime = 0;
 	AddAnimation(33);
+	isGround = false;
 	AddAnimation(35);
 }
 
@@ -23,15 +28,17 @@ void CHolyWater::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			CMario *mario = CMario::GetInstance();
 			if (isBurning == true)
 			{
-				if (GetTickCount() - burnTime > 3000)
+				if (GetTickCount() - burnTime > 1500)
 				{
 					isBurning = false;
 					isActive = false;
 					burnTime = 0;
 					isFlying = false;
 					mario->SubWeapUsed = false;
+					isGround = false;
 				}
 			}
+			if(isGround == false)
 			vy += HWATER_GRAVITY*dt;
 			vector<LPCOLLISIONEVENT> coEvents;
 			vector<LPCOLLISIONEVENT> coEventsResult;
@@ -50,6 +57,7 @@ void CHolyWater::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					LPCOLLISIONEVENT e = coEventsResult[i];
 					if (dynamic_cast<CCastleGround *>(e->obj))
 					{
+						isGround = true;
 						if (e->ny < 0)
 						{
 							if (this->state != HWATER_STATE_BURN)
@@ -66,6 +74,61 @@ void CHolyWater::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						{
 							goomba->SetState(GOOMBA_STATE_BURN);
 							mario->point += goomba->point;
+							y += dy;
+						}
+					}
+					if (dynamic_cast<Dog *>(e->obj))
+					{
+						Dog *dog = dynamic_cast<Dog *>(e->obj);
+						if (dog->GetState() != DOG_STATE_DIE)
+						{
+							dog->SetState(DOG_STATE_DIE);
+							mario->point += dog->point;
+						}
+					}
+					if (dynamic_cast<CFish *>(e->obj))
+					{
+						CFish *fish = dynamic_cast<CFish *>(e->obj);
+						if (e->nx == 0)
+						{
+							if (fish->state != FISH_STATE_BURN)
+							{
+								fish->SetState(FISH_STATE_BURN);
+								mario->point += fish->point;
+							}
+						}
+					}
+					if (dynamic_cast<FishBullet *>(e->obj))
+					{
+						FishBullet *fish = dynamic_cast<FishBullet *>(e->obj);
+						if (e->nx == 0)
+						{
+							fish->isHit = true;
+						}
+					}
+					if (dynamic_cast<CBoss *>(e->obj))
+					{
+						CBoss *boss = dynamic_cast<CBoss *>(e->obj);
+						if (e->nx == 0)
+						{
+							if (boss->state == BOSS_STATE_ACT)
+							{
+								boss->isHit = true;
+								boss->curHealth -= 1;
+							}
+							if (boss->curHealth - 1 <= 0) boss->SetState(BOSS_STATE_DIE);
+						}
+					}
+					if (dynamic_cast<CBat *>(e->obj))
+					{
+						CBat *bat = dynamic_cast<CBat *>(e->obj);
+						if (e->nx == 0)
+						{
+							if (bat->state != BAT_STATE_DESTROYED)
+							{
+								bat->SetState(BAT_STATE_DESTROYED);
+								mario->point += bat->point;
+							}
 						}
 					}
 				}

@@ -66,13 +66,6 @@ void CSampleKeyHander::OnKeyDown(int KeyCode)
 		if(menu!= NULL)
 			menu->isRunning = false;
 		break;
-	case DIK_SPACE:
-		if (mario != NULL)
-		{		
-			if(mario->isAttacking == false)
-				mario->SetState(MARIO_STATE_JUMP);
-		}
-		break;
 	case DIK_X:
 		if (mario != NULL &&  mario->GetSubWeapon(mario->subWeapInUse) != NULL && mario->SubWeapUsed == false)
 		{
@@ -90,19 +83,27 @@ void CSampleKeyHander::OnKeyDown(int KeyCode)
 			}
 		}
 		break;
-	case DIK_Z:
+	case DIK_SPACE:
+		if (stage1->isRunning == true)
+			stage1->isRunning = false;
+		break;
+	case DIK_S:
+		if (mario != NULL)
+		{
+			if (mario->isAttacking == false && mario->jumped == false)
+			{
+				mario->SetState(MARIO_STATE_JUMP);
+				mario->jumped = true;
+			}
+		}
+		break;
+	case DIK_A: // reset
 		if (mario != NULL)
 		{
 			if (mario->nx > 0)
 				mario->SetState(MARIO_STATE_ATK_RIGHT);
 			else mario->SetState(MARIO_STATE_ATK_LEFT);
 			if (mario->SubWeapUsed) mario->SubWeapUsed = false;
-		}
-		break;
-	case DIK_A: // reset
-		if (mario != NULL)
-		{
-			stage1->isRunning = false;
 		}
 		break;
 	case DIK_TAB:
@@ -146,7 +147,7 @@ void CSampleKeyHander::KeyState(BYTE *states)
 	if(mario != NULL)
 	{
 		if (mario->GetState() == MARIO_STATE_DIE) return;
-		if (game->IsKeyDown(DIK_RIGHT) && mario->GetState() != MARIO_STATE_ATK_RIGHT && mario->isAttacking == false)
+		if (game->IsKeyDown(DIK_RIGHT) && mario->GetState() != MARIO_STATE_ATK_RIGHT && mario->isAttacking == false)		// GIU LEN XUONG TRUOC, TRAI PHAI SAU DE LEN XUONG CAU THANG
 		{
 			if (game->IsKeyDown(DIK_DOWN) && mario->isGoingStair == true)
 			{
@@ -157,7 +158,7 @@ void CSampleKeyHander::KeyState(BYTE *states)
 				}				
 				mario->SetState(MARIO_STATE_WALKING_DWNSTAIR_RIGHT);
 			}
-			else if (game->IsKeyDown(DIK_UP) && mario->isGoingStair == true)
+			else if (game->IsKeyDown(DIK_UP) && mario->isGoingStair == true && mario->stairDirection->x == mario->nx && mario->stairDirection->y == 1)
 			{
 				if (mario->dy == 0 && mario->stairOnGoing == false)
 				{
@@ -184,7 +185,7 @@ void CSampleKeyHander::KeyState(BYTE *states)
 				}
 				mario->SetState(MARIO_STATE_WALKING_DWNSTAIR_LEFT);
 			}
-			else if (game->IsKeyDown(DIK_UP) && mario->isGoingStair == true)
+			else if (game->IsKeyDown(DIK_UP) && mario->isGoingStair == true && mario->stairDirection->x == mario->nx && mario->stairDirection->y == 1)
 			{
 				if (mario->dy == 0 && mario->stairOnGoing == false)
 				{

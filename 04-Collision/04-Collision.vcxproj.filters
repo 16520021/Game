@@ -138,6 +138,9 @@
     <ClInclude Include="HolyWater.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Stage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="debug.cpp">
@@ -266,6 +269,9 @@
     <ClCompile Include="HolyWater.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Stage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="map2.txt">
@@ -284,6 +290,18 @@
       <Filter>Resource Files</Filter>
     </Text>
     <Text Include="Stair.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="Dog.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="Door.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="Bat.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="Fish.txt">
       <Filter>Resource Files</Filter>
     </Text>
   </ItemGroup>

@@ -7,11 +7,13 @@
 #include "Goomba.h"
 #include "Heart.h"
 #include "Cross.h"
+#include "Dog.h"
 #include "Stair.h"
 #include "Door.h"
 #include "Fish.h"
 #include "Boss.h"
 #include "Vase.h"
+#include "CastleGround.h"
 #include "Bat.h"
 #include "Sphere.h"
 
@@ -155,7 +157,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 				if (dynamic_cast<CGoomba *>(e->obj))
 				{
 					CGoomba *goomba = dynamic_cast<CGoomba *>(e->obj);
-					/*if (untouchable == 0)
+					if (untouchable == 0)
 					{
 						if (goomba->GetState() != GOOMBA_STATE_DIE)
 						{
@@ -166,7 +168,27 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 							autoMove = true;
 							curHealth -= 1;
 						}
-					}*/
+					}
+				}
+				if (dynamic_cast<CCastleGround *>(e->obj))
+				{
+					if (this->jumped == true) this->jumped = false;
+				}
+				if (dynamic_cast<Dog *>(e->obj))
+				{
+					Dog *dog = dynamic_cast<Dog *>(e->obj);
+					if (untouchable == 0)
+					{
+						if (dog->GetState() != DOG_STATE_DIE)
+						{
+							StartUntouchable();
+							SetState(MARIO_STATE_HURT);
+							isAttacking = false;
+							isHit = true;
+							autoMove = true;
+							curHealth -= 1;
+						}
+					}
 				}
 				if (dynamic_cast<CBat *>(e->obj))
 				{
@@ -214,6 +236,19 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 							autoMove = true;
 							curHealth -= 1;
 						}
+					}
+				}
+				if (dynamic_cast<FishBullet *>(e->obj))
+				{
+					FishBullet *fish = dynamic_cast<FishBullet *>(e->obj);
+					if (untouchable == 0)
+					{
+						StartUntouchable();
+						SetState(MARIO_STATE_HURT);
+						isAttacking = false;
+						isHit = true;
+						autoMove = true;
+						curHealth -= 1;
 					}
 				}
 				if (dynamic_cast<CHeart *>(e->obj))
@@ -288,13 +323,16 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 						this->isGoingStair = true;
 						stairPosition->x = dwn->x;
 						stairPosition->y = dwn->y;
+						stairDirection->x = dwn->nx;
+						stairDirection->y = dwn->ny;
 					}
-
 				}
 				if (dynamic_cast<StopPoint *>(e->obj))
 				{
 					StopPoint *up = dynamic_cast<StopPoint *>(e->obj);
 					isGoingStair = false;
+					x += dx;
+					y += dy;
 				}
 				if (dynamic_cast<CDoor *>(e->obj))
 				{
@@ -385,8 +423,12 @@ void CMario::Render()
 						ani = MARIO_ANI_INVI_IDLE_RIGHT;
 					else ani = MARIO_ANI_BIG_IDLE_RIGHT;
 
-					if (isGoingStair == true) ani = MARIO_ANI_STAIR_IDLE_RIGHT;
-
+					if (isGoingStair == true)
+					{
+						if(stairDirection->y == 1)
+						ani = MARIO_ANI_STAIR_IDLE_RIGHT;
+						else ani = MARIO_ANI_STAIR_IDLE_RIGHT_DOWN;
+					}
 					if (state == MARIO_STATE_ATK_RIGHT)
 					{
 						attackTime += dt;
@@ -398,8 +440,6 @@ void CMario::Render()
 						}
 						else ani = MARIO_ANI_SIT_ATK_RIGHT;
 					}
-					else if (state == MARIO_STATE_WALKING_DWNSTAIR_RIGHT || state == MARIO_STATE_WALKING_UPSTAIR_RIGHT)
-						ani = MARIO_ANI_BIG_WALKING_RIGHT;
 				}
 				else
 				{
@@ -409,7 +449,12 @@ void CMario::Render()
 						ani = MARIO_ANI_INVI_IDLE_LEFT;
 					else ani = MARIO_ANI_BIG_IDLE_LEFT;
 
-					if (isGoingStair == true) ani = MARIO_ANI_STAIR_IDLE_LEFT;
+					if (isGoingStair == true)
+					{
+						if(stairDirection->y == 1)
+						ani = MARIO_ANI_STAIR_IDLE_LEFT;
+						else MARIO_ANI_STAIR_IDLE_LEFT_DOWN;
+					}
 
 					if (state == MARIO_STATE_ATK_LEFT)
 					{
@@ -422,8 +467,6 @@ void CMario::Render()
 						}
 						else ani = MARIO_ANI_SIT_ATK_LEFT;
 					}
-					else if (state == MARIO_STATE_WALKING_DWNSTAIR_LEFT || state == MARIO_STATE_WALKING_UPSTAIR_LEFT)
-						ani = MARIO_ANI_BIG_WALKING_LEFT;
 				}
 			}
 			else if (vx > 0)								// moving
@@ -431,8 +474,6 @@ void CMario::Render()
 				if (outInvisible == false)
 					ani = MARIO_ANI_BIG_WALKING_RIGHT;
 				else ani = MARIO_ANI_INVI_WALKING_RIGHT;
-
-
 				if (state == MARIO_STATE_ATK_RIGHT)
 				{
 					if (outInvisible == false)
@@ -440,7 +481,12 @@ void CMario::Render()
 					else ani = MARIO_ANI_INVI_ATK_RIGHT;
 					attackTime += dt;
 				}
-				if (isGoingStair == true) ani = MARIO_ANI_STAIR_RIGHT;
+				if (isGoingStair == true)
+				{
+					if(state == MARIO_STATE_WALKING_UPSTAIR_RIGHT)
+					ani = MARIO_ANI_STAIR_RIGHT;
+					else ani = MARIO_ANI_STAIR_RIGHT_DOWN;
+				}
 			}
 			else
 			{
@@ -454,7 +500,12 @@ void CMario::Render()
 					else ani = MARIO_ANI_INVI_ATK_LEFT;
 					attackTime += dt;
 				}
-				if (isGoingStair == true) ani = MARIO_ANI_STAIR_LEFT;
+				if (isGoingStair == true)
+				{
+					if(state == MARIO_STATE_WALKING_UPSTAIR_LEFT)
+					ani = MARIO_ANI_STAIR_LEFT;
+					else ani = MARIO_ANI_STAIR_LEFT_DOWN;
+				}
 
 			}
 			if (attackTime >= 200)

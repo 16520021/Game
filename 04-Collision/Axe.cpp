@@ -3,6 +3,10 @@
 #include "Mario.h"
 #include "Goomba.h"
 #include "Boss.h"
+#include "Bat.h"
+#include "Fish.h"
+#include "Dog.h"
+#include"Candle.h"
 
 CAxe::CAxe()
 {
@@ -54,6 +58,35 @@ void CAxe::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 							}
 						}
 					}	
+					if (dynamic_cast<Dog *>(e->obj))
+					{
+						Dog *dog = dynamic_cast<Dog *>(e->obj);
+						if (dog->GetState() != DOG_STATE_DIE)
+						{
+							dog->SetState(DOG_STATE_DIE);
+							mario->point += dog->point;
+						}
+					}
+					if (dynamic_cast<CFish *>(e->obj))
+					{
+						CFish *fish = dynamic_cast<CFish *>(e->obj);
+						if (e->nx == 0)
+						{
+							if (fish->state != FISH_STATE_BURN)
+							{
+								fish->SetState(FISH_STATE_BURN);
+								mario->point += fish->point;
+							}
+						}
+					}
+					if (dynamic_cast<FishBullet *>(e->obj))
+					{
+						FishBullet *fish = dynamic_cast<FishBullet *>(e->obj);
+						if (e->nx == 0)
+						{
+							fish->isHit = true;
+						}
+					}
 					if (dynamic_cast<CBoss *>(e->obj))
 					{
 						CBoss *boss = dynamic_cast<CBoss *>(e->obj);
@@ -65,6 +98,27 @@ void CAxe::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 								boss->curHealth -= 1;
 							}
 							if (boss->curHealth - 1 <= 0) boss->SetState(BOSS_STATE_DIE);
+						}
+					}
+					if (dynamic_cast<CBat *>(e->obj))
+					{
+						CBat *bat = dynamic_cast<CBat *>(e->obj);
+						if (e->nx == 0)
+						{
+							if (bat->state != BAT_STATE_DESTROYED)
+							{
+								bat->SetState(BAT_STATE_DESTROYED);
+								mario->point += bat->point;
+							}
+						}
+					}
+					if (dynamic_cast<CCandle *>(e->obj))
+					{
+						CCandle *candle = dynamic_cast<CCandle *>(e->obj);
+						if (candle->GetState() != CANDLE_STATE_DESTROYED)
+						{
+							candle->SetState(CANDLE_STATE_DESTROYED);
+							mario->point += candle->point;
 						}
 					}
 				}
